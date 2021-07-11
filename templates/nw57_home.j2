@@ -1,0 +1,38 @@
+{% extends "nw57_layout.j2" %}
+{% block title %}Pawsome Animal Rescue - Home Page{% endblock title %} 
+{% block body_content %}
+<h1>Pawsome Animal Rescue</h1>
+
+<h2>About Us</h2>
+<p>Pawsome Animal Rescue is focused on helping animals get adopted and find happy homes.</p>
+
+<h2>Featured Pet</h2>
+<p>-one randomly selected anaimal displayed here</p>
+
+<h2>View All Pets</h2>
+<p>-link to view all pets page</p>
+
+<h2>Our Shelter Locations</h2>
+    {# <table>
+    <caption>Our Shelter Locations</caption>
+    <thead>
+    <tr>
+        <th>Name</th>
+        <th>Street</th>
+        <th>City</th>
+        <th>State</th>
+        <th>Zip</th>
+    </tr>
+    <tbody>
+    {% for shelter in shelters %}
+    <tr>
+        <td>{{shelter['shelter_name']}}</td>
+        <td>{{shelter['street']}}</td>
+        <td>{{shelter['city']}}</td>
+        <td>{{shelter['state']}}</td>
+        <td>{{shelter['zip_code']}}</td>
+    </tr>
+    {% endfor %}
+    </table> #}
+{% endblock body_content %}
+
