@@ -8,6 +8,10 @@ app = Flask("Pawsome")
 def hello_world():
     return render_template('nw57_home.j2')
 
+@app.route("/animals")
+def animals():
+    return render_template('nw57_filter_animals.j2')
+
 if __name__ == "__main__":
     port = int(os.environ.get('PORT', 3000))
     app.run(port=port, debug=True)
