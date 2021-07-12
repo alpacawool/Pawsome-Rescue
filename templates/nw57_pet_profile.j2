@@ -1,0 +1,28 @@
+{% extends "nw57_layout.j2" %}
+{% block title %}Pawsome Animal Rescue - Pet Profile{% endblock title %} 
+{% block body_content %}
+<h1>Pet Profile - {{ animal_id }}</h1>
+
+{# Select animal with animal_id #}
+
+<div class="col-sm-12">
+    <div class="card">
+        <div class="card-body">
+            <img class="card-img-top" src="..." alt="Card image cap">
+            <h5 class="card-title">Freddy</h5>
+            <h6 class="card-subtitle mb-2 text-muted">Golden Doodle - Dog</h6>
+            <p class="card-text">
+                <ul>
+                    <li>Personality: Such a sweet boi.</li>
+                    <li>Birthdate: 2020-12-23</li>
+                    <li>Gender: M</li>
+                    <li>Shelter: shelter_name</li>
+                </ul>
+            </p>
+            <a href="#" class="card-link">Adopt Me</a>
+        </div>
+    </div>
+</div>
+
+
+{% endblock body_content %}
