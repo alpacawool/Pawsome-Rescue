@@ -9,20 +9,98 @@
     <div class="card">
         <div class="card-body">
             <img class="card-img-top" src="..." alt="Card image cap">
-            <h5 class="card-title">Freddy</h5>
-            <h6 class="card-subtitle mb-2 text-muted">Golden Doodle - Dog</h6>
+            <h5 class="card-title">animal_name</h5>
+            <h6 class="card-subtitle mb-2 text-muted">breed - species_type</h6>
             <p class="card-text">
                 <ul>
-                    <li>Personality: Such a sweet boi.</li>
                     <li>Birthdate: 2020-12-23</li>
                     <li>Gender: M</li>
-                    <li>Shelter: shelter_name</li>
+                    <li>Personality: Such a sweet boi.</li>
+                    <li>Intake Date: 2021-03-13</li>
+                    <li>Adoption Fee: 2021-03-13</li>
+                    <li>Available?: Y/N based on adopted_date</li>
                 </ul>
-            </p>
-            <a href="#" class="card-link">Adopt Me</a>
-        </div>
+            </p>  
+        </div> 
     </div>
 </div>
 
+<br>
+<h2>Apply below to adopt this pet.</h2>
+<br>
+
+{# if available, show adopt me form, otherwise don't #}
+<form>
+  <fieldset class="form-group">
+    <div class="row">
+      <legend class="col-form-label col-sm-6 pt-0">Do you own your home?</legend>
+      <div class="col-sm-10">
+        <div class="form-check">
+          <input class="form-check-input" type="radio" name="homeOwnership" id="homeOwnership1" value="0">
+          <label class="form-check-label" for="homeOwnership1">No</label>
+        </div>
+        <div class="form-check">
+          <input class="form-check-input" type="radio" name="gridRadios" id="homeOwnership2" value="1">
+          <label class="form-check-label" for="homeOwnership2">Yes</label>
+        </div>
+      </div>
+    </div>
+  </fieldset>
+  <br>
+
+  <fieldset class="form-group">
+    <div class="row">
+      <legend class="col-form-label col-sm-6 pt-0">Do you have children?</legend>
+      <div class="col-sm-10">
+        <div class="form-check">
+          <input class="form-check-input" type="radio" name="homeOwnership" id="homeOwnership1" value="0">
+          <label class="form-check-label" for="homeOwnership1">No</label>
+        </div>
+        <div class="form-check">
+          <input class="form-check-input" type="radio" name="gridRadios" id="homeOwnership2" value="1">
+          <label class="form-check-label" for="homeOwnership2">Yes</label>
+        </div>
+      </div>
+    </div>
+  </fieldset>
+  <br>
+
+  <fieldset class="form-group">
+    <div class="row">
+      <legend class="col-form-label col-sm-6 pt-0">Will this be your first pet?</legend>
+      <div class="col-sm-10">
+        <div class="form-check">
+          <input class="form-check-input" type="radio" name="homeOwnership" id="homeOwnership1" value="0">
+          <label class="form-check-label" for="homeOwnership1">No</label>
+        </div>
+        <div class="form-check">
+          <input class="form-check-input" type="radio" name="gridRadios" id="homeOwnership2" value="1">
+          <label class="form-check-label" for="homeOwnership2">Yes</label>
+        </div>
+      </div>
+    </div>
+  </fieldset>
+  <br>
+
+  <div class="form-group">
+    <label for="petsInHome">How many pets do you currently have at home?</label>
+    <select class="form-control" id="petsInHome">
+      <option>0</option>
+      <option>1</option>
+      <option>2</option>
+      <option>3</option>
+      <option>4</option>
+      <option>5</option>
+      <option>6</option>
+      <option>7</option>
+      <option>8</option>
+      <option>9</option>
+      <option>10</option>
+    </select>
+  </div>
+  <br>
+
+  <button type="submit" class="btn btn-primary">Submit Application</button>
+</form>
 
 {% endblock body_content %}
