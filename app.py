@@ -3,7 +3,9 @@ import os
 
 # Testing with User Object Below
 from test_object.test_users import User, test_users
+from test_object.test_roles import Role, test_roles
 users = test_users
+roles = test_roles
 # End Testing Content Above
 
 app = Flask("Pawsome")
@@ -38,6 +40,20 @@ def update_user(user_id):
                 user.email = req["user_email"]
                 flash("Updated user successfully!")
     return redirect("/edit-users")
+
+@app.route("/edit-roles")
+def edit_roles():
+    return render_template('nw57_edit_roles.j2', roles=roles)
+
+@app.route("/update-role/<int:role_id>", methods=['GET', 'POST'])
+def update_role(role_id):
+    if request.method == 'POST':
+        req = request.form
+        for role in roles:
+            if role.id == role_id:
+                role.name = req["role_name"]
+                flash("Updated user successfully!")
+    return redirect("/edit-roles")
 
 @app.route("/animals")
 def animals():
