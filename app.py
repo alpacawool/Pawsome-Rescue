@@ -1,13 +1,12 @@
-<<<<<<< HEAD
-from flask import Flask, render_template, request, url_for, redirect
-=======
-from flask import Flask, render_template, request, redirect, flash
->>>>>>> main
+from flask import Flask, render_template, request, redirect, flash, url_for
 import os
 
 # Testing with User Object Below
 from test_object.test_users import User, test_users
 users = test_users
+# Testing with Animal Object Below
+from test_object.test_animals import Animal, test_animals
+animals_data = test_animals
 # End Testing Content Above
 
 app = Flask("Pawsome")
@@ -45,7 +44,7 @@ def update_user(user_id):
 
 @app.route("/animals")
 def animals():
-    return render_template('nw57_animals.j2')
+    return render_template('nw57_animals.j2', animals_data=animals_data)
 
 @app.route('/animals/<int:animal_id>', methods=['GET', 'POST'])
 def pet_profile(animal_id):
@@ -54,7 +53,6 @@ def pet_profile(animal_id):
         return 'Submit Application'
     else:
         return render_template('nw57_pet_profile.j2', animal_id=animal_id)
-
 
 @app.route("/add_animal", methods=['GET', 'POST'])
 def add_animal():
@@ -81,9 +79,14 @@ def add_animal():
 
         # TODO: add POST to DB Logic
 
-        print("Adding New Animal:", animalName)
-        return redirect(url_for('update_animals'))
+        print("Adding New Animal:", animalName, adoptedDate)
+        return redirect(url_for('edit_animals'))
 
+
+@app.route("/edit-animals")
+def edit_animals():
+    # print(animals_data[1].intake_date)
+    return render_template('nw57_update_animals.j2', animals_data=animals_data)
 
 @app.route("/update_animal/<int:animal_id>", methods=['GET', 'POST'])
 def update_animals():

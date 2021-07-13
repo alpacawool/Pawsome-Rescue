@@ -1,88 +1,84 @@
 {% extends "nw57_layout.j2" %}
-{% block title %}Pawsome Animal Rescue - Update Animal{% endblock title %} 
+{% block title %}Pawsome Animal Rescue - Update Animals{% endblock title %} 
 {% block body_content %}
+<br>
 <h1>Update Animal</h1>
+<br>
 
-<form id=updateAnimal method="POST">
-    <div class="form-group">
-        <label for="animalName">Animal Name</label>
-        <input type="text" class="form-control" name="animalName" id="animalName" placeholder="Belinda">
-    </div>
-    <br>
+{# Animals: Records the details of pets with connections to our animal shelter
+animal_id: INT, auto_increment, unique, NOT NULL, PK
+animal_name: VARCHAR(50), NOT NULL
+birthdate: DATE NOT NULL
+gender: CHAR(1)
+species_type: VARCHAR(50)
+breed: VARCHAR(50)
+personality: VARCHAR(255)
+image_url: VARCHAR(255)
+intake_date: DATE NOT NULL
+adopted_date: DATE
+adoption_fee: DECIMAL(5,2)
+Relationships: 
+1:M relationship between Applications, using animal_id as fk implemented inside Applications
+1:M relationship between Shelters, using shelter_id as fk implemented inside Animals #}
 
-    <div class="form-group">
-        <label for="shelterName">Shelter Name</label>
-        <select class="form-control" name="shelterName" id="shelterName">
-            <option value="1">Wag'on Town</option>
-            <option value="2">Frosty Knoll</option>
-            <option value="3">The Comfy Couch</option>
-        </select>
-    </div>
-    <br>
 
-    <div class="form-group">
-        <label for="birthdate">Birthdate</label>
-        <input type="date" class="form-control" name="birthdate" id="birthdate">
-    </div>
-    <br>
-
-    <div class="form-group">
-        <label for="gender">Gender</label>
-        <select class="form-control" name="gender" id="gender">
-            <option>F</option>
-            <option>M</option>
-        </select>
-    </div>
-    <br>
-
-    <div class="form-group">
-        <label for="speciesType">Species Type</label>
-        <select class="form-control" name="speciesType" id="speciesType">
-            <option>Cat</option>
-            <option>Dog</option>
-            <option>Bird</option>
-            <option>Other</option>
-        </select>
-    </div>
-    <br>
-
-    <div class="form-group">
-        <label for="breed">Breed</label>
-        <input type="text" class="form-control" name="breed" id="breed" placeholder="Maine Coon">
-    </div>
-    <br>
-
-    <div class="form-group">
-        <label for="personality">Personality</label>
-        <input type="text" class="form-control" name="personality" id="personality" placeholder="A friendly floof who loves belly rubs and dipping her paw in cups of water.">
-    </div>
-    <br>
-
-    <div class="form-group">
-        <label for="imageURL">Image Name in Static Folder</label>
-        <input type="text" class="form-control" name="imageURL" id="imageURL" placeholder="cat1.png">
-    </div>
-    <br>
-    
-    <div class="form-group">
-        <label for="intakeDate">Birthdate</label>
-        <input type="date" class="form-control" name="intakeDate" id="intakeDate">
-    </div>
-    <br>
-
-    <div class="form-group">
-        <label for="adoptedDate">Adopted Date (leave blank if not yet adopted)</label>
-        <input type="date" class="form-control" name="adoptedDate" id="adoptedDate">
-    </div>
-    <br>
-
-    <div class="form-group">
-        <label for="adoptionFee">Adoption Fee</label>
-        <input type="number" class="form-control" name="adoptionFee" id="adoptionFee" placeholder="35.00" step="0.01" min="0" max="99.99">
-    </div>
-    <br>
-
-  <button type="submit" class="btn btn-primary">Submit Application</button>
-</form>
+    <table class="table">
+        <thead>
+            <tr>
+                <th scope="col">Animal ID</th>
+                <th scope="col">Animal Name</th>
+                <th scope="col">Shelter Name</th>
+                <th scope="col">Birthdate</th>
+                <th scope="col">Gender</th>
+                <th scope="col">Species Type</th>
+                <th scope="col">Breed</th>
+                <th scope="col">Personality</th>
+                <th scope="col">ImageURL</th>
+                <th scope="col">Intake Date</th>
+                <th scope="col">Adopted Date</th>
+                <th scope="col">Adoption Fee</th>
+                <th scope="col"></th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for animal in animals_data %}
+                <tr>
+                    <form action="/update_animal/{{animal.animal_id}}" method="POST">
+                    <td>{{animal.animal_id}}</td>
+                    <td><input type="text" class="form-control" id="animal_animal_name" name="animal_animal_name" value="{{animal.animal_name}}"></td>
+                    <td>
+                        <select class="form-control" name="shelterName" id="shelterName">
+                            <option value="1">Wag'on Town</option>
+                            <option value="2">Frosty Knoll</option>
+                            <option value="3">The Comfy Couch</option>
+                        </select>
+                    </td>
+                    <td><input type="date" class="form-control" id="animal_birthdate" name="animal_birthdate" value="{{animal.birthdate}}"></td>
+                    <td>
+                        <select class="form-control" name="gender" id="gender">
+                            <option>F</option>
+                            <option>M</option>
+                        </select>
+                    </td>
+                    <td>
+                        <select class="form-control" name="animal_species_type" id="animal_species_type">
+                            <option>Cat</option>
+                            <option>Dog</option>
+                            <option>Bird</option>
+                            <option>Other</option>
+                        </select>
+                    </td>
+                    <td><input type="text" class="form-control" name="animal_breed" id="animal_breed" value="{{animal.breed}}"></td>
+                    <td><input type="text" class="form-control" id="animal_personality" name="animal_personality" value="{{animal.personality}}"></td>
+                    <td><input type="text" class="form-control" id="animal_imageURL" name="animal_imageURL" value="{{animal.image_url}}"></td>
+                    <td><input type="date" class="form-control" name="animal_intake_date" id="animal_intake_date" value="{{animal.intake_date}}"></td>
+                    <td><input type="date" class="form-control" name="animal_adopted_date" id="animal_adopted_date" value="{{animal.adopted_date}}"></td>
+                    <td><input type="number" class="form-control" name="adoptionFee" id="adoptionFee" placeholder="35.00" step="0.01" min="0" max="99.99"></td>
+                    <td><button type="submit" class="btn btn-primary">Update</button></td>
+                    </form>
+                </tr>
+            {% endfor %}
+        </tbody>
+    </table>
 
 {% endblock body_content %}

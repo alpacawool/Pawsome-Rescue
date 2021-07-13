@@ -6,45 +6,27 @@
 {# Add filter options #}
 
 {# Add if/then for showing all animals or filtered animals #}
-{# {% for animal in animals %} #}
-<div class="row justify-content-center">
-    <div class="col-sm-8">
-        <div class="card">
-            <div class="card-body">
-                <img class="card-img-top" src="..." alt="Card image cap">
-                <h5 class="card-title">animal_name</h5>
-                <h6 class="card-subtitle mb-2 text-muted">breed - species_type</h6>
-                <p class="card-text">
-                    <ul>
-                        <li>Personality: Such a sweet boi.</li>
-                        <li>Available?: Y/N based on adopted_date</li>
-                    </ul>
-                </p>
-                <a href="#" class="card-link">Learn More About Me</a>
+
+{% for animal in animals_data %}
+    <div class="row justify-content-center">
+        <div class="col-sm-8">
+            <div class="card">
+                <div class="card-body">
+                    <img class="card-img-top" src="..." alt="Card image cap">
+                    <h5 class="card-title">{{animal.animal_name}}</h5>
+                    <h6 class="card-subtitle mb-2 text-muted">{{animal.breed}} - {{animal.species_type}}</h6>
+                    <p class="card-text">
+                        <ul>
+                            <li>Personality: {{animal.personality}}</li>
+                            <li>Available?: Y/N based on adopted_date: {{animal.adopted_date}}</li>
+                        </ul>
+                    </p>
+                    <a href="/animals/{{animal.animal_id}}" class="card-link">Learn More About Me</a>
+                </div>
             </div>
         </div>
     </div>
-</div>
-<br>
-<div class="row justify-content-center">
-    <div class="col-sm-8">
-        <div class="card">
-            <div class="card-body">
-                <img class="card-img-top" src="..." alt="Card image cap">
-                <h5 class="card-title">animal_name</h5>
-                <h6 class="card-subtitle mb-2 text-muted">breed - species_type</h6>
-                <p class="card-text">
-                    <ul>
-                        <li>Personality: Cuddler!</li>
-                        <li>Available?: Y/N based on adopted_date</li>
-                    </ul>
-                </p>
-                <a href="#" class="card-link">Learn More About Me</a>
-            </div>
-        </div>
-    </div>
-</div>
-<br>
-{# {% endfor %} #}
+    <br>
+{% endfor %}
 
 {% endblock body_content %}
