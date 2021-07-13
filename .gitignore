@@ -3,3 +3,4 @@ env/__pycache__/
 /env/
 /.vscode
 /venv
+test_object/__pycache__/
