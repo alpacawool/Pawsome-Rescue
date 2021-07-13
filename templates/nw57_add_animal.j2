@@ -1,0 +1,88 @@
+{% extends "nw57_layout.j2" %}
+{% block title %}Pawsome Animal Rescue - Add Animals{% endblock title %} 
+{% block body_content %}
+<h1>Add Animal</h1>
+
+<form id=addAnimal method="POST">
+    <div class="form-group">
+        <label for="animalName">Animal Name</label>
+        <input type="text" class="form-control" name="animalName" id="animalName" placeholder="Belinda">
+    </div>
+    <br>
+
+    <div class="form-group">
+        <label for="shelterName">Shelter Name</label>
+        <select class="form-control" name="shelterName" id="shelterName">
+            <option value="1">Wag'on Town</option>
+            <option value="2">Frosty Knoll</option>
+            <option value="3">The Comfy Couch</option>
+        </select>
+    </div>
+    <br>
+
+    <div class="form-group">
+        <label for="birthdate">Birthdate</label>
+        <input type="date" class="form-control" name="birthdate" id="birthdate">
+    </div>
+    <br>
+
+    <div class="form-group">
+        <label for="gender">Gender</label>
+        <select class="form-control" name="gender" id="gender">
+            <option>F</option>
+            <option>M</option>
+        </select>
+    </div>
+    <br>
+
+    <div class="form-group">
+        <label for="speciesType">Species Type</label>
+        <select class="form-control" name="speciesType" id="speciesType">
+            <option>Cat</option>
+            <option>Dog</option>
+            <option>Bird</option>
+            <option>Other</option>
+        </select>
+    </div>
+    <br>
+
+    <div class="form-group">
+        <label for="breed">Breed</label>
+        <input type="text" class="form-control" name="breed" id="breed" placeholder="Maine Coon">
+    </div>
+    <br>
+
+    <div class="form-group">
+        <label for="personality">Personality</label>
+        <input type="text" class="form-control" name="personality" id="personality" placeholder="A friendly floof who loves belly rubs and dipping her paw in cups of water.">
+    </div>
+    <br>
+
+    <div class="form-group">
+        <label for="imageURL">Image Name in Static Folder</label>
+        <input type="text" class="form-control" name="imageURL" id="imageURL" placeholder="cat1.png">
+    </div>
+    <br>
+    
+    <div class="form-group">
+        <label for="intakeDate">Birthdate</label>
+        <input type="date" class="form-control" name="intakeDate" id="intakeDate">
+    </div>
+    <br>
+
+    <div class="form-group">
+        <label for="adoptedDate">Adopted Date (leave blank if not yet adopted)</label>
+        <input type="date" class="form-control" name="adoptedDate" id="adoptedDate">
+    </div>
+    <br>
+
+    <div class="form-group">
+        <label for="adoptionFee">Adoption Fee</label>
+        <input type="number" class="form-control" name="adoptionFee" id="adoptionFee" placeholder="35.00" step="0.01" min="0" max="99.99">
+    </div>
+    <br>
+
+  <button type="submit" class="btn btn-primary">Submit Application</button>
+</form>
+
+{% endblock body_content %}
