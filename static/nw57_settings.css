@@ -1,0 +1,4 @@
+/* Remove underline from links in Settings Grid */
+.settings-grid a:hover, .settings-grid a:visited, .settings-grid a:link, .settings-grid a:active {
+    text-decoration: none;
+}
