@@ -1,0 +1,44 @@
+{% extends "nw57_layout.j2" %}
+{% block title %}Pawsome Animal Rescue - Settings{% endblock title %} 
+{% block body_content %}
+<link rel="stylesheet" href="{{ url_for('static', filename='nw57_settings.css') }}">
+
+<br>
+<h2>Settings</h2>
+<br>
+
+<div class="container-fluid settings-grid">
+  <div class="row g-2">
+    <div class="col-md-4">
+      <div class="p-3 border bg-light d-flex justify-content-center">
+        Animals
+      </div>
+    </div>
+    <div class="col-md-4">
+      <div class="p-3 border bg-light d-flex justify-content-center">
+        Applications
+      </div>
+    </div>
+    <div class="col-md-4">
+      <div class="p-3 border bg-light d-flex justify-content-center">
+        Shelters
+      </div>
+    </div>
+    <div class="col-md-4">
+      <div class="p-3 border bg-light d-flex justify-content-center">
+        <a href="#">Users</a>
+      </div>
+    </div>
+    <div class="col-md-4">
+      <div class="p-3 border bg-light d-flex justify-content-center">
+        <a href="#">Roles</a>
+      </div>
+    </div>
+  </div>
+</div>
+
+</div>
+
+
+{% endblock body_content %}
+

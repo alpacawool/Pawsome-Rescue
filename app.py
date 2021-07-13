@@ -16,6 +16,10 @@ def index_page():
 def animals():
     return render_template('nw57_animals.j2')
 
+@app.route("/settings")
+def settings():
+    return render_template('nw57_settings.j2')
+
 @app.route('/animals/<int:animal_id>', methods=['GET', 'POST'])
 def pet_profile(animal_id):
     if request.method == 'POST': 
