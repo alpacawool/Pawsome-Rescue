@@ -36,6 +36,23 @@ def settings():
 def edit_users():
     return render_template('nw57_edit_users.j2', users=users)
 
+@app.route("/signup")
+def signup():
+    return render_template("nw57_signup.j2")
+
+@app.route("/create-user", methods=['POST'])
+def create_user():
+    req = request.form
+    new_user = User(
+        len(users),
+        req['first_name'],
+        req['last_name'],
+        req['email'],
+        req['pw']
+    )
+    users.append(new_user)
+    return redirect("/")
+
 @app.route("/update-user/<int:user_id>", methods=['GET', 'POST'])
 def update_user(user_id):
     if request.method == 'POST':
