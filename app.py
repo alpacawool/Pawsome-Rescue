@@ -148,8 +148,8 @@ def pet_profile(animal_id):
                 return render_template('nw57_pet_profile.j2', animal_id=animal_id, animal=animal)
         return 'Pet not found'
 
-@app.route("/add_animal", methods=['GET', 'POST'])
-def add_animal():
+@app.route("/insert-animal", methods=['GET', 'POST'])
+def insert_animal():
     if request.method == 'POST': 
         animalName = request.form['animalName']
         shelterName = request.form['shelterName']
