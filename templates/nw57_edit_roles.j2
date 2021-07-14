@@ -1,0 +1,70 @@
+{% extends "nw57_layout.j2" %}
+{% block title %}Pawsome Animal Rescue - Edit Roles{% endblock title %} 
+{% block body_content %}
+<br>
+<h2>Edit Roles</h2>
+<br>
+
+<a href="/settings"><button class="btn btn-secondary">Back to Settings</button></a> <a href="/edit-users"><button class="btn btn-secondary">Manage Role Assignment</button></a>
+<br><br>
+<!--
+role_id: INT, auto_increment, unique, NOT NULL, PK
+role_name: VARCHAR(255), NOT NULL
+Relationship: 
+M:M relationship with Users, using intersection table Users_Roles with two foreign keys
+-->
+
+<!--- TODO : Better confirmation message -->
+{% with messages = get_flashed_messages() %}
+  {% if messages %}
+    <script>
+      var messages = {{ messages | safe }};
+      for (var i=0; i<messages.length; i++) {
+        alert(messages[i]);
+      }
+    </script>
+  {% endif %}
+{% endwith %}
+
+<h4>Add New Role<h4>
+<form name="create_a_role" action="/insert-role" method="POST">
+<table class="table table-sm w-auto table-borderless">
+  <tbody>
+  <tr>
+    <td><input type="text" name="name" value="" placeholder="Name"></td>
+    <td><button type="submit" class="btn btn-primary">Create</button>
+  </tr>
+  </tbody>
+</table>
+</form>
+
+<h4>Roles</h4>
+
+{% if roles|length < 1 %}
+<p>There are no existing roles.</p>
+{% else %}
+    <table class = "table">
+        <thead>
+        <tr>
+            <th scope="col">ID</th>
+            <th scope="col">Name</th>
+            <th scope="col"></th>
+        </tr>
+        </thead>
+        <tbody>
+        {% for role in roles %}
+        <tr>
+            <form action="/update-role/{{role.id}}" method="POST">
+            <td>{{role.id}}</td>
+            <td><input type="text" class="form-control" id="role_name" name="role_name" value="{{role.name}}"></td>
+            <td><button type="submit" class="btn btn-primary">Update</button></td>
+            </form>
+        </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+
+{% endif %}
+
+{% endblock body_content %}
+

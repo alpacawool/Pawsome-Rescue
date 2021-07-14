@@ -1,0 +1,38 @@
+{% extends "nw57_layout.j2" %}
+{% block title %}Pawsome Animal Rescue - Signup{% endblock title %} 
+{% block body_content %}
+<br><br>
+<div class="row">
+    <div class="col-md-4"></div>
+    <div class="signup-container col-md-4">
+        <form name="signup" action="/create-user" method="POST">
+            <div class="form-group">
+            <h2 class="mb-3">Sign up</h2>
+            </div>
+            <div class="form-group">
+                <label for="first_name"><b>Name</b></label>
+                <input type="text" class="form-control mb-2" 
+                    name="first_name" value="" placeholder="First">
+                <input type="text" class="form-control mb-2" 
+                    name="last_name" value="" placeholder="Last">          
+            </div>
+            <div class="form-group">
+                <label for="email"><b>Email Address</b></label>
+                <input type="email" name="email" class="form-control mb-2"
+                    value="" placeholder="name@email.com">
+            </div>
+            <div class="form-group">
+            <b>Password</b>
+            <input type="password" class="form-control mb-2"
+                name="pw" value="" placeholder="**********">
+            <div class="form-group">
+
+            <div class="form-group">
+            <button type="submit" class="form control btn btn-primary">Create Account</button>
+            <div class="form-group">
+        </form>
+    </div>
+     <div class="col-md-4"></div>
+</div>
+
+{% endblock body_content %}
