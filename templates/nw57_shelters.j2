@@ -1,0 +1,26 @@
+{% extends "nw57_layout.j2" %}
+{% block title %}Pawsome Animal Rescue - Shelters{% endblock title %} 
+{% block body_content %}
+<br>
+<h1>Shelters</h1>
+<br>
+
+{% for shelter in shelters_data %}
+    <div class="row justify-content-center">
+        <div class="col-sm-6">
+            <div class="card text-center">
+                <div class="card-body">
+                    <h3 class="card-title">{{shelter.shelter_name}}</h3>
+                    <address>
+                    {{shelter.street}}<br>
+                    {{shelter.city}} {{shelter.state}} {{shelter.zip_code}} 
+                    </address>
+                    <a href="/animals" class="btn btn-primary">View Animals At This Location</a>
+                </div>
+            </div>
+        </div>
+    </div>
+    <br>
+{% endfor %}
+
+{% endblock body_content %}
