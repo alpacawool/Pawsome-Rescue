@@ -11,17 +11,28 @@
     <div class="row justify-content-center">
         <div class="col-sm-8">
             <div class="card">
-                <div class="card-body">
-                    <img class="card-img-top" src="..." alt="Card image cap">
-                    <h5 class="card-title">{{animal.animal_name}}</h5>
-                    <h6 class="card-subtitle mb-2 text-muted">{{animal.breed}} - {{animal.species_type}}</h6>
-                    <p class="card-text">
-                        <ul>
-                            <li>Personality: {{animal.personality}}</li>
-                            <li>Available?: Y/N based on adopted_date: {{animal.adopted_date}}</li>
-                        </ul>
-                    </p>
-                    <a href="/animals/{{animal.animal_id}}" class="card-link">Learn More About Me</a>
+                <div class="row g-0">
+                    <div class="col-md-4">
+                        <img src="{{url_for('static', filename='img/'+ animal.image_url)}}" class="img-fluid rounded-start" alt="picture of animal">
+                    </div>
+                    <div class="col-md-8">
+                        <div class="card-body">
+                            <h5 class="card-title">{{animal.animal_name}}</h5>
+                            <h6 class="card-subtitle mb-2 text-muted">{{animal.breed}} - {{animal.species_type}}</h6>
+                            <p class="card-text">
+                                <ul>
+                                    <li>Personality: {{animal.personality}}</li>
+                                    {% if animal.adopted_date %}
+                                        <li>Adopted on: {{animal.adopted_date}}</li>
+                                    {% else %}
+                                        <li>Needs a Home! Learn More & Apply Below.</li>
+                                    {% endif %}
+                                </ul>
+                            </p>
+                            <p class="card-text"><small class="text-muted">Photo from <a href="https://unsplash.com/s/photos/cat-and-dog-pet?utm_source=unsplash&utm_medium=referral&utm_content=creditCopyText">Unsplash</a></small></p>
+                            <a href="/animals/{{animal.animal_id}}" class="card-link">Learn More About Me</a>
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>

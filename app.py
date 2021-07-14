@@ -50,18 +50,23 @@ def animals():
 def pet_profile(animal_id):
     if request.method == 'POST': 
         # Implement a method for this POST
-        return 'Submit Application'
+        animalID = animal_id
+        homeOwnership = request.form["homeOwnership"]
+        children = request.form["children"]
+        firstPet = request.form["firstPet"]
+        petsInHome = request.form["petsInHome"]
+
+        print('Submitted New Application for animalID:', animalID)
+        return redirect(url_for('pet_profile', animal_id=animal_id))
     else:
-        return render_template('nw57_pet_profile.j2', animal_id=animal_id)
+        for animal in animals_data:
+            if animal_id == animal.animal_id:
+                return render_template('nw57_pet_profile.j2', animal_id=animal_id, animal=animal)
+        return 'Pet not found'
 
 @app.route("/add_animal", methods=['GET', 'POST'])
 def add_animal():
-    if request.method == 'GET':
-        shelterQueryResult = None
-        # TODO: add SELECT names from Shelters DB Logic
-        return render_template('nw57_add_animal.j2', shelters = shelterQueryResult)
-
-    elif request.method == 'POST': 
+    if request.method == 'POST': 
         animalName = request.form['animalName']
         shelterName = request.form['shelterName']
         birthdate = request.form['birthdate']
@@ -81,6 +86,10 @@ def add_animal():
 
         print("Adding New Animal:", animalName, adoptedDate)
         return redirect(url_for('edit_animals'))
+    else:
+        shelterQueryResult = None
+        # TODO: add SELECT names from Shelters DB Logic
+        return render_template('nw57_add_animal.j2', shelters = shelterQueryResult)
 
 
 @app.route("/edit-animals")
@@ -89,12 +98,12 @@ def edit_animals():
     return render_template('nw57_update_animals.j2', animals_data=animals_data)
 
 @app.route("/update_animal/<int:animal_id>", methods=['GET', 'POST'])
-def update_animals():
+def update_animals(animal_id):
     if request.method == 'POST': 
         # add Update to DB Logic
         return render_template('nw57_update_animals.j2')
     else:
-        return render_template('nw57_update_animals.j2')
+        return redirect(url_for('edit_animals'))
 
 
 if __name__ == "__main__":

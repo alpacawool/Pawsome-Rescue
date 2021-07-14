@@ -36,5 +36,5 @@ class Animal:
 test_animals = [
     Animal(0, "Belinda", "Wag'on Town", "2020-03-23", "F", "Cat", "Maine Coon", "Friendly", "cat1.png", "2021-06-23", "2021-06-30", 35.00),
     Animal(1, "Gene", "Wag'on Town", "2017-02-20", "M", "Dog", "Poodle", "Goofy", "dog1.png", "2021-06-24", None, 45.00),
-    Animal(2, "Dr. Dog", "The Comfy Couch", "2017-02-20", "M", "Dog", "Shih-tzu", "Sleepy", "dog2.png", "2021-06-24", "2021-07-11", 35.00)
+    Animal(2, "Dr. Dog", "The Comfy Couch", "2017-02-20", "M", "Dog", "Shih-tzu", "Sleepy", "dog1.png", "2021-06-24", "2021-07-11", 35.00)
 ]

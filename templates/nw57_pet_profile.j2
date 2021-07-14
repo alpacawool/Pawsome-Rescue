@@ -3,105 +3,118 @@
 {% block body_content %}
 <h1>Pet Profile - {{ animal_id }}</h1>
 
-{# Select animal with animal_id #}
-
 <div class="col-sm-12">
     <div class="card">
-        <div class="card-body">
-            <img class="card-img-top" src="..." alt="Card image cap">
-            <h5 class="card-title">animal_name</h5>
-            <h6 class="card-subtitle mb-2 text-muted">breed - species_type</h6>
-            <p class="card-text">
-                <ul>
-                    <li>Birthdate: 2020-12-23</li>
-                    <li>Gender: M</li>
-                    <li>Personality: Such a sweet boi.</li>
-                    <li>Intake Date: 2021-03-13</li>
-                    <li>Adoption Fee: 2021-03-13</li>
-                    <li>Available?: Y/N based on adopted_date</li>
-                </ul>
-            </p>  
-            <a href="{{ url_for('update_animals', animal_id=animal_id) }}" class="btn btn-primary">Update Animal</a>
-        </div> 
+        <div class="row g-0">
+            <div class="col-md-8">
+                <div class="card-body">
+                    <h5 class="card-title">{{animal.animal_name}}</h5>
+                    <h6 class="card-subtitle mb-2 text-muted">{{animal.breed}} - {{animal.species_type}}</h6>
+                    <p class="card-text">
+                        <ul>
+                            <li>Birthdate: {{animal.birthdate}}</li>
+                            <li>Location: {{animal.shelter_name}}</li>
+                            <li>Personality: {{animal.personality}}</li>
+                            <li>Gender: {{animal.gender}}</li>
+                            <li>Intake Date: {{animal.intake_date}}</li>
+                            {% if animal.adopted_date %}
+                                <li>Adopted on: {{animal.adopted_date}}</li>
+                            {% else %}
+                                <li>Needs a Home! Apply Below.</li>
+                                <li>Adoption Fee: {{animal.adoption_fee}}</li>
+                            {% endif %}
+                        </ul>
+                    </p>  
+                </div> 
+            </div>
+            <div class="col-md-4">
+                <img src="{{url_for('static', filename='img/'+ animal.image_url)}}" class="img-fluid float-end rounded-end" alt="picture of animal">
+            </div>
+        </div>
     </div>
 </div>
 
-<br>
-<h2>Apply below to adopt this pet.</h2>
-<br>
+{% if animal.adopted_date %}
+    <br>
+    <h2>{{animal.animal_name}} already has a home. Yay!</h2>
+    <br>
+{% else %}
+    <br>
+    <h2>Apply below to adopt {{animal.animal_name}}.</h2>
+    <br>
 
-{# if available, show adopt me form, otherwise don't #}
-<form>
-  <fieldset class="form-group">
-    <div class="row">
-      <legend class="col-form-label col-sm-6 pt-0">Do you own your home?</legend>
-      <div class="col-sm-10">
-        <div class="form-check">
-          <input class="form-check-input" type="radio" name="homeOwnership" id="homeOwnership1" value="0">
-          <label class="form-check-label" for="homeOwnership1">No</label>
+    <form action="/animals/{{animal_id}}" method="POST">
+    <fieldset class="form-group">
+        <div class="row">
+        <legend class="col-form-label col-sm-6 pt-0">Do you own your home?</legend>
+        <div class="col-sm-10">
+            <div class="form-check">
+            <input class="form-check-input" type="radio" name="homeOwnership" id="homeOwnership1" value="0">
+            <label class="form-check-label" for="homeOwnership1">No</label>
+            </div>
+            <div class="form-check">
+            <input class="form-check-input" type="radio" name="homeOwnership" id="homeOwnership2" value="1">
+            <label class="form-check-label" for="homeOwnership2">Yes</label>
+            </div>
         </div>
-        <div class="form-check">
-          <input class="form-check-input" type="radio" name="gridRadios" id="homeOwnership2" value="1">
-          <label class="form-check-label" for="homeOwnership2">Yes</label>
         </div>
-      </div>
+    </fieldset>
+    <br>
+
+    <fieldset class="form-group">
+        <div class="row">
+        <legend class="col-form-label col-sm-6 pt-0">Do you have children?</legend>
+        <div class="col-sm-10">
+            <div class="form-check">
+            <input class="form-check-input" type="radio" name="children" id="children1" value="0">
+            <label class="form-check-label" for="children1">No</label>
+            </div>
+            <div class="form-check">
+            <input class="form-check-input" type="radio" name="children" id="children2" value="1">
+            <label class="form-check-label" for="children2">Yes</label>
+            </div>
+        </div>
+        </div>
+    </fieldset>
+    <br>
+
+    <fieldset class="form-group">
+        <div class="row">
+        <legend class="col-form-label col-sm-6 pt-0">Will this be your first pet?</legend>
+        <div class="col-sm-10">
+            <div class="form-check">
+            <input class="form-check-input" type="radio" name="firstPet" id="firstPet1" value="0">
+            <label class="form-check-label" for="firstPet1">No</label>
+            </div>
+            <div class="form-check">
+            <input class="form-check-input" type="radio" name="firstPet" id="firstPet2" value="1">
+            <label class="form-check-label" for="firstPet2">Yes</label>
+            </div>
+        </div>
+        </div>
+    </fieldset>
+    <br>
+
+    <div class="form-group">
+        <label for="petsInHome">How many pets do you currently have at home?</label>
+        <select class="form-control" name="petsInHome" id="petsInHome">
+        <option>0</option>
+        <option>1</option>
+        <option>2</option>
+        <option>3</option>
+        <option>4</option>
+        <option>5</option>
+        <option>6</option>
+        <option>7</option>
+        <option>8</option>
+        <option>9</option>
+        <option>10</option>
+        </select>
     </div>
-  </fieldset>
-  <br>
+    <br>
 
-  <fieldset class="form-group">
-    <div class="row">
-      <legend class="col-form-label col-sm-6 pt-0">Do you have children?</legend>
-      <div class="col-sm-10">
-        <div class="form-check">
-          <input class="form-check-input" type="radio" name="homeOwnership" id="homeOwnership1" value="0">
-          <label class="form-check-label" for="homeOwnership1">No</label>
-        </div>
-        <div class="form-check">
-          <input class="form-check-input" type="radio" name="gridRadios" id="homeOwnership2" value="1">
-          <label class="form-check-label" for="homeOwnership2">Yes</label>
-        </div>
-      </div>
-    </div>
-  </fieldset>
-  <br>
-
-  <fieldset class="form-group">
-    <div class="row">
-      <legend class="col-form-label col-sm-6 pt-0">Will this be your first pet?</legend>
-      <div class="col-sm-10">
-        <div class="form-check">
-          <input class="form-check-input" type="radio" name="homeOwnership" id="homeOwnership1" value="0">
-          <label class="form-check-label" for="homeOwnership1">No</label>
-        </div>
-        <div class="form-check">
-          <input class="form-check-input" type="radio" name="gridRadios" id="homeOwnership2" value="1">
-          <label class="form-check-label" for="homeOwnership2">Yes</label>
-        </div>
-      </div>
-    </div>
-  </fieldset>
-  <br>
-
-  <div class="form-group">
-    <label for="petsInHome">How many pets do you currently have at home?</label>
-    <select class="form-control" id="petsInHome">
-      <option>0</option>
-      <option>1</option>
-      <option>2</option>
-      <option>3</option>
-      <option>4</option>
-      <option>5</option>
-      <option>6</option>
-      <option>7</option>
-      <option>8</option>
-      <option>9</option>
-      <option>10</option>
-    </select>
-  </div>
-  <br>
-
-  <button type="submit" class="btn btn-primary">Submit Application</button>
-</form>
+    <button type="submit" class="btn btn-primary">Submit Application</button>
+    </form>
+{% endif %}
 
 {% endblock body_content %}
