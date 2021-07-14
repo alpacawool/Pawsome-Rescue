@@ -6,6 +6,7 @@ from test_object.test_users import User, test_users
 from test_object.test_roles import Role, test_roles
 from test_object.test_users_roles import User_Role, test_users_roles
 from test_object.test_animals import Animal, test_animals
+from test_object.test_shelters import Shelter, test_shelters
 
 users = test_users
 roles = test_roles
@@ -13,6 +14,7 @@ users_roles = test_users_roles
 roles = test_roles
 users_roles = test_users_roles
 animals_data = test_animals
+shelters_data = test_shelters
 # End Testing Content Above
 
 app = Flask("Pawsome")
@@ -187,6 +189,18 @@ def update_animals(animal_id):
     else:
         return redirect(url_for('edit_animals'))
 
+
+@app.route("/edit-shelters")
+def edit_shelters():
+    return render_template('nw57_edit_shelters.j2', shelters_data=shelters_data)
+
+@app.route("/insert-shelter", methods=['POST'])
+def insert_shelter():
+    return redirect(url_for('edit_shelters'))
+
+@app.route("/delete-shelter/<int:shelter_id>", methods=['POST'])
+def delete_shelter():
+    return redirect(url_for('edit_shelters'))
 
 if __name__ == "__main__":
     port = int(os.environ.get('PORT', 3000))
