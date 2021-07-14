@@ -26,6 +26,19 @@ M:M relationship with Users, using intersection table Users_Roles with two forei
   {% endif %}
 {% endwith %}
 
+<h4>Add New Role<h4>
+<form name="create_a_role" action="/insert-role" method="POST">
+<table class="table table-sm w-auto table-borderless">
+  <tbody>
+  <tr>
+    <td><input type="text" name="name" value="" placeholder="Name"></td>
+    <td><button type="submit" class="btn btn-primary">Create</button>
+  </tr>
+  </tbody>
+</table>
+</form>
+
+<h4>Roles</h4>
 
 {% if roles|length < 1 %}
 <p>There are no existing roles.</p>

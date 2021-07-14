@@ -49,6 +49,14 @@ def update_user(user_id):
 def edit_roles():
     return render_template('nw57_edit_roles.j2', roles=roles)
 
+@app.route("/insert-role", methods=['POST'])
+def insert_role():
+    name = request.form['name']
+    id = len(roles)
+    roles.append(Role(id, name))
+    return redirect("/edit-roles")
+
+
 @app.route("/update-role/<int:role_id>", methods=['GET', 'POST'])
 def update_role(role_id):
     if request.method == 'POST':
@@ -56,7 +64,7 @@ def update_role(role_id):
         for role in roles:
             if role.id == role_id:
                 role.name = req["role_name"]
-                flash("Updated user successfully!")
+                flash("Updated role successfully!")
     return redirect("/edit-roles")
 
 @app.route("/edit-users/roles/<int:user_id>")
