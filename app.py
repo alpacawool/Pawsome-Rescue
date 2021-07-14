@@ -4,8 +4,11 @@ import os
 # Testing with User Object Below
 from test_object.test_users import User, test_users
 from test_object.test_roles import Role, test_roles
+from test_object.test_users_roles import User_Role, test_users_roles
+
 users = test_users
 roles = test_roles
+users_roles = test_users_roles
 # End Testing Content Above
 
 app = Flask("Pawsome")
@@ -41,6 +44,7 @@ def update_user(user_id):
                 flash("Updated user successfully!")
     return redirect("/edit-users")
 
+
 @app.route("/edit-roles")
 def edit_roles():
     return render_template('nw57_edit_roles.j2', roles=roles)
@@ -54,6 +58,42 @@ def update_role(role_id):
                 role.name = req["role_name"]
                 flash("Updated user successfully!")
     return redirect("/edit-roles")
+
+@app.route("/edit-users/roles/<int:user_id>")
+def edit_users_roles(user_id):
+    # Replace with SQL-query filtering
+    # Users_Roles by user and returning the role id and role names.
+    for user in users:
+        if user.id == user_id:
+            current_roles = []
+            for user_role in users_roles:
+                if user_role.uid == user_id:
+                    for role in roles:
+                        if role.id == user_role.rid:
+                            current_roles.append(Role(role.id, role.name))
+            return render_template(
+                "nw57_user_role_list.j2", user=user, current_roles=current_roles, roles=roles)
+    return render_template('/edit-roles')
+
+# Assign new Roles and Users relationship.
+@app.route("/create-users-roles/<int:user_id>", methods=['POST'])
+def create_users_roles(user_id):
+    new_id = len(users_roles)
+    role_id = request.form.get('roles')
+    # Note: integer type is important. Otherwise python will interpret as wrong type
+    users_roles.append(User_Role(new_id, int(user_id), int(role_id)))
+    users_roles_redirect_url = "/edit-users/roles/" + str(user_id)
+    return redirect(users_roles_redirect_url)
+
+@app.route("/delete-users-roles/<int:user_id>/<int:role_id>", methods=['POST'])
+def delete_users_roles(user_id, role_id):
+    for user_role in users_roles:
+        if user_role.uid == user_id and user_role.rid == role_id:
+            users_roles.remove(user_role)
+            break
+    users_roles_redirect_url = "/edit-users/roles/" + str(user_id)
+    return redirect(users_roles_redirect_url)
+
 
 @app.route("/animals")
 def animals():
