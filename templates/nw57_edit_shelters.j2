@@ -1,0 +1,76 @@
+{% extends "nw57_layout.j2" %}
+{% block title %}Pawsome Animal Rescue - Edit Shelters{% endblock title %} 
+{% block body_content %}
+<br>
+<h1>Delete Shelters</h1>
+<br>
+
+{# Shelters: Records the details of each animal shelter location
+shelter_id: INT, auto_increment, unique, NOT NULL, PK
+shelter_name: VARCHAR(255), NOT NULL
+street: VARCHAR(255)
+city: VARCHAR(50)
+state: VARCHAR(2)
+zip_code: INT(5)
+Relationship: 
+1:M relationship with Animals, using shelter_id as fk implemented inside Animals #}
+
+<table class="table">
+    <thead>
+        <tr>
+            <th scope="col">Shelter ID</th>
+            <th scope="col">Shelter Name</th>
+            <th scope="col">Street</th>
+            <th scope="col">City</th>
+            <th scope="col">State</th>
+            <th scope="col">Zip Code</th>
+            <th scope="col"></th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for shelter in shelters_data %}
+            <tr>
+                <form action="/delete-shelter/{{shelter.shelter_id}}" method="POST">
+                <td>{{shelter.shelter_id}}</td>
+                <td><input type="text" class="form-control" id="shelter_shelter_name" name="shelter_shelter_name" value="{{shelter.shelter_name}}" disabled></td>
+                <td><input type="text" class="form-control" id="shelter_street" name="shelter_street" value="{{shelter.street}}" disabled></td>
+                <td><input type="text" class="form-control" id="shelter_city" name="shelter_city" value="{{shelter.city}}" disabled></td>
+                <td><input type="text" class="form-control" id="shelter_state" name="shelter_state" value="{{shelter.state}}" disabled></td>
+                <td><input type="number" class="form-control" id="shelter_zip_code" name="shelter_zip_code" value="{{shelter.zip_code}}" disabled></td>
+                <td><button type="submit" class="btn btn-primary">Delete</button></td>
+                </form>
+            </tr>
+        {% endfor %}
+    </tbody>
+</table>
+
+<br>
+<h1>Add New Shelter</h1>
+<br>
+
+<table class="table">
+    <thead>
+        <tr>
+            <th scope="col">Shelter Name</th>
+            <th scope="col">Street</th>
+            <th scope="col">City</th>
+            <th scope="col">State</th>
+            <th scope="col">Zip Code</th>
+            <th scope="col"></th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr>
+            <form action="/insert-shelter" method="POST">
+            <td><input type="text" class="form-control" id="shelter_name" name="shelter_name" placeholder="Calico Place"></td>
+            <td><input type="text" class="form-control" id="street" name="street" placeholder="1423 Raccoon Run"></td>
+            <td><input type="text" class="form-control" id="city" name="city" placeholder="Seattle"></td>
+            <td><input type="text" class="form-control" id="state" name="state" placeholder="WA"></td>
+            <td><input type="number" class="form-control" id="zip_code" name="zip_code" placeholder="98109"></td>
+            <td><button type="submit" class="btn btn-primary">Add</button></td>
+            </form>
+        </tr>
+    </tbody>
+</table>
+
+{% endblock body_content %}

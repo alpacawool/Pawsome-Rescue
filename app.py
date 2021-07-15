@@ -6,6 +6,7 @@ from test_object.test_users import User, test_users
 from test_object.test_roles import Role, test_roles
 from test_object.test_users_roles import User_Role, test_users_roles
 from test_object.test_animals import Animal, test_animals
+from test_object.test_shelters import Shelter, test_shelters
 
 users = test_users
 roles = test_roles
@@ -13,6 +14,7 @@ users_roles = test_users_roles
 roles = test_roles
 users_roles = test_users_roles
 animals_data = test_animals
+shelters_data = test_shelters
 # End Testing Content Above
 
 app = Flask("Pawsome")
@@ -146,8 +148,8 @@ def pet_profile(animal_id):
                 return render_template('nw57_pet_profile.j2', animal_id=animal_id, animal=animal)
         return 'Pet not found'
 
-@app.route("/add_animal", methods=['GET', 'POST'])
-def add_animal():
+@app.route("/insert-animal", methods=['GET', 'POST'])
+def insert_animal():
     if request.method == 'POST': 
         animalName = request.form['animalName']
         shelterName = request.form['shelterName']
@@ -187,6 +189,30 @@ def update_animals(animal_id):
     else:
         return redirect(url_for('edit_animals'))
 
+@app.route("/shelters")
+def shelters():
+    return render_template('nw57_shelters.j2', shelters_data=shelters_data)
+
+@app.route("/edit-shelters")
+def edit_shelters():
+    return render_template('nw57_edit_shelters.j2', shelters_data=shelters_data)
+
+@app.route("/delete-shelter/<int:shelter_id>", methods=['POST'])
+def delete_shelter(shelter_id):
+    shelterID = shelter_id
+    print("Deleting Shelter ID: ", shelterID)
+    return redirect(url_for('edit_shelters'))
+
+@app.route("/insert-shelter", methods=['POST'])
+def insert_shelter():
+    if request.method == "POST":
+        shelterName = request.form['shelter_name']
+        street = request.form['street']
+        city = request.form['city']
+        state = request.form['state']
+        zipCode = request.form['zip_code']
+        print("Adding New Shelter:", shelterName)
+    return redirect(url_for('edit_shelters'))
 
 if __name__ == "__main__":
     port = int(os.environ.get('PORT', 3000))
