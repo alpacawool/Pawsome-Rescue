@@ -19,4 +19,8 @@ test_users_roles = [
     User_Role(2, 0, 0),
     User_Role(3, 0, 3),
     User_Role(4, 0, 1),
+    User_Role(5, 2, 3),
+    User_Role(6, 2, 1),
+    User_Role(6, 3, 2),
+    User_Role(7, 3, 0),
 ]

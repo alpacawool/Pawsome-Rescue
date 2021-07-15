@@ -1,0 +1,54 @@
+{% extends "nw57_layout.j2" %}
+{% block title %}Pawsome Animal Rescue - Edit Application Detail{% endblock title %} 
+{% block body_content %}
+
+
+<br>
+<h3>Application #{{current_app.id}}</h3>
+
+<br>
+<b>Submission Date:</b> {{current_app.app_date}} <br>
+<b>Animal Name:</b> {{animal.animal_name}} <br>
+<b>Animal ID:</b> {{animal.animal_id}}<br><br>
+
+<h4>Applicant Information</h4>
+<b>Name:</b> {{user.first}} {{user.last}} <br>
+<b>Home Ownership:</b>
+{% if current_app.own_home %}
+     Yes
+{% else %}
+     No
+{% endif %}
+<br>
+<b>Children:</b>
+{% if current_app.has_child %}
+     Yes
+{% else %}
+     No
+{% endif %}
+<br>
+<b>Would {{animal.animal_name}} be their first pet?</b>
+{% if current_app.first_pet %}
+     Yes
+{% else %}
+     No
+{% endif %}
+<br>
+<b>Number of Pets Owned: </b> {{current_app.pets_in_home}}
+<br>
+<br>
+<form>
+<button class="btn btn-success">Approve</button> <button class="btn btn-danger">Reject</button>
+</form>
+
+
+<br>
+<a href="/edit-apps"><button class="btn btn-secondary">Back to All Applications</button></a> 
+<br>
+
+
+
+
+
+{% endblock body_content %}
+
