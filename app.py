@@ -7,6 +7,7 @@ from test_object.test_roles import Role, test_roles
 from test_object.test_users_roles import User_Role, test_users_roles
 from test_object.test_animals import Animal, test_animals
 from test_object.test_shelters import Shelter, test_shelters
+from test_object.test_apps import Apply, test_apps
 
 users = test_users
 roles = test_roles
@@ -15,6 +16,7 @@ roles = test_roles
 users_roles = test_users_roles
 animals_data = test_animals
 shelters_data = test_shelters
+animal_apps = test_apps # preventing confusion with app
 # End Testing Content Above
 
 app = Flask("Pawsome")
@@ -188,6 +190,38 @@ def update_animals(animal_id):
         return render_template('nw57_update_animals.j2')
     else:
         return redirect(url_for('edit_animals'))
+
+@app.route("/edit-apps")
+def edit_apps():
+    # Query foreign keys from applications where approval status is NULL
+    curr_users=[]
+    curr_animals=[]
+    for application in animal_apps:
+        for user in users:
+            if user.id == application.uid:
+                curr_users.append(user)
+    for application in animal_apps:
+        for animal in animals_data:
+            if animal.animal_id == application.aid:
+                curr_animals.append(animal)
+    return render_template(
+        'nw57_edit_apps.j2', users = curr_users, animals = curr_animals, animal_apps=animal_apps)
+
+@app.route("/edit-apps/<int:app_id>")
+def edit_app_detail(app_id):
+    current_app = animal_apps[app_id]
+    current_user = None
+    current_animal = None
+    for user in users:
+        if user.id == current_app.uid:
+            current_user = user
+    for animal in animals_data:
+        if animal.animal_id == current_app.aid:
+            current_animal = animal
+    return render_template(
+        'nw57_edit_app_detail.j2', 
+            current_app = current_app, user = current_user, animal = current_animal)
+
 
 @app.route("/shelters")
 def shelters():

@@ -1,0 +1,59 @@
+{% extends "nw57_layout.j2" %}
+{% block title %}Pawsome Animal Rescue - Edit Applications{% endblock title %} 
+{% block body_content %}
+
+<br>
+<h2>Edit Applications</h2>
+<br>
+<a href="/settings"><button class="btn btn-secondary">Back to Settings</button></a> 
+<br><br>
+
+{% if animal_apps|length < 1 %}
+<p>There are no existing applications.</p>
+{% else %}
+    <table class = "table">
+        <thead>
+        <tr>
+            <th scope="col">ID</th>
+            <th scope="col">Animal Name</th>
+            <th scope="col">Submitted By</th>
+            <th scope="col">Approval</th>
+            <th scope="col">Date</th>
+            <th scope="col"></th>
+        </tr>
+        </thead>
+        <tbody>
+        {% for i in animal_apps %}
+           {% set application = animal_apps[loop.index-1] %}
+            {% set animal = animals[loop.index-1] %}
+            {% set user = users[loop.index-1] %}
+        <tr>
+            <form action="/edit-apps/{{application.id}}" method="GET">
+              <td>{{application.id}}</td>
+              <td>{{animal.animal_name}}</td>
+              <td>{{user.first}} {{user.last}}</td>
+              <td>
+
+                {% if application.approval is not none %}
+                    {% if application.approval %}
+                        Approved
+                    {% else %}
+                        Rejected
+                    {% endif %}
+                {% else %}
+                    Pending
+                {% endif %}
+
+              </td>
+              <td>{{application.app_date}}</td>
+            <td><button type="submit" class="btn btn-primary">Edit</button></td>
+            </form>
+        </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+
+{% endif %}
+
+{% endblock body_content %}
+
