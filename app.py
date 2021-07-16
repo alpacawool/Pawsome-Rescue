@@ -180,11 +180,23 @@ def insert_animal():
         # TODO: add SELECT names from Shelters DB Logic
         return render_template('nw57_add_animal.j2', shelters = shelterQueryResult)
 
-
+# View general information of the animal
 @app.route("/edit-animals")
 def edit_animals():
+    # Will need to also SELECT shelter information if we also want shelter name
     # print(animals_data[1].intake_date)
     return render_template('nw57_update_animals.j2', animals_data=animals_data)
+
+# View more detail of animal and update information if necessary
+@app.route("/edit-animals/<int:animal_id>",methods =['GET', 'POST'])
+def edit_animal_detail(animal_id):
+    current_animal = None
+    for animal in animals_data:
+        print(animal.animal_name)
+        if animal.animal_id == animal_id:
+            current_animal = animal
+            break
+    return render_template('nw57_update_animal_detail.j2', animal = current_animal)
 
 @app.route("/update_animal/<int:animal_id>", methods=['GET', 'POST'])
 def update_animals(animal_id):
