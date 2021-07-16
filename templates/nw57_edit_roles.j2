@@ -5,7 +5,7 @@
 <h2>Edit Roles</h2>
 <br>
 
-<a href="/settings"><button class="btn btn-secondary">Back to Settings</button></a> <a href="/edit-users"><button class="btn btn-secondary">Manage Role Assignment</button></a>
+<a href="/settings"><button class="btn btn-secondary">Back to Settings</button></a> <a href="/edit-users"><button class="btn btn-secondary">Manage Role Assignment</button></a>  <a href="/view-users-roles"><button class="btn btn-secondary">View All Role Assignments</button></a>
 <br><br>
 <!--
 role_id: INT, auto_increment, unique, NOT NULL, PK
@@ -32,7 +32,7 @@ M:M relationship with Users, using intersection table Users_Roles with two forei
   <tbody>
   <tr>
     <td><input type="text" name="name" value="" placeholder="Name"></td>
-    <td><button type="submit" class="btn btn-primary">Create</button>
+    <td><button class="btn btn-primary" disabled>Create</button>
   </tr>
   </tbody>
 </table>
@@ -57,7 +57,7 @@ M:M relationship with Users, using intersection table Users_Roles with two forei
             <form action="/update-role/{{role.id}}" method="POST">
             <td>{{role.id}}</td>
             <td><input type="text" class="form-control" id="role_name" name="role_name" value="{{role.name}}"></td>
-            <td><button type="submit" class="btn btn-primary">Update</button></td>
+            <td><button class="btn btn-primary" disabled>Update</button></td>
             </form>
         </tr>
         {% endfor %}

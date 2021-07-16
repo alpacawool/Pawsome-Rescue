@@ -25,11 +25,11 @@
 <form name="assign_user_role" action="/create-users-roles/{{user.id}}" method="POST">
     <select name="roles" class ="form-select w-auto">
       {% for role in roles %}
-        <option value="{{role.id}}" SELECTED>{{role.name}}</option>
+        <option value="{{role.id}}" SELECTED>{{role.id}}. {{role.name}}</option>
       {% endfor %}     
     </select>
     <br>
-    <button type="submit" class="btn btn-primary">Submit</button>
+    <button class="btn btn-primary" disabled>Submit</button>
 </form>
 
 <br>
@@ -42,6 +42,7 @@
     <table class = "table table-hover">
         <thead>
         <tr>
+            <th scope="col">ID</th>
             <th scope="col">Name</th>
             <th scope="col">Delete</th>
         </tr>
@@ -50,8 +51,9 @@
         {% for current_role in current_roles %}
         <tr>
             <form action="/delete-users-roles/{{user.id}}/{{current_role.id}}" method="POST">
+            <td>{{current_role.id}}</td>
             <td>{{current_role.name}}</td>
-            <td><button type="submit" class="btn btn-danger">x</button></td></td>
+            <td><button class="btn btn-danger" disabled>x</button></td></td>
             </form>
         </tr>
         {% endfor %}
