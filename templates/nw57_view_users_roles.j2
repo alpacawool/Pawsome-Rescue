@@ -1,0 +1,36 @@
+{% extends "nw57_layout.j2" %}
+{% block title %}Pawsome Animal Rescue - Edit Roles{% endblock title %} 
+{% block body_content %}
+<br>
+<h2>View Users_Roles</h2>
+<br>
+
+<a href="/settings"><button class="btn btn-secondary">Back to Settings</button></a> <a href="/edit-users"><button class="btn btn-secondary">Manage Role Assignment</button></a>
+<br><br>
+
+{% if users_roles|length < 1 %}
+<p>There are no existing users_roles.</p>
+{% else %}
+    <table class = "table">
+        <thead>
+        <tr>
+            <th scope="col">ID</th>
+            <th scope="col">User ID</th>
+            <th scope="col">Role ID</th>
+        </tr>
+        </thead>
+        <tbody>
+        {% for item in users_roles %}
+        <tr>
+          <td>{{item.id}}</td>
+          <td>{{item.uid}}</td>
+          <td>{{item.rid}}</td>
+        </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+
+{% endif %}
+
+{% endblock body_content %}
+

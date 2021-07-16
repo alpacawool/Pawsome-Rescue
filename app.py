@@ -127,6 +127,9 @@ def delete_users_roles(user_id, role_id):
     users_roles_redirect_url = "/edit-users/roles/" + str(user_id)
     return redirect(users_roles_redirect_url)
 
+@app.route("/view-users-roles")
+def view_users_roles():
+    return render_template("nw57_view_users_roles.j2", users_roles = users_roles)
 
 @app.route("/animals")
 def animals():
