@@ -1,38 +1,44 @@
 {% extends "nw57_layout.j2" %}
 {% block title %}Pawsome Animal Rescue - Home Page{% endblock title %} 
 {% block body_content %}
-<h1>Pawsome Animal Rescue</h1>
+<br>
+<h1 class="display-5 fw-bold" >Pawsome Animal Rescue</h1>
+<br>
 
 <h2>About Us</h2>
 <p>Pawsome Animal Rescue is focused on helping animals get adopted and find happy homes.</p>
 
+<br>
 <h2>Featured Pet</h2>
-<p>-one randomly selected anaimal displayed here</p>
+<div class="row justify-content">
+        <div class="col-sm-10">
+            <div class="card">
+                <div class="row g-0">
+                    <div class="col-md-4">
+                        <img src="{{url_for('static', filename='img/'+ animal.image_url)}}" class="img-fluid rounded-start" alt="picture of animal">
+                    </div>
+                    <div class="col-md-8">
+                        <div class="card-body">
+                            <h5 class="card-title">{{animal.animal_name}}</h5>
+                            <h6 class="card-subtitle mb-2 text-muted">{{animal.breed}} - {{animal.species_type}}</h6>
+                            <p class="card-text">
+                                <ul>
+                                    <li>Personality: {{animal.personality}}</li>
+                                    {% if animal.adopted_date %}
+                                        <li>Adopted on: {{animal.adopted_date}}</li>
+                                    {% else %}
+                                        <li>Needs a Home! Learn More & Apply Below.</li>
+                                    {% endif %}
+                                </ul>
+                            </p>
+                            <p class="card-text"><small class="text-muted">Photo from <a href="https://unsplash.com/s/photos/cat-and-dog-pet?utm_source=unsplash&utm_medium=referral&utm_content=creditCopyText">Unsplash</a></small></p>
+                            <a href="/animals/{{animal.animal_id}}" class="card-link">Learn More About Me</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
 
-<h2>View All Pets</h2>
-<p>-link to view all pets page</p>
-
-<h2>Our Shelter Locations</h2>
-    {# <table>
-    <caption>Our Shelter Locations</caption>
-    <thead>
-    <tr>
-        <th>Name</th>
-        <th>Street</th>
-        <th>City</th>
-        <th>State</th>
-        <th>Zip</th>
-    </tr>
-    <tbody>
-    {% for shelter in shelters %}
-    <tr>
-        <td>{{shelter['shelter_name']}}</td>
-        <td>{{shelter['street']}}</td>
-        <td>{{shelter['city']}}</td>
-        <td>{{shelter['state']}}</td>
-        <td>{{shelter['zip_code']}}</td>
-    </tr>
-    {% endfor %}
-    </table> #}
 {% endblock body_content %}
 
