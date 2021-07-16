@@ -29,7 +29,7 @@
       {% endfor %}     
     </select>
     <br>
-    <button type="submit" class="btn btn-primary">Submit</button>
+    <button class="btn btn-primary" disabled>Submit</button>
 </form>
 
 <br>
@@ -53,7 +53,7 @@
             <form action="/delete-users-roles/{{user.id}}/{{current_role.id}}" method="POST">
             <td>{{current_role.id}}</td>
             <td>{{current_role.name}}</td>
-            <td><button type="submit" class="btn btn-danger">x</button></td></td>
+            <td><button class="btn btn-danger" disabled>x</button></td></td>
             </form>
         </tr>
         {% endfor %}
