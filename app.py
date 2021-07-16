@@ -25,7 +25,8 @@ app.secret_key = "1234" # For flask flash
 @app.route("/")
 @app.route("/home")
 def home():
-    return render_template('nw57_home.j2')
+    animal = animals_data[0]
+    return render_template('nw57_home.j2', animal=animal)
 
 @app.route("/index")
 def index_page():
@@ -133,7 +134,31 @@ def view_users_roles():
 
 @app.route("/animals")
 def animals():
-    return render_template('nw57_animals.j2', animals_data=animals_data)
+    # find distinct attributes for filters
+    all_shelters = []
+    all_species_types = []
+    for animal in animals_data:
+        all_shelters.append(animal.shelter_name)
+        all_species_types.append(animal.species_type)
+    distinct_shelters = set(all_shelters)
+    distinct_species_type = set(all_species_types)
+
+    shelter_filter = request.args.get('shelter', type = str)
+    available_filter = request.args.get('available', type = str)
+    species_type_filter = request.args.get('species_type', type = str)
+    
+    if shelter_filter:
+        print(f"Query DB with shelter filter ({shelter_filter}) & render that data")
+        return render_template('nw57_animals.j2', animals_data=animals_data, distinct_shelters=distinct_shelters, distinct_species_type=distinct_species_type)
+    elif available_filter:
+        print(f"Query DB with available filter ({available_filter}) & render that data")
+        return render_template('nw57_animals.j2', animals_data=animals_data, distinct_shelters=distinct_shelters, distinct_species_type=distinct_species_type)
+    elif species_type_filter:
+        print(f"Query DB with species_type filter ({species_type_filter}) & render that data")
+        return render_template('nw57_animals.j2', animals_data=animals_data, distinct_shelters=distinct_shelters, distinct_species_type=distinct_species_type)
+    else:
+        print("No filters")
+        return render_template('nw57_animals.j2', animals_data=animals_data, distinct_shelters=distinct_shelters, distinct_species_type=distinct_species_type)
 
 @app.route('/animals/<int:animal_id>', methods=['GET', 'POST'])
 def pet_profile(animal_id):
