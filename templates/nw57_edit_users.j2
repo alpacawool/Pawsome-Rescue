@@ -53,9 +53,9 @@ M:M relationship with Roles, using intersection table Users_Roles with two forei
             <form action="/update-user/{{user.id}}" method="POST">
             <td>{{user.id}}</td>
             <td><a href="/edit-users/roles/{{user.id}}"><button type="button" class="btn btn-secondary">+</button></a></td>
-            <td><input type="text" class="form-control" id="user_first" name="user_first" value="{{user.first}}"></td>
-            <td><input type="text" class="form-control" id="user_last" name="user_last" value="{{user.last}}"></td>
-            <td><input type="text" class="form-control" id="user_email" name="user_email" value="{{user.email}}"></td>
+            <td><input type="text" class="form-control" id="user_first" name="user_first" value="{{user.first_name}}"></td>
+            <td><input type="text" class="form-control" id="user_last" name="user_last" value="{{user.last_name}}"></td>
+            <td><input type="text" class="form-control" id="user_email" name="user_email" value="{{user.email_address}}"></td>
             <td><button class="btn btn-primary" disabled>Update</button></td>
             </form>
         </tr>

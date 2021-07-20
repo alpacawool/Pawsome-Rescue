@@ -1,5 +1,10 @@
 from flask import Flask, render_template, request, redirect, flash, url_for
+import database.db_connector as db
 import os
+
+# Database connection
+db_connection = db.connect_to_db()
+
 
 # Testing with User Object Below
 from test_object.test_users import User, test_users
@@ -18,6 +23,13 @@ animals_data = test_animals
 shelters_data = test_shelters
 animal_apps = test_apps # preventing confusion with app
 # End Testing Content Above
+
+# Database execute query and return results
+def execute_query(query):
+    query = query
+    cursor = db.run_query(db_connection=db_connection, query=query)
+    results = cursor.fetchall()
+    return results
 
 app = Flask("Pawsome")
 app.secret_key = "1234" # For flask flash
@@ -39,7 +51,8 @@ def settings():
 
 @app.route("/edit-users")
 def edit_users():
-    return render_template('nw57_edit_users.j2', users=users)
+    db_users = execute_query("SELECT * FROM Users;")
+    return render_template('nw57_edit_users.j2', users = db_users)
 
 @app.route("/signup")
 def signup():
