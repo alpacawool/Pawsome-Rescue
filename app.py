@@ -37,8 +37,8 @@ app.secret_key = "1234" # For flask flash
 @app.route("/")
 @app.route("/home")
 def home():
-    animal = animals_data[0]
-    return render_template('nw57_home.j2', animal=animal)
+    db_animal = execute_query("SELECT * FROM Animals LIMIT 1;")
+    return render_template('nw57_home.j2', animals=db_animal)
 
 @app.route("/index")
 def index_page():
