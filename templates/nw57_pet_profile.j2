@@ -1,7 +1,9 @@
 {% extends "nw57_layout.j2" %}
 {% block title %}Pawsome Animal Rescue - Pet Profile{% endblock title %} 
 {% block body_content %}
-<h1>Pet Profile - {{ animal_id }}</h1>
+<br>
+<h1>Pet Profile</h1>
+<br>
 
 <div class="col-sm-12">
     <div class="card">
@@ -13,6 +15,7 @@
                     <p class="card-text">
                         <ul>
                             <li>Birthdate: {{animal.birthdate}}</li>
+                            <li>Animal ID: {{animal.id}}</li>
                             <li>Location: {{animal.shelter_name}}</li>
                             <li>Personality: {{animal.personality}}</li>
                             <li>Gender: {{animal.gender}}</li>

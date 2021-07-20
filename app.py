@@ -215,9 +215,13 @@ def pet_profile(animal_id):
         print('Submitted New Application for animalID:', animalID)
         return redirect(url_for('pet_profile', animal_id=animal_id))
     else:
-        for animal in animals_data:
-            if animal_id == animal.animal_id:
-                return render_template('nw57_pet_profile.j2', animal_id=animal_id, animal=animal)
+        db_animals = execute_query(f"""
+            SELECT Animals.id, shelter_id, animal_name, birthdate, gender, species_type, breed, personality, image_url, intake_date, adopted_date, adoption_fee, Shelters.id, shelter_name
+            FROM Animals 
+            INNER JOIN Shelters ON shelter_id = Shelters.id
+            WHERE Animals.id = {animal_id};""")
+        for animal in db_animals:
+            return render_template('nw57_pet_profile.j2', animal_id=animal_id, animal=animal)
         return 'Pet not found'
 
 @app.route("/insert-animal", methods=['GET', 'POST'])
