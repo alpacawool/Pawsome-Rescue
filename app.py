@@ -1,5 +1,9 @@
 from flask import Flask, render_template, request, redirect, flash, url_for
+import database.db_connector as db
 import os
+
+# Database connection
+db_connection = db.connect_to_db()
 
 # Testing with User Object Below
 from test_object.test_users import User, test_users
