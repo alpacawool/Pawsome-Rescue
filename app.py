@@ -147,6 +147,12 @@ def view_users_roles():
 
 @app.route("/animals")
 def animals():
+    db_animals = execute_query("""
+            SELECT Animals.id, shelter_id, animal_name, birthdate, gender, species_type, breed, personality, image_url, intake_date, adopted_date, adoption_fee, Shelters.id, shelter_name
+            FROM Animals 
+            INNER JOIN Shelters ON shelter_id = Shelters.id
+            ORDER BY intake_date ASC;""")
+            
     # find distinct attributes for filters
     all_shelters = []
     all_species_types = []
@@ -171,7 +177,7 @@ def animals():
         return render_template('nw57_animals.j2', animals_data=animals_data, distinct_shelters=distinct_shelters, distinct_species_type=distinct_species_type)
     else:
         print("No filters")
-        return render_template('nw57_animals.j2', animals_data=animals_data, distinct_shelters=distinct_shelters, distinct_species_type=distinct_species_type)
+        return render_template('nw57_animals.j2', animals_data=db_animals, distinct_shelters=distinct_shelters, distinct_species_type=distinct_species_type)
 
 @app.route('/animals/<int:animal_id>', methods=['GET', 'POST'])
 def pet_profile(animal_id):
