@@ -38,13 +38,13 @@ Relationships:
         <tbody>
             {% for animal in animals_data %}
                 <tr>
-                    <td>{{animal.animal_id}}</td>
+                    <td>{{animal.id}}</td>
                     <td>{{animal.animal_name}}</td>
                     <td>{{animal.shelter_name}}</td>
                     <td>{{animal.gender}}</td>
                     <td>{{animal.species_type}}</td>
                     <td>{{animal.breed}}</td>
-                    <td><form action="/edit-animals/{{animal.animal_id}}" method="POST">
+                    <td><form action="/edit-animals/{{animal.id}}" method="POST">
                     <button type="submit" class="btn btn-primary">Edit</button></form></td>
                 </tr>
             {% endfor %}

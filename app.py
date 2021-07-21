@@ -254,9 +254,12 @@ def insert_animal():
 # View general information of the animal
 @app.route("/edit-animals")
 def edit_animals():
-    # Will need to also SELECT shelter information if we also want shelter name
-    # print(animals_data[1].intake_date)
-    return render_template('nw57_update_animals.j2', animals_data=animals_data)
+    db_animals = execute_query("""
+            SELECT *
+            FROM Animals 
+            INNER JOIN Shelters ON shelter_id = Shelters.id
+            ORDER BY Animals.id ASC;""")
+    return render_template('nw57_update_animals.j2', animals_data=db_animals)
 
 # View more detail of animal and update information if necessary
 @app.route("/edit-animals/<int:animal_id>",methods =['GET', 'POST'])
