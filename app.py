@@ -75,12 +75,15 @@ def create_user():
 def update_user(user_id):
     if request.method == 'POST':
         req = request.form
-        for user in users:
-            if user.id == user_id:
-                user.first = req["user_first"]
-                user.last = req["user_last"]
-                user.email = req["user_email"]
-                flash("Updated user successfully!")
+        update_user_query = 'UPDATE Users ' \
+            'SET first_name = "' + req["user_first"] + '", ' \
+            'last_name = "' + req["user_last"] + '", ' \
+            'email_address = "' + req["user_email"] + '" ' \
+            'WHERE id = ' + str(user_id)
+        execute_query(update_user_query)
+        update_user_success = 'Updated ' + req["user_first"] \
+            + ' ' + req["user_last"] + ' successfully!'
+        flash(update_user_success)
     return redirect("/edit-users")
 
 

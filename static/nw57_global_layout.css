@@ -1,0 +1,10 @@
+/* Impact CSS globally for entire site */
+
+/* Successful update flash message */
+#update-success {
+    background-color:#157347;
+    color:white;
+    padding: 0.5em;
+    border-radius: 0.3em;
+    display:inline-block;
+}
