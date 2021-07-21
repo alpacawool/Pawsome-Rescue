@@ -77,12 +77,25 @@ FROM Shelters
 -- Applications
 -- Edit Applications Page
 --  SELECT Applications
+SELECT * FROM Applications;
+
 --  SELECT Applications specific to ID
+SELECT * FROM Applications WHERE id = :id_of_application;
+
 --  UPDATE Applications
+UPDATE Applications
+SET approval_status = :approval_boolean
+WHERE id = :id_of_application;
 
 -- Apply for Animal (available from "Learn More About Me" links on Filter Animals Page)
---  SELECT single pet by animal_id
 --  INSERT Application
+INSERT INTO Applications (
+    user_id, animal_id, application_date, home_ownership,
+    has_children, first_pet, pets_in_home, approval_status)
+VALUES (
+    :id_of_user, :id_of_animal, :date_of_app, :bool_owns_home,
+    :bool_children, :bool_first_pet, :number_of_pets, :approval_boolean
+);
 
 
 -- Users
