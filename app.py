@@ -37,8 +37,8 @@ app.secret_key = "1234" # For flask flash
 @app.route("/")
 @app.route("/home")
 def home():
-    animal = animals_data[0]
-    return render_template('nw57_home.j2', animal=animal)
+    db_animal = execute_query("SELECT * FROM Animals LIMIT 1;")
+    return render_template('nw57_home.j2', animals=db_animal)
 
 @app.route("/index")
 def index_page():
@@ -147,31 +147,60 @@ def view_users_roles():
 
 @app.route("/animals")
 def animals():
-    # find distinct attributes for filters
+    db_animals = execute_query("""
+            SELECT Animals.id, shelter_id, animal_name, birthdate, gender, species_type, breed, personality, image_url, intake_date, adopted_date, adoption_fee, Shelters.id, shelter_name
+            FROM Animals 
+            INNER JOIN Shelters ON shelter_id = Shelters.id
+            ORDER BY intake_date ASC;""")
+            
+    # find distinct attributes for populating filters
     all_shelters = []
     all_species_types = []
-    for animal in animals_data:
-        all_shelters.append(animal.shelter_name)
-        all_species_types.append(animal.species_type)
+    for animal in db_animals:
+        all_shelters.append(animal['shelter_name'])
+        all_species_types.append(animal['species_type'])
     distinct_shelters = set(all_shelters)
     distinct_species_type = set(all_species_types)
 
+    # get any filters from the request
     shelter_filter = request.args.get('shelter', type = str)
     available_filter = request.args.get('available', type = str)
     species_type_filter = request.args.get('species_type', type = str)
     
     if shelter_filter:
-        print(f"Query DB with shelter filter ({shelter_filter}) & render that data")
-        return render_template('nw57_animals.j2', animals_data=animals_data, distinct_shelters=distinct_shelters, distinct_species_type=distinct_species_type)
+        db_animals_filtered = execute_query(f"""
+            SELECT Animals.id, shelter_id, animal_name, birthdate, gender, species_type, breed, personality, image_url, intake_date, adopted_date, adoption_fee, Shelters.id, shelter_name
+            FROM Animals 
+            INNER JOIN Shelters ON shelter_id = Shelters.id
+            WHERE shelter_name = '{shelter_filter}'
+            ORDER BY intake_date ASC;""")
+        return render_template('nw57_animals.j2', animals_data=db_animals_filtered, distinct_shelters=distinct_shelters, distinct_species_type=distinct_species_type)
     elif available_filter:
-        print(f"Query DB with available filter ({available_filter}) & render that data")
-        return render_template('nw57_animals.j2', animals_data=animals_data, distinct_shelters=distinct_shelters, distinct_species_type=distinct_species_type)
+        if available_filter == 'available':
+            db_animals_filtered = execute_query("""
+            SELECT Animals.id, shelter_id, animal_name, birthdate, gender, species_type, breed, personality, image_url, intake_date, adopted_date, adoption_fee, Shelters.id, shelter_name
+            FROM Animals 
+            INNER JOIN Shelters ON shelter_id = Shelters.id
+            WHERE adopted_date IS NULL
+            ORDER BY intake_date ASC;""")
+        else:   # if available_filter == 'adopted'
+            db_animals_filtered = execute_query("""
+            SELECT Animals.id, shelter_id, animal_name, birthdate, gender, species_type, breed, personality, image_url, intake_date, adopted_date, adoption_fee, Shelters.id, shelter_name
+            FROM Animals 
+            INNER JOIN Shelters ON shelter_id = Shelters.id
+            WHERE adopted_date IS NOT NULL
+            ORDER BY intake_date ASC;""")
+        return render_template('nw57_animals.j2', animals_data=db_animals_filtered, distinct_shelters=distinct_shelters, distinct_species_type=distinct_species_type)
     elif species_type_filter:
-        print(f"Query DB with species_type filter ({species_type_filter}) & render that data")
-        return render_template('nw57_animals.j2', animals_data=animals_data, distinct_shelters=distinct_shelters, distinct_species_type=distinct_species_type)
-    else:
-        print("No filters")
-        return render_template('nw57_animals.j2', animals_data=animals_data, distinct_shelters=distinct_shelters, distinct_species_type=distinct_species_type)
+        db_animals_filtered = execute_query(f"""
+            SELECT Animals.id, shelter_id, animal_name, birthdate, gender, species_type, breed, personality, image_url, intake_date, adopted_date, adoption_fee, Shelters.id, shelter_name
+            FROM Animals 
+            INNER JOIN Shelters ON shelter_id = Shelters.id
+            WHERE species_type = '{species_type_filter}'
+            ORDER BY intake_date ASC;""")
+        return render_template('nw57_animals.j2', animals_data=db_animals_filtered, distinct_shelters=distinct_shelters, distinct_species_type=distinct_species_type)
+    else:   # no filters
+        return render_template('nw57_animals.j2', animals_data=db_animals, distinct_shelters=distinct_shelters, distinct_species_type=distinct_species_type)
 
 @app.route('/animals/<int:animal_id>', methods=['GET', 'POST'])
 def pet_profile(animal_id):
@@ -186,9 +215,13 @@ def pet_profile(animal_id):
         print('Submitted New Application for animalID:', animalID)
         return redirect(url_for('pet_profile', animal_id=animal_id))
     else:
-        for animal in animals_data:
-            if animal_id == animal.animal_id:
-                return render_template('nw57_pet_profile.j2', animal_id=animal_id, animal=animal)
+        db_animals = execute_query(f"""
+            SELECT Animals.id, shelter_id, animal_name, birthdate, gender, species_type, breed, personality, image_url, intake_date, adopted_date, adoption_fee, Shelters.id, shelter_name
+            FROM Animals 
+            INNER JOIN Shelters ON shelter_id = Shelters.id
+            WHERE Animals.id = {animal_id};""")
+        for animal in db_animals:
+            return render_template('nw57_pet_profile.j2', animal_id=animal_id, animal=animal)
         return 'Pet not found'
 
 @app.route("/insert-animal", methods=['GET', 'POST'])
