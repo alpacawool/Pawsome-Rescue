@@ -73,7 +73,6 @@ DELETE FROM Shelters WHERE id = :id_of_shelter_to_be_deleted
 SELECT id, shelter_name, street, city, state, zip_code
 FROM Shelters
 
-
 -- Applications
 -- Edit Applications Page
 --  SELECT Applications
@@ -97,16 +96,31 @@ VALUES (
     :bool_children, :bool_first_pet, :number_of_pets, :approval_boolean
 );
 
-
 -- Users
 -- Edit Users Page
 --  SELECT Users
+SELECT * FROM Users;
+
 --  UPDATE Users
---  INSERT and DELETE Users_Roles (M:M)
+UPDATE Users
+SET first_name = :input_first_name,
+    last_name = :input_last_name,
+    email_address = :input_email
+WHERE id = :id_of_user;
+
+-- INSERT Users_Roles (M:M)
+INSERT INTO Users_Roles (user_id, role_id)
+VALUES (:id_of_user, :id_of_role);
+
+-- DELETE Users_Roles
+DELETE FROM Users_Roles
+WHERE id = :id_of_users_roles;
 
 -- Sign Up Page
 --  INSERT Users
-
+INSERT INTO Users (
+    first_name, last_name, email_address, password)
+VALUES (:input_first_name, :input_last_name, :input_email, :input_pw);
 
 -- Roles
 -- Edit Roles Page
