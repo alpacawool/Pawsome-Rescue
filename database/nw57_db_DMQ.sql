@@ -125,13 +125,15 @@ VALUES (:input_first_name, :input_last_name, :input_email, :input_pw);
 -- Roles
 -- Edit Roles Page
 --  SELECT Roles
+SELECT * FROM Roles;
 --  INSERT Roles
+INSERT INTO Roles (role_name) VALUES (:input_role_name);
 --  UPDATE Roles
-
+UPDATE Roles
+SET role_name = :input_role_name
+WHERE id = :id_of_role;
 
 -- Users_Roles
 -- View Users_Roles Page
 --  SELECT Users_Roles
-
--- Edit Users_Roles Page (Click on plus symbol next to user in Role column)
---  INSERT and DELETE Users_Roles (M:M)
+SELECT * From Users_Roles;
