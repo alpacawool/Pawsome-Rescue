@@ -108,6 +108,12 @@ SET first_name = :input_first_name,
     email_address = :input_email
 WHERE id = :id_of_user;
 
+-- SELECT Roles for Specific User (Users_Roles)
+SELECT * FROM Users_Roles 
+INNER JOIN Users ON user_id = Users.id 
+INNER JOIN Roles ON role_id = Roles.id 
+WHERE user_id = :id_of_user;
+
 -- INSERT Users_Roles (M:M)
 INSERT INTO Users_Roles (user_id, role_id)
 VALUES (:id_of_user, :id_of_role);
