@@ -4,7 +4,8 @@
 <br>
 <h1>Update Animals</h1>
 <br>
-<a href="/settings"><button class="btn btn-secondary">Back to Settings</button></a> <a href="/insert-animal"><button class="btn btn-success">Add Animal</button></a>
+<a href="/settings"><button class="btn btn-secondary">Back to Settings</button></a> 
+<a href="/insert-animal"><button class="btn btn-success">Add Animal</button></a>
 <br><br>
 {# Animals: Records the details of pets with connections to our animal shelter
 animal_id: INT, auto_increment, unique, NOT NULL, PK
@@ -38,13 +39,13 @@ Relationships:
         <tbody>
             {% for animal in animals_data %}
                 <tr>
-                    <td>{{animal.animal_id}}</td>
+                    <td>{{animal.id}}</td>
                     <td>{{animal.animal_name}}</td>
                     <td>{{animal.shelter_name}}</td>
                     <td>{{animal.gender}}</td>
                     <td>{{animal.species_type}}</td>
                     <td>{{animal.breed}}</td>
-                    <td><form action="/edit-animals/{{animal.animal_id}}" method="POST">
+                    <td><form action="/edit-animals/{{animal.id}}" method="POST">
                     <button type="submit" class="btn btn-primary">Edit</button></form></td>
                 </tr>
             {% endfor %}
