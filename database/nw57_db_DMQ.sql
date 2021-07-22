@@ -85,8 +85,15 @@ INNER JOIN Animals as a
 INNER JOIN Users as u
     ON app.user_id = u.id;
 
---  SELECT Applications specific to ID
-SELECT * FROM Applications WHERE id = :id_of_application;
+--  SELECT Applications specific to ID with foreign key information
+SELECT app.*,
+       a.animal_name, u.first_name, u.last_name
+       FROM Applications AS app
+INNER JOIN Animals as a
+    ON app.animal_id = a.id
+INNER JOIN Users as u
+    ON app.user_id = u.id
+WHERE app.id = :id_of_application;
 
 --  UPDATE Applications
 UPDATE Applications

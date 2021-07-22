@@ -320,18 +320,16 @@ def edit_apps():
 
 @app.route("/edit-apps/<int:app_id>")
 def edit_app_detail(app_id):
-    current_app = animal_apps[app_id]
-    current_user = None
-    current_animal = None
-    for user in users:
-        if user.id == current_app.uid:
-            current_user = user
-    for animal in animals_data:
-        if animal.animal_id == current_app.aid:
-            current_animal = animal
+    select_app_detail_query = 'SELECT app.*, ' \
+        'a.animal_name, u.first_name, u.last_name ' \
+        'FROM Applications AS app ' \
+        'INNER JOIN Animals as a ON app.animal_id = a.id ' \
+        'INNER JOIN Users as u ON app.user_id = u.id ' \
+        'WHERE app.id = ' + str(app_id) + ';'
+    db_current_app = execute_query(select_app_detail_query)
     return render_template(
         'nw57_edit_app_detail.j2', 
-            current_app = current_app, user = current_user, animal = current_animal)
+            current_app = db_current_app[0])
 
 
 @app.route("/shelters")
