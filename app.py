@@ -121,7 +121,6 @@ def edit_users_roles(user_id):
     db_user = execute_query(db_user_query)
     db_users_roles = execute_query(db_user_role_query)
     db_roles = execute_query('SELECT * FROM Roles;')
-    print(db_user)
     return render_template(
         "nw57_user_role_list.j2", 
         users_roles = db_users_roles,
@@ -129,7 +128,7 @@ def edit_users_roles(user_id):
         roles = db_roles
     )
 
-# Assign new Roles and Users relationship.
+# Assign new Roles and Users relationship
 @app.route("/create-users-roles/<int:user_id>", methods=['POST'])
 def create_users_roles(user_id):
     role_id = request.form.get('roles')
@@ -137,16 +136,22 @@ def create_users_roles(user_id):
         'VALUES (' + str(user_id) + ', ' + role_id + ');'
     execute_query(insert_user_role_query)
     users_roles_redirect_url = "/edit-users/roles/" + str(user_id)
-    flash('Added role successfully')
+    flash('Added role successfully!' , 'insert')
     return redirect(users_roles_redirect_url)
 
-@app.route("/delete-users-roles/<int:user_id>/<int:role_id>", methods=['POST'])
-def delete_users_roles(user_id, role_id):
-    for user_role in users_roles:
-        if user_role.uid == user_id and user_role.rid == role_id:
-            users_roles.remove(user_role)
-            break
-    users_roles_redirect_url = "/edit-users/roles/" + str(user_id)
+# Delete Roles and Users relationship
+@app.route("/delete-users-roles/<int:users_roles_id>", methods=['POST'])
+def delete_users_roles(users_roles_id):
+    current_user_id_query = 'SELECT user_id FROM Users_Roles ' \
+        'WHERE id = ' + str(users_roles_id) + ';'
+    delete_users_roles_query = 'DELETE FROM Users_Roles ' \
+        'WHERE id = ' + str(users_roles_id) + ';'
+
+    current_user_id = execute_query(current_user_id_query)[0]['user_id']
+    execute_query(delete_users_roles_query)
+    flash('Deleted role successfully!', 'delete')
+
+    users_roles_redirect_url = "/edit-users/roles/" + str(current_user_id)
     return redirect(users_roles_redirect_url)
 
 @app.route("/view-users-roles")

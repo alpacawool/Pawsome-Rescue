@@ -8,12 +8,31 @@
 <a href="/edit-users"><button class="btn btn-secondary">Back to All Users</button></a>
 <br><br>
 
-{% for message in get_flashed_messages() %}
+{# {% for message in get_flashed_messages() %}
   <div id="update-success">
       {{ message }}
   </div>
-  <br><br>
-{% endfor %}
+{% endfor %} #}
+
+{% with insert = get_flashed_messages(category_filter=["insert"]) %}
+  {% if insert %}
+    {% for message in get_flashed_messages() %}
+      <div id="update-success">
+          {{ message }}
+      </div>
+    {% endfor %}
+  {% endif %}
+{% endwith %}
+
+{% with delete = get_flashed_messages(category_filter=["delete"]) %}
+  {% if delete %}
+    {% for message in get_flashed_messages() %}
+      <div id="delete-success">
+          {{ message }}
+      </div>
+    {% endfor %}
+  {% endif %}
+{% endwith %}
 
 <h4>Add Role</h4>
 
@@ -45,10 +64,10 @@
         <tbody>
         {% for users_roles in users_roles %}
         <tr>
-            <form action="/delete-users-roles/{{users_roles.user_id}}/{{users_roles.id}}" method="POST">
+            <form action="/delete-users-roles/{{users_roles.id}}" method="POST">
             <td>{{users_roles.id}}</td>
             <td>{{users_roles.role_name}}</td>
-            <td><button class="btn btn-danger" disabled>x</button></td></td>
+            <td><button class="btn btn-danger">x</button></td></td>
             </form>
         </tr>
         {% endfor %}
