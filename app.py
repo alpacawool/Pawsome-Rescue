@@ -92,13 +92,19 @@ def update_user(user_id):
 
 @app.route("/edit-roles")
 def edit_roles():
-    return render_template('nw57_edit_roles.j2', roles=roles)
+    db_roles = execute_query('SELECT * FROM Roles;')
+    return render_template('nw57_edit_roles.j2', roles=db_roles)
 
 @app.route("/insert-role", methods=['POST'])
 def insert_role():
-    name = request.form['name']
-    id = len(roles)
-    roles.append(Role(id, name))
+    if request.method == 'POST':
+        insert_role_query = 'INSERT INTO Roles (role_name) ' \
+            'VALUES ("' + request.form['name'] + '");'
+        print(insert_role_query)
+        execute_query(insert_role_query)
+        success_message = 'Created role ' + request.form['name'] \
+            + ' successfully!'
+        flash(success_message)
     return redirect("/edit-roles")
 
 
@@ -106,10 +112,12 @@ def insert_role():
 def update_role(role_id):
     if request.method == 'POST':
         req = request.form
-        for role in roles:
-            if role.id == role_id:
-                role.name = req["role_name"]
-                flash("Updated role successfully!")
+        update_role_query = 'UPDATE Roles ' \
+            'SET role_name = "' + req["role_name"] + \
+            '" WHERE id = ' + str(role_id) + ';'
+        execute_query(update_role_query)
+        flash("Updated role successfully!")
+
     return redirect("/edit-roles")
 
 @app.route("/edit-users/roles/<int:user_id>")

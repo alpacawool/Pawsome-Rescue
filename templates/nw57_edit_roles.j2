@@ -14,17 +14,11 @@ Relationship:
 M:M relationship with Users, using intersection table Users_Roles with two foreign keys
 -->
 
-<!--- TODO : Better confirmation message -->
-{% with messages = get_flashed_messages() %}
-  {% if messages %}
-    <script>
-      var messages = {{ messages | safe }};
-      for (var i=0; i<messages.length; i++) {
-        alert(messages[i]);
-      }
-    </script>
-  {% endif %}
-{% endwith %}
+{% for message in get_flashed_messages() %}
+  <div id="update-success">
+      {{ message }}
+  </div>
+{% endfor %}
 
 <h4>Add New Role<h4>
 <form name="create_a_role" action="/insert-role" method="POST">
@@ -32,7 +26,7 @@ M:M relationship with Users, using intersection table Users_Roles with two forei
   <tbody>
   <tr>
     <td><input type="text" name="name" value="" placeholder="Name"></td>
-    <td><button class="btn btn-primary" disabled>Create</button>
+    <td><button class="btn btn-primary">Create</button>
   </tr>
   </tbody>
 </table>
@@ -56,8 +50,8 @@ M:M relationship with Users, using intersection table Users_Roles with two forei
         <tr>
             <form action="/update-role/{{role.id}}" method="POST">
             <td>{{role.id}}</td>
-            <td><input type="text" class="form-control" id="role_name" name="role_name" value="{{role.name}}"></td>
-            <td><button class="btn btn-primary" disabled>Update</button></td>
+            <td><input type="text" class="form-control" id="role_name" name="role_name" value="{{role.role_name}}"></td>
+            <td><button class="btn btn-primary">Update</button></td>
             </form>
         </tr>
         {% endfor %}
