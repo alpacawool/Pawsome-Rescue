@@ -62,14 +62,11 @@ def signup():
 @app.route("/create-user", methods=['POST'])
 def create_user():
     req = request.form
-    new_user = User(
-        len(users),
-        req['first_name'],
-        req['last_name'],
-        req['email'],
-        req['pw']
-    )
-    users.append(new_user)
+    insert_user_query = 'INSERT INTO Users ' \
+        '(first_name, last_name, email_address, password) ' \
+        'VALUES ("' + req['first_name'] + '", "' + req['last_name'] \
+        + '", "' + req['email'] + '", "' + req['pw'] + '");'
+    execute_query(insert_user_query)
     return redirect("/")
 
 @app.route("/update-user/<int:user_id>", methods=['GET', 'POST'])
