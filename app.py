@@ -308,19 +308,15 @@ def update_animals(animal_id):
 
 @app.route("/edit-apps")
 def edit_apps():
-    # Query foreign keys from applications where approval status is NULL
-    curr_users=[]
-    curr_animals=[]
-    for application in animal_apps:
-        for user in users:
-            if user.id == application.uid:
-                curr_users.append(user)
-    for application in animal_apps:
-        for animal in animals_data:
-            if animal.animal_id == application.aid:
-                curr_animals.append(animal)
+    select_app_query = 'SELECT app.id, app.user_id, app.animal_id, ' \
+        'app.application_date, app.approval_status, ' \
+        'a.animal_name, u.first_name, u.last_name ' \
+        'FROM Applications AS app ' \
+        'INNER JOIN Animals as a ON app.animal_id = a.id ' \
+        'INNER JOIN Users as u ON app.user_id = u.id;'
+    db_animal_apps = execute_query(select_app_query)
     return render_template(
-        'nw57_edit_apps.j2', users = curr_users, animals = curr_animals, animal_apps=animal_apps)
+        'nw57_edit_apps.j2', animal_apps=db_animal_apps)
 
 @app.route("/edit-apps/<int:app_id>")
 def edit_app_detail(app_id):

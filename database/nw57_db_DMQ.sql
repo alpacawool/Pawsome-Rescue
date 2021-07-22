@@ -75,8 +75,15 @@ FROM Shelters;
 
 -- Applications
 -- Edit Applications Page
---  SELECT Applications
-SELECT * FROM Applications;
+--  SELECT Applications and get foreign key names
+SELECT app.id, app.user_id, app.animal_id,
+       app.application_date, app.approval_status,
+       a.animal_name, u.first_name, u.last_name
+       FROM Applications AS app
+INNER JOIN Animals as a
+    ON app.animal_id = a.id
+INNER JOIN Users as u
+    ON app.user_id = u.id;
 
 --  SELECT Applications specific to ID
 SELECT * FROM Applications WHERE id = :id_of_application;

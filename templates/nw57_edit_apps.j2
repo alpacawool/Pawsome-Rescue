@@ -23,19 +23,16 @@
         </tr>
         </thead>
         <tbody>
-        {% for i in animal_apps %}
-           {% set application = animal_apps[loop.index-1] %}
-            {% set animal = animals[loop.index-1] %}
-            {% set user = users[loop.index-1] %}
+        {% for animal_app in animal_apps %}
         <tr>
-            <form action="/edit-apps/{{application.id}}" method="GET">
-              <td>{{application.id}}</td>
-              <td>{{animal.animal_name}}</td>
-              <td>{{user.first}} {{user.last}}</td>
+            <form action="/edit-apps/{{animal_app.id}}" method="GET">
+              <td>{{animal_app.id}}</td>
+              <td>{{animal_app.animal_name}}</td>
+              <td>{{animal_app.first_name}} {{animal_app.last_name}}</td>
               <td>
 
-                {% if application.approval is not none %}
-                    {% if application.approval %}
+                {% if animal_app.approval_status is not none %}
+                    {% if animal_app.approval_status %}
                         Approved
                     {% else %}
                         Rejected
@@ -45,7 +42,7 @@
                 {% endif %}
 
               </td>
-              <td>{{application.app_date}}</td>
+              <td>{{animal_app.application_date}}</td>
             <td><button type="submit" class="btn btn-primary">Edit</button></td>
             </form>
         </tr>
