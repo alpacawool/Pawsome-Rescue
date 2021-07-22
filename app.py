@@ -331,6 +331,21 @@ def edit_app_detail(app_id):
         'nw57_edit_app_detail.j2', 
             current_app = db_current_app[0])
 
+@app.route("/update-app/<int:app_id>/<int:app_status>")
+def update_app_approval(app_id, app_status):
+    approval_string = None
+    if app_status == 3:
+        approval_string = 'NULL'
+    else:
+        approval_string = str(app_status)
+    update_app_query = 'UPDATE Applications ' \
+        'SET approval_status = ' + approval_string \
+        + ' WHERE id = ' + str(app_id) + ';'
+    execute_query(update_app_query)
+    flash('Updated approval status successfully!')
+    users_roles_redirect_url = "/edit-apps/" + str(app_id)
+    return redirect(users_roles_redirect_url)
+
 
 @app.route("/shelters")
 def shelters():
