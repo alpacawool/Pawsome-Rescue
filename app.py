@@ -67,6 +67,11 @@ def create_user():
         'VALUES ("' + req['first_name'] + '", "' + req['last_name'] \
         + '", "' + req['email'] + '", "' + req['pw'] + '");'
     execute_query(insert_user_query)
+    if request.referrer.endswith('/edit-users'):
+        insert_success_message = req['first_name'] + ' ' \
+            + req['last_name'] + ' added successfully!'
+        flash(insert_success_message)
+        return redirect('/edit-users')
     return redirect("/")
 
 @app.route("/update-user/<int:user_id>", methods=['GET', 'POST'])

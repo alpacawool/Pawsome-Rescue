@@ -9,7 +9,7 @@
 <h2>Edit Users</h2>
 <br>
 
-<a href="/settings"><button class="btn btn-secondary">Back to Settings</button></a> <a href="/signup"><button class="btn btn-success">Add User</button></a>
+<a href="/settings"><button class="btn btn-secondary">Back to Settings</button></a> <a href="/signup"><button class="btn btn-success">Signup Page</button></a>
 <br><br>
 
 <!--
@@ -30,7 +30,31 @@ M:M relationship with Roles, using intersection table Users_Roles with two forei
   </div>
 {% endfor %}
 
+<h4>Add New User</h4>
+<table class = "table">
+    <thead>
+        <tr>
+            <th scope="col">First</th>
+            <th scope="col">Last</th>
+            <th scope="col">Email Address</th>
+            <th scope="col">Password</th>
+            <th scope="col"></th>
+        </tr>
+    </thead>
+    <tbody>
+     <tr>
+            <form action="/create-user" method="POST">
+            <td><input type="text" class="form-control" name="first_name" value="" placeholder="First"></td>
+            <td><input type="text" class="form-control" name="last_name" value="" placeholder="Last"></td>
+            <td><input type="email" class="form-control" name="email" value="" placeholder="name@email.com"></td>
+            <td><input type="password" class="form-control" name="pw" value="" placeholder="**********"></td>
+            <td><button class="btn btn-success">Create</button></td>
+            </form>
+    </tr>
+    </tbody>
+</table>
 
+<h4>Users</h4>
 {% if users|length < 1 %}
 <p>There are no existing users.</p>
 {% else %}
