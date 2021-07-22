@@ -228,7 +228,7 @@ def pet_profile(animal_id):
 def insert_animal():
     if request.method == 'POST': 
         animalName = request.form['animalName']
-        shelterName = request.form['shelterName']
+        shelterId = request.form['shelterId']
         birthdate = request.form['birthdate']
         gender = request.form['gender']
         speciesType = request.form['speciesType']
@@ -242,13 +242,16 @@ def insert_animal():
             adoptedDate = None
         adoptionFee = request.form['adoptionFee']
 
-        # TODO: add POST to DB Logic
-
-        print("Adding New Animal:", animalName, adoptedDate)
+        query = f"""
+            INSERT INTO Animals(shelter_id, animal_name, birthdate, gender, species_type, breed, personality, image_url, intake_date, adopted_date, adoption_fee)
+            VALUES ({shelterId}, '{animalName}', '{birthdate}', '{gender}', '{speciesType}', '{breed}', '{personality}', '{imageURL}', '{intakeDate}', {"'{}'".format(adoptedDate) if adoptedDate else 'NULL'}, {adoptionFee});
+            """
+        execute_query(query)
         return redirect(url_for('edit_animals'))
     else:
-        shelterQueryResult = None
-        # TODO: add SELECT names from Shelters DB Logic
+        shelterQueryResult = execute_query("""
+            SELECT id, shelter_name
+            FROM Shelters;""")
         return render_template('nw57_add_animal.j2', shelters = shelterQueryResult)
 
 # View general information of the animal

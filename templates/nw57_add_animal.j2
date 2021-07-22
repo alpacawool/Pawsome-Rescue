@@ -15,11 +15,12 @@
     <br>
 
     <div class="form-group">
-        <label for="shelterName">Shelter Name</label>
-        <select class="form-control" name="shelterName" id="shelterName">
-            <option value="1">Wag'on Town</option>
-            <option value="2">Frosty Knoll</option>
-            <option value="3">The Comfy Couch</option>
+        <label for="shelterId">Shelter Name</label>
+        <select class="form-control" name="shelterId" id="shelterId">
+            <option value="None">None</option>
+            {% for shelter in shelters %}
+                <option value="{{ shelter.id }}">{{ shelter.shelter_name }}</option>
+            {% endfor %}
         </select>
     </div>
     <br>
