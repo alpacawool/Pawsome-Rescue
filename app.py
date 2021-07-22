@@ -1,6 +1,7 @@
 from flask import Flask, render_template, request, redirect, flash, url_for
 import database.db_connector as db
 import os
+import json
 
 # Database connection
 db_connection = db.connect_to_db()
@@ -79,7 +80,7 @@ def update_user(user_id):
             'SET first_name = "' + req["user_first"] + '", ' \
             'last_name = "' + req["user_last"] + '", ' \
             'email_address = "' + req["user_email"] + '" ' \
-            'WHERE id = ' + str(user_id)
+            'WHERE id = ' + str(user_id) + ';'
         execute_query(update_user_query)
         update_user_success = 'Updated ' + req["user_first"] \
             + ' ' + req["user_last"] + ' successfully!'
@@ -111,19 +112,22 @@ def update_role(role_id):
 
 @app.route("/edit-users/roles/<int:user_id>")
 def edit_users_roles(user_id):
-    # Replace with SQL-query filtering
-    # Users_Roles by user and returning the role id and role names.
-    for user in users:
-        if user.id == user_id:
-            current_roles = []
-            for user_role in users_roles:
-                if user_role.uid == user_id:
-                    for role in roles:
-                        if role.id == user_role.rid:
-                            current_roles.append(Role(role.id, role.name))
-            return render_template(
-                "nw57_user_role_list.j2", user=user, current_roles=current_roles, roles=roles)
-    return render_template('/edit-roles')
+    db_user_query = 'SELECT * FROM Users ' \
+        'WHERE id = ' + str(user_id) + ';'
+    db_user_role_query = 'SELECT * FROM Users_Roles ' \
+        'INNER JOIN Users ON user_id = Users.id ' \
+        'INNER JOIN Roles ON role_id = Roles.id ' \
+        'WHERE user_id = ' + str(user_id) + ';'
+    db_user = execute_query(db_user_query)
+    db_users_roles = execute_query(db_user_role_query)
+    db_roles = execute_query('SELECT * FROM Roles;')
+    print(db_user)
+    return render_template(
+        "nw57_user_role_list.j2", 
+        users_roles = db_users_roles,
+        user = db_user,
+        roles = db_roles
+    )
 
 # Assign new Roles and Users relationship.
 @app.route("/create-users-roles/<int:user_id>", methods=['POST'])

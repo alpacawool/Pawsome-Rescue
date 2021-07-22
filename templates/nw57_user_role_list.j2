@@ -1,8 +1,8 @@
 {% extends "nw57_layout.j2" %}
-{% block title %}Pawsome Animal Rescue - Edit {{user.first}} {{user.last}}'s Roles{% endblock title %} 
+{% block title %}Pawsome Animal Rescue - Edit {{user[0].first_name}} {{user[0].last_name}}'s Roles{% endblock title %} 
 {% block body_content %}
 <br>
-<h2>Edit Roles for {{user.first}} {{user.last}}</h2>
+<h2>Edit Roles for {{user[0].first_name}} {{user[0].last_name}}</h2>
 <br>
 
 <a href="/edit-users"><button class="btn btn-secondary">Back to All Users</button></a>
@@ -22,10 +22,10 @@
 
 <h4>Add Role</h4>
 
-<form name="assign_user_role" action="/create-users-roles/{{user.id}}" method="POST">
+<form name="assign_user_role" action="/create-users-roles/{{users_roles.user_id}}" method="POST">
     <select name="roles" class ="form-select w-auto">
       {% for role in roles %}
-        <option value="{{role.id}}" SELECTED>{{role.id}}. {{role.name}}</option>
+        <option value="{{role.id}}" SELECTED>{{role.id}}. {{role.role_name}}</option>
       {% endfor %}     
     </select>
     <br>
@@ -36,7 +36,7 @@
 
 <h4>Current Roles</h4>
 
-{% if current_roles|length < 1 %}
+{% if users_roles|length < 1 %}
 <p>There are no existing roles.</p>
 {% else %}
     <table class = "table table-hover">
@@ -48,11 +48,11 @@
         </tr>
         </thead>
         <tbody>
-        {% for current_role in current_roles %}
+        {% for users_roles in users_roles %}
         <tr>
-            <form action="/delete-users-roles/{{user.id}}/{{current_role.id}}" method="POST">
-            <td>{{current_role.id}}</td>
-            <td>{{current_role.name}}</td>
+            <form action="/delete-users-roles/{{users_roles.user_id}}/{{users_roles.id}}" method="POST">
+            <td>{{users_roles.id}}</td>
+            <td>{{users_roles.role_name}}</td>
             <td><button class="btn btn-danger" disabled>x</button></td></td>
             </form>
         </tr>
