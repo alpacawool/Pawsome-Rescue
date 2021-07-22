@@ -8,28 +8,23 @@
 <a href="/edit-users"><button class="btn btn-secondary">Back to All Users</button></a>
 <br><br>
 
-<!--- TODO : Better confirmation message -->
-{% with messages = get_flashed_messages() %}
-  {% if messages %}
-    <script>
-      var messages = {{ messages | safe }};
-      for (var i=0; i<messages.length; i++) {
-        alert(messages[i]);
-      }
-    </script>
-  {% endif %}
-{% endwith %}
+{% for message in get_flashed_messages() %}
+  <div id="update-success">
+      {{ message }}
+  </div>
+  <br><br>
+{% endfor %}
 
 <h4>Add Role</h4>
 
-<form name="assign_user_role" action="/create-users-roles/{{users_roles.user_id}}" method="POST">
+<form name="assign_user_role" action="/create-users-roles/{{user[0].id}}" method="POST">
     <select name="roles" class ="form-select w-auto">
       {% for role in roles %}
         <option value="{{role.id}}" SELECTED>{{role.id}}. {{role.role_name}}</option>
       {% endfor %}     
     </select>
     <br>
-    <button class="btn btn-primary" disabled>Submit</button>
+    <button class="btn btn-primary">Submit</button>
 </form>
 
 <br>
@@ -42,7 +37,7 @@
     <table class = "table table-hover">
         <thead>
         <tr>
-            <th scope="col">ID</th>
+            <th scope="col">Users_Roles ID</th>
             <th scope="col">Name</th>
             <th scope="col">Delete</th>
         </tr>

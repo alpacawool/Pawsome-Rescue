@@ -132,11 +132,12 @@ def edit_users_roles(user_id):
 # Assign new Roles and Users relationship.
 @app.route("/create-users-roles/<int:user_id>", methods=['POST'])
 def create_users_roles(user_id):
-    new_id = len(users_roles)
     role_id = request.form.get('roles')
-    # Note: integer type is important. Otherwise python will interpret as wrong type
-    users_roles.append(User_Role(new_id, int(user_id), int(role_id)))
+    insert_user_role_query = 'INSERT INTO Users_Roles (user_id, role_id) ' \
+        'VALUES (' + str(user_id) + ', ' + role_id + ');'
+    execute_query(insert_user_role_query)
     users_roles_redirect_url = "/edit-users/roles/" + str(user_id)
+    flash('Added role successfully')
     return redirect(users_roles_redirect_url)
 
 @app.route("/delete-users-roles/<int:user_id>/<int:role_id>", methods=['POST'])
