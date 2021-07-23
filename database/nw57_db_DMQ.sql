@@ -24,30 +24,30 @@ FROM Shelters;
 --  SELECT all Animals
 SELECT Animals.id, shelter_id, animal_name, birthdate, gender, species_type, breed, personality, image_url, intake_date, adopted_date, adoption_fee, Shelters.id, shelter_name
 FROM Animals 
-INNER JOIN Shelters ON shelter_id = Shelters.id
+LEFT JOIN Shelters ON shelter_id = Shelters.id
 ORDER BY Animals.id ASC;
 --  SELECT subset of Animals - based on the Species Type Filter
 SELECT Animals.id, shelter_id, animal_name, birthdate, gender, species_type, breed, personality, image_url, intake_date, adopted_date, adoption_fee, Shelters.id, shelter_name
 FROM Animals 
-INNER JOIN Shelters ON shelter_id = Shelters.id
+LEFT JOIN Shelters ON shelter_id = Shelters.id
 WHERE species_type = :species_type_from_the_filter_dropdown
 ORDER BY Animals.id ASC;
 --  SELECT subset of Animals - based on the Shelter Name Filter
 SELECT Animals.id, shelter_id, animal_name, birthdate, gender, species_type, breed, personality, image_url, intake_date, adopted_date, adoption_fee, Shelters.id, shelter_name
 FROM Animals 
-INNER JOIN Shelters ON shelter_id = Shelters.id
+LEFT JOIN Shelters ON shelter_id = Shelters.id
 WHERE shelter_name = :shelter_name_from_the_filter_dropdown
 ORDER BY Animals.id ASC;
 --  SELECT subset of Animals - based on the Available Filter - Available
 SELECT Animals.id, shelter_id, animal_name, birthdate, gender, species_type, breed, personality, image_url, intake_date, adopted_date, adoption_fee, Shelters.id, shelter_name
 FROM Animals 
-INNER JOIN Shelters ON shelter_id = Shelters.id
+LEFT JOIN Shelters ON shelter_id = Shelters.id
 WHERE adopted_date IS NULL
 ORDER BY Animals.id ASC;
 --  SELECT subset of Animals - based on the Available Filter - Adopted
 SELECT Animals.id, shelter_id, animal_name, birthdate, gender, species_type, breed, personality, image_url, intake_date, adopted_date, adoption_fee, Shelters.id, shelter_name
 FROM Animals 
-INNER JOIN Shelters ON shelter_id = Shelters.id
+LEFT JOIN Shelters ON shelter_id = Shelters.id
 WHERE adopted_date IS NOT NULL
 ORDER BY Animals.id ASC;
 
@@ -55,7 +55,7 @@ ORDER BY Animals.id ASC;
 -- SELECT single pet by animal_id
 SELECT Animals.id, shelter_id, animal_name, birthdate, gender, species_type, breed, personality, image_url, intake_date, adopted_date, adoption_fee, Shelters.id, shelter_name
 FROM Animals 
-INNER JOIN Shelters ON shelter_id = Shelters.id
+LEFT JOIN Shelters ON shelter_id = Shelters.id
 WHERE Animals.id = :id_of_desired_animal;
 -- INSERT Application
 
