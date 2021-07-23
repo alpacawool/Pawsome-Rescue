@@ -75,11 +75,25 @@ FROM Shelters;
 
 -- Applications
 -- Edit Applications Page
---  SELECT Applications
-SELECT * FROM Applications;
+--  SELECT Applications and get foreign key names
+SELECT app.id, app.user_id, app.animal_id,
+       app.application_date, app.approval_status,
+       a.animal_name, u.first_name, u.last_name
+       FROM Applications AS app
+INNER JOIN Animals as a
+    ON app.animal_id = a.id
+INNER JOIN Users as u
+    ON app.user_id = u.id;
 
---  SELECT Applications specific to ID
-SELECT * FROM Applications WHERE id = :id_of_application;
+--  SELECT Applications specific to ID with foreign key information
+SELECT app.*,
+       a.animal_name, u.first_name, u.last_name
+       FROM Applications AS app
+INNER JOIN Animals as a
+    ON app.animal_id = a.id
+INNER JOIN Users as u
+    ON app.user_id = u.id
+WHERE app.id = :id_of_application;
 
 --  UPDATE Applications
 UPDATE Applications
@@ -107,6 +121,12 @@ SET first_name = :input_first_name,
     last_name = :input_last_name,
     email_address = :input_email
 WHERE id = :id_of_user;
+
+-- SELECT Roles for Specific User (Users_Roles)
+SELECT * FROM Users_Roles 
+INNER JOIN Users ON user_id = Users.id 
+INNER JOIN Roles ON role_id = Roles.id 
+WHERE user_id = :id_of_user;
 
 -- INSERT Users_Roles (M:M)
 INSERT INTO Users_Roles (user_id, role_id)

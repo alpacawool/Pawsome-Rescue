@@ -1,6 +1,7 @@
 from flask import Flask, render_template, request, redirect, flash, url_for
 import database.db_connector as db
 import os
+import json
 
 # Database connection
 db_connection = db.connect_to_db()
@@ -61,38 +62,49 @@ def signup():
 @app.route("/create-user", methods=['POST'])
 def create_user():
     req = request.form
-    new_user = User(
-        len(users),
-        req['first_name'],
-        req['last_name'],
-        req['email'],
-        req['pw']
-    )
-    users.append(new_user)
+    insert_user_query = 'INSERT INTO Users ' \
+        '(first_name, last_name, email_address, password) ' \
+        'VALUES ("' + req['first_name'] + '", "' + req['last_name'] \
+        + '", "' + req['email'] + '", "' + req['pw'] + '");'
+    execute_query(insert_user_query)
+    if request.referrer.endswith('/edit-users'):
+        insert_success_message = req['first_name'] + ' ' \
+            + req['last_name'] + ' added successfully!'
+        flash(insert_success_message)
+        return redirect('/edit-users')
     return redirect("/")
 
 @app.route("/update-user/<int:user_id>", methods=['GET', 'POST'])
 def update_user(user_id):
     if request.method == 'POST':
         req = request.form
-        for user in users:
-            if user.id == user_id:
-                user.first = req["user_first"]
-                user.last = req["user_last"]
-                user.email = req["user_email"]
-                flash("Updated user successfully!")
+        update_user_query = 'UPDATE Users ' \
+            'SET first_name = "' + req["user_first"] + '", ' \
+            'last_name = "' + req["user_last"] + '", ' \
+            'email_address = "' + req["user_email"] + '" ' \
+            'WHERE id = ' + str(user_id) + ';'
+        execute_query(update_user_query)
+        update_user_success = 'Updated ' + req["user_first"] \
+            + ' ' + req["user_last"] + ' successfully!'
+        flash(update_user_success)
     return redirect("/edit-users")
 
 
 @app.route("/edit-roles")
 def edit_roles():
-    return render_template('nw57_edit_roles.j2', roles=roles)
+    db_roles = execute_query('SELECT * FROM Roles;')
+    return render_template('nw57_edit_roles.j2', roles=db_roles)
 
 @app.route("/insert-role", methods=['POST'])
 def insert_role():
-    name = request.form['name']
-    id = len(roles)
-    roles.append(Role(id, name))
+    if request.method == 'POST':
+        insert_role_query = 'INSERT INTO Roles (role_name) ' \
+            'VALUES ("' + request.form['name'] + '");'
+        print(insert_role_query)
+        execute_query(insert_role_query)
+        success_message = 'Created role ' + request.form['name'] \
+            + ' successfully!'
+        flash(success_message)
     return redirect("/edit-roles")
 
 
@@ -100,45 +112,56 @@ def insert_role():
 def update_role(role_id):
     if request.method == 'POST':
         req = request.form
-        for role in roles:
-            if role.id == role_id:
-                role.name = req["role_name"]
-                flash("Updated role successfully!")
+        update_role_query = 'UPDATE Roles ' \
+            'SET role_name = "' + req["role_name"] + \
+            '" WHERE id = ' + str(role_id) + ';'
+        execute_query(update_role_query)
+        flash("Updated role successfully!")
+
     return redirect("/edit-roles")
 
 @app.route("/edit-users/roles/<int:user_id>")
 def edit_users_roles(user_id):
-    # Replace with SQL-query filtering
-    # Users_Roles by user and returning the role id and role names.
-    for user in users:
-        if user.id == user_id:
-            current_roles = []
-            for user_role in users_roles:
-                if user_role.uid == user_id:
-                    for role in roles:
-                        if role.id == user_role.rid:
-                            current_roles.append(Role(role.id, role.name))
-            return render_template(
-                "nw57_user_role_list.j2", user=user, current_roles=current_roles, roles=roles)
-    return render_template('/edit-roles')
+    db_user_query = 'SELECT * FROM Users ' \
+        'WHERE id = ' + str(user_id) + ';'
+    db_user_role_query = 'SELECT * FROM Users_Roles ' \
+        'INNER JOIN Users ON user_id = Users.id ' \
+        'INNER JOIN Roles ON role_id = Roles.id ' \
+        'WHERE user_id = ' + str(user_id) + ';'
+    db_user = execute_query(db_user_query)
+    db_users_roles = execute_query(db_user_role_query)
+    db_roles = execute_query('SELECT * FROM Roles;')
+    return render_template(
+        "nw57_user_role_list.j2", 
+        users_roles = db_users_roles,
+        user = db_user,
+        roles = db_roles
+    )
 
-# Assign new Roles and Users relationship.
+# Assign new Roles and Users relationship
 @app.route("/create-users-roles/<int:user_id>", methods=['POST'])
 def create_users_roles(user_id):
-    new_id = len(users_roles)
     role_id = request.form.get('roles')
-    # Note: integer type is important. Otherwise python will interpret as wrong type
-    users_roles.append(User_Role(new_id, int(user_id), int(role_id)))
+    insert_user_role_query = 'INSERT INTO Users_Roles (user_id, role_id) ' \
+        'VALUES (' + str(user_id) + ', ' + role_id + ');'
+    execute_query(insert_user_role_query)
     users_roles_redirect_url = "/edit-users/roles/" + str(user_id)
+    flash('Added role successfully!' , 'insert')
     return redirect(users_roles_redirect_url)
 
-@app.route("/delete-users-roles/<int:user_id>/<int:role_id>", methods=['POST'])
-def delete_users_roles(user_id, role_id):
-    for user_role in users_roles:
-        if user_role.uid == user_id and user_role.rid == role_id:
-            users_roles.remove(user_role)
-            break
-    users_roles_redirect_url = "/edit-users/roles/" + str(user_id)
+# Delete Roles and Users relationship
+@app.route("/delete-users-roles/<int:users_roles_id>", methods=['POST'])
+def delete_users_roles(users_roles_id):
+    current_user_id_query = 'SELECT user_id FROM Users_Roles ' \
+        'WHERE id = ' + str(users_roles_id) + ';'
+    delete_users_roles_query = 'DELETE FROM Users_Roles ' \
+        'WHERE id = ' + str(users_roles_id) + ';'
+
+    current_user_id = execute_query(current_user_id_query)[0]['user_id']
+    execute_query(delete_users_roles_query)
+    flash('Deleted role successfully!', 'delete')
+
+    users_roles_redirect_url = "/edit-users/roles/" + str(current_user_id)
     return redirect(users_roles_redirect_url)
 
 @app.route("/view-users-roles")
@@ -285,34 +308,43 @@ def update_animals(animal_id):
 
 @app.route("/edit-apps")
 def edit_apps():
-    # Query foreign keys from applications where approval status is NULL
-    curr_users=[]
-    curr_animals=[]
-    for application in animal_apps:
-        for user in users:
-            if user.id == application.uid:
-                curr_users.append(user)
-    for application in animal_apps:
-        for animal in animals_data:
-            if animal.animal_id == application.aid:
-                curr_animals.append(animal)
+    select_app_query = 'SELECT app.id, app.user_id, app.animal_id, ' \
+        'app.application_date, app.approval_status, ' \
+        'a.animal_name, u.first_name, u.last_name ' \
+        'FROM Applications AS app ' \
+        'INNER JOIN Animals as a ON app.animal_id = a.id ' \
+        'INNER JOIN Users as u ON app.user_id = u.id;'
+    db_animal_apps = execute_query(select_app_query)
     return render_template(
-        'nw57_edit_apps.j2', users = curr_users, animals = curr_animals, animal_apps=animal_apps)
+        'nw57_edit_apps.j2', animal_apps=db_animal_apps)
 
 @app.route("/edit-apps/<int:app_id>")
 def edit_app_detail(app_id):
-    current_app = animal_apps[app_id]
-    current_user = None
-    current_animal = None
-    for user in users:
-        if user.id == current_app.uid:
-            current_user = user
-    for animal in animals_data:
-        if animal.animal_id == current_app.aid:
-            current_animal = animal
+    select_app_detail_query = 'SELECT app.*, ' \
+        'a.animal_name, u.first_name, u.last_name ' \
+        'FROM Applications AS app ' \
+        'INNER JOIN Animals as a ON app.animal_id = a.id ' \
+        'INNER JOIN Users as u ON app.user_id = u.id ' \
+        'WHERE app.id = ' + str(app_id) + ';'
+    db_current_app = execute_query(select_app_detail_query)
     return render_template(
         'nw57_edit_app_detail.j2', 
-            current_app = current_app, user = current_user, animal = current_animal)
+            current_app = db_current_app[0])
+
+@app.route("/update-app/<int:app_id>/<int:app_status>")
+def update_app_approval(app_id, app_status):
+    approval_string = None
+    if app_status == 3:
+        approval_string = 'NULL'
+    else:
+        approval_string = str(app_status)
+    update_app_query = 'UPDATE Applications ' \
+        'SET approval_status = ' + approval_string \
+        + ' WHERE id = ' + str(app_id) + ';'
+    execute_query(update_app_query)
+    flash('Updated approval status successfully!')
+    users_roles_redirect_url = "/edit-apps/" + str(app_id)
+    return redirect(users_roles_redirect_url)
 
 
 @app.route("/shelters")

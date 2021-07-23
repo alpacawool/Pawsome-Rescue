@@ -1,59 +1,73 @@
 {% extends "nw57_layout.j2" %}
-{% block title %}Pawsome Animal Rescue - Edit {{user.first}} {{user.last}}'s Roles{% endblock title %} 
+{% block title %}Pawsome Animal Rescue - Edit {{user[0].first_name}} {{user[0].last_name}}'s Roles{% endblock title %} 
 {% block body_content %}
 <br>
-<h2>Edit Roles for {{user.first}} {{user.last}}</h2>
+<h2>Edit Roles for {{user[0].first_name}} {{user[0].last_name}}</h2>
 <br>
 
 <a href="/edit-users"><button class="btn btn-secondary">Back to All Users</button></a>
 <br><br>
 
-<!--- TODO : Better confirmation message -->
-{% with messages = get_flashed_messages() %}
-  {% if messages %}
-    <script>
-      var messages = {{ messages | safe }};
-      for (var i=0; i<messages.length; i++) {
-        alert(messages[i]);
-      }
-    </script>
+{# {% for message in get_flashed_messages() %}
+  <div id="update-success">
+      {{ message }}
+  </div>
+{% endfor %} #}
+
+{% with insert = get_flashed_messages(category_filter=["insert"]) %}
+  {% if insert %}
+    {% for message in get_flashed_messages() %}
+      <div id="update-success">
+          {{ message }}
+      </div>
+    {% endfor %}
+  {% endif %}
+{% endwith %}
+
+{% with delete = get_flashed_messages(category_filter=["delete"]) %}
+  {% if delete %}
+    {% for message in get_flashed_messages() %}
+      <div id="delete-success">
+          {{ message }}
+      </div>
+    {% endfor %}
   {% endif %}
 {% endwith %}
 
 <h4>Add Role</h4>
 
-<form name="assign_user_role" action="/create-users-roles/{{user.id}}" method="POST">
+<form name="assign_user_role" action="/create-users-roles/{{user[0].id}}" method="POST">
     <select name="roles" class ="form-select w-auto">
       {% for role in roles %}
-        <option value="{{role.id}}" SELECTED>{{role.id}}. {{role.name}}</option>
+        <option value="{{role.id}}" SELECTED>{{role.id}}. {{role.role_name}}</option>
       {% endfor %}     
     </select>
     <br>
-    <button class="btn btn-primary" disabled>Submit</button>
+    <button class="btn btn-primary">Submit</button>
 </form>
 
 <br>
 
 <h4>Current Roles</h4>
 
-{% if current_roles|length < 1 %}
+{% if users_roles|length < 1 %}
 <p>There are no existing roles.</p>
 {% else %}
     <table class = "table table-hover">
         <thead>
         <tr>
-            <th scope="col">ID</th>
+            <th scope="col">Users_Roles ID</th>
             <th scope="col">Name</th>
             <th scope="col">Delete</th>
         </tr>
         </thead>
         <tbody>
-        {% for current_role in current_roles %}
+        {% for users_roles in users_roles %}
         <tr>
-            <form action="/delete-users-roles/{{user.id}}/{{current_role.id}}" method="POST">
-            <td>{{current_role.id}}</td>
-            <td>{{current_role.name}}</td>
-            <td><button class="btn btn-danger" disabled>x</button></td></td>
+            <form action="/delete-users-roles/{{users_roles.id}}" method="POST">
+            <td>{{users_roles.id}}</td>
+            <td>{{users_roles.role_name}}</td>
+            <td><button class="btn btn-danger">x</button></td></td>
             </form>
         </tr>
         {% endfor %}
