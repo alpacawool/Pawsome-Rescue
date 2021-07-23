@@ -349,7 +349,12 @@ def update_app_approval(app_id, app_status):
 
 @app.route("/shelters")
 def shelters():
-    return render_template('nw57_shelters.j2', shelters_data=shelters_data)
+    query = f"""
+            SELECT *
+            FROM Shelters;
+            """
+    db_shelters = execute_query(query)
+    return render_template('nw57_shelters.j2', shelters_data=db_shelters)
 
 @app.route("/edit-shelters")
 def edit_shelters():

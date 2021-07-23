@@ -70,8 +70,9 @@ DELETE FROM Shelters WHERE id = :id_of_shelter_to_be_deleted;
 
 -- View Shelters Page
 --  SELECT Shelters
-SELECT id, shelter_name, street, city, state, zip_code
+SELECT *
 FROM Shelters;
+
 
 -- Applications
 -- Edit Applications Page
