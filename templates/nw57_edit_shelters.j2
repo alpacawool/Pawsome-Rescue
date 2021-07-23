@@ -30,8 +30,8 @@ Relationship:
     <tbody>
         {% for shelter in shelters_data %}
             <tr>
-                <form action="/delete-shelter/{{shelter.shelter_id}}" method="POST">
-                <td>{{shelter.shelter_id}}</td>
+                <form action="/delete-shelter/{{shelter.id}}" method="POST">
+                <td>{{shelter.id}}</td>
                 <td><input type="text" class="form-control" id="shelter_shelter_name" name="shelter_shelter_name" value="{{shelter.shelter_name}}" disabled></td>
                 <td><input type="text" class="form-control" id="shelter_street" name="shelter_street" value="{{shelter.street}}" disabled></td>
                 <td><input type="text" class="form-control" id="shelter_city" name="shelter_city" value="{{shelter.city}}" disabled></td>

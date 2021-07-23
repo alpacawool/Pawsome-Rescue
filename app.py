@@ -349,7 +349,7 @@ def update_app_approval(app_id, app_status):
 
 @app.route("/shelters")
 def shelters():
-    query = f"""
+    query = """
             SELECT *
             FROM Shelters;
             """
@@ -358,23 +358,30 @@ def shelters():
 
 @app.route("/edit-shelters")
 def edit_shelters():
-    return render_template('nw57_edit_shelters.j2', shelters_data=shelters_data)
+    query = """
+            SELECT *
+            FROM Shelters;
+            """
+    db_shelters = execute_query(query)
+    return render_template('nw57_edit_shelters.j2', shelters_data=db_shelters)
 
 @app.route("/delete-shelter/<int:shelter_id>", methods=['POST'])
 def delete_shelter(shelter_id):
-    shelterID = shelter_id
-    print("Deleting Shelter ID: ", shelterID)
+    delete_query = f"""
+            DELETE FROM Shelters WHERE id = {shelter_id};
+            """
+    # print(delete_query)
+    execute_query(delete_query)
     return redirect(url_for('edit_shelters'))
 
 @app.route("/insert-shelter", methods=['POST'])
 def insert_shelter():
-    if request.method == "POST":
-        shelterName = request.form['shelter_name']
-        street = request.form['street']
-        city = request.form['city']
-        state = request.form['state']
-        zipCode = request.form['zip_code']
-        print("Adding New Shelter:", shelterName)
+    insert_query = f"""
+            INSERT INTO Shelters(shelter_name, street, city, state, zip_code)
+            VALUES ("{request.form['shelter_name']}", "{request.form['street']}", "{request.form['city']}", "{request.form['state']}", "{request.form['zip_code']}");
+            """
+    # print(insert_query)
+    execute_query(insert_query)
     return redirect(url_for('edit_shelters'))
 
 if __name__ == "__main__":
