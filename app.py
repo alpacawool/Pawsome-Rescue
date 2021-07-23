@@ -174,7 +174,7 @@ def animals():
             SELECT Animals.id, shelter_id, animal_name, birthdate, gender, species_type, breed, personality, image_url, intake_date, adopted_date, adoption_fee, Shelters.id, shelter_name
             FROM Animals 
             INNER JOIN Shelters ON shelter_id = Shelters.id
-            ORDER BY intake_date ASC;""")
+            ORDER BY Animals.id ASC;""")
             
     # find distinct attributes for populating filters
     all_shelters = []
@@ -196,7 +196,7 @@ def animals():
             FROM Animals 
             INNER JOIN Shelters ON shelter_id = Shelters.id
             WHERE shelter_name = '{shelter_filter}'
-            ORDER BY intake_date ASC;""")
+            ORDER BY Animals.id ASC;""")
         return render_template('nw57_animals.j2', animals_data=db_animals_filtered, distinct_shelters=distinct_shelters, distinct_species_type=distinct_species_type)
     elif available_filter:
         if available_filter == 'available':
@@ -205,14 +205,14 @@ def animals():
             FROM Animals 
             INNER JOIN Shelters ON shelter_id = Shelters.id
             WHERE adopted_date IS NULL
-            ORDER BY intake_date ASC;""")
+            ORDER BY Animals.id ASC;""")
         else:   # if available_filter == 'adopted'
             db_animals_filtered = execute_query("""
             SELECT Animals.id, shelter_id, animal_name, birthdate, gender, species_type, breed, personality, image_url, intake_date, adopted_date, adoption_fee, Shelters.id, shelter_name
             FROM Animals 
             INNER JOIN Shelters ON shelter_id = Shelters.id
             WHERE adopted_date IS NOT NULL
-            ORDER BY intake_date ASC;""")
+            ORDER BY Animals.id ASC;""")
         return render_template('nw57_animals.j2', animals_data=db_animals_filtered, distinct_shelters=distinct_shelters, distinct_species_type=distinct_species_type)
     elif species_type_filter:
         db_animals_filtered = execute_query(f"""
@@ -220,7 +220,7 @@ def animals():
             FROM Animals 
             INNER JOIN Shelters ON shelter_id = Shelters.id
             WHERE species_type = '{species_type_filter}'
-            ORDER BY intake_date ASC;""")
+            ORDER BY Animals.id ASC;""")
         return render_template('nw57_animals.j2', animals_data=db_animals_filtered, distinct_shelters=distinct_shelters, distinct_species_type=distinct_species_type)
     else:   # no filters
         return render_template('nw57_animals.j2', animals_data=db_animals, distinct_shelters=distinct_shelters, distinct_species_type=distinct_species_type)
@@ -243,8 +243,9 @@ def pet_profile(animal_id):
             FROM Animals 
             INNER JOIN Shelters ON shelter_id = Shelters.id
             WHERE Animals.id = {animal_id};""")
-        for animal in db_animals:
-            return render_template('nw57_pet_profile.j2', animal_id=animal_id, animal=animal)
+        animal = db_animals[0]
+        # for animal in db_animals:
+        return render_template('nw57_pet_profile.j2', animal_id=animal_id, animal=animal)
         return 'Pet not found'
 
 @app.route("/insert-animal", methods=['GET', 'POST'])
