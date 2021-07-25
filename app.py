@@ -165,7 +165,18 @@ def delete_users_roles(users_roles_id):
 
 @app.route("/view-users-roles")
 def view_users_roles():
-    return render_template("nw57_view_users_roles.j2", users_roles = users_roles)
+    select_users_roles_query = """
+        SELECT ur.*,
+            r.role_name, u.first_name, u.last_name
+            FROM Users_Roles AS ur
+        INNER JOIN Roles as r
+            ON ur.role_id = r.id
+        INNER JOIN Users as u
+            ON ur.user_id = u.id
+        ORDER BY r.id ASC;
+        """
+    db_users_roles = execute_query(select_users_roles_query)
+    return render_template("nw57_view_users_roles.j2", users_roles = db_users_roles)
 
 @app.route("/animals")
 def animals():

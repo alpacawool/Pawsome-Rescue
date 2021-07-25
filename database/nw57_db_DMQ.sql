@@ -157,5 +157,12 @@ WHERE id = :id_of_role;
 
 -- Users_Roles
 -- View Users_Roles Page
---  SELECT Users_Roles
-SELECT * From Users_Roles;
+--  SELECT Users_Roles and include foreign key information
+SELECT ur.*,
+       r.role_name, u.first_name, u.last_name
+       FROM Users_Roles AS ur
+INNER JOIN Roles as r
+    ON ur.role_id = r.id
+INNER JOIN Users as u
+    ON ur.user_id = u.id
+ORDER BY r.id ASC;
