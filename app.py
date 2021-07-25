@@ -358,7 +358,8 @@ def edit_apps():
         'a.animal_name, u.first_name, u.last_name ' \
         'FROM Applications AS app ' \
         'INNER JOIN Animals as a ON app.animal_id = a.id ' \
-        'INNER JOIN Users as u ON app.user_id = u.id;'
+        'INNER JOIN Users as u ON app.user_id = u.id ' \
+        'ORDER BY app.id ASC;'
     db_animal_apps = execute_query(select_app_query)
     return render_template(
         'nw57_edit_apps.j2', animal_apps=db_animal_apps)

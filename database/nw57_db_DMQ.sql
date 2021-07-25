@@ -84,7 +84,8 @@ SELECT app.id, app.user_id, app.animal_id,
 INNER JOIN Animals as a
     ON app.animal_id = a.id
 INNER JOIN Users as u
-    ON app.user_id = u.id;
+    ON app.user_id = u.id
+ORDER BY app.id ASC;
 
 --  SELECT Applications specific to ID with foreign key information
 SELECT app.*,
