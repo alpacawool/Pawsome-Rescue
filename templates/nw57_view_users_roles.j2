@@ -14,17 +14,21 @@
     <table class = "table">
         <thead>
         <tr>
-            <th scope="col">ID</th>
-            <th scope="col">User ID</th>
+            <th scope="col">User_Roles_ID</th>
             <th scope="col">Role ID</th>
+            <th scope="col">Role Name</th>
+            <th scope="col">User ID</th>
+            <th scope="col">User Name</th>
         </tr>
         </thead>
         <tbody>
         {% for item in users_roles %}
         <tr>
           <td>{{item.id}}</td>
-          <td>{{item.uid}}</td>
-          <td>{{item.rid}}</td>
+          <td>{{item.role_id}}</td>
+          <td>{{item.role_name}}</td>
+          <td>{{item.user_id}}</td>
+          <td>{{item.first_name}} {{item.last_name}}</td>
         </tr>
         {% endfor %}
         </tbody>

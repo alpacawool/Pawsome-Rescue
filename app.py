@@ -1,7 +1,6 @@
 from flask import Flask, render_template, request, redirect, flash, url_for
 import database.db_connector as db
 import os
-import json
 
 # Database connection
 db_connection = db.connect_to_db()
@@ -166,7 +165,18 @@ def delete_users_roles(users_roles_id):
 
 @app.route("/view-users-roles")
 def view_users_roles():
-    return render_template("nw57_view_users_roles.j2", users_roles = users_roles)
+    select_users_roles_query = """
+        SELECT ur.*,
+            r.role_name, u.first_name, u.last_name
+            FROM Users_Roles AS ur
+        INNER JOIN Roles as r
+            ON ur.role_id = r.id
+        INNER JOIN Users as u
+            ON ur.user_id = u.id
+        ORDER BY r.id ASC;
+        """
+    db_users_roles = execute_query(select_users_roles_query)
+    return render_template("nw57_view_users_roles.j2", users_roles = db_users_roles)
 
 @app.route("/animals")
 def animals():
@@ -189,14 +199,25 @@ def animals():
     shelter_filter = request.args.get('shelter', type = str)
     available_filter = request.args.get('available', type = str)
     species_type_filter = request.args.get('species_type', type = str)
-    
     if shelter_filter:
-        db_animals_filtered = execute_query(f"""
-            SELECT Animals.id, shelter_id, animal_name, birthdate, gender, species_type, breed, personality, image_url, intake_date, adopted_date, adoption_fee, Shelters.id, shelter_name
-            FROM Animals 
-            LEFT JOIN Shelters ON shelter_id = Shelters.id
-            WHERE shelter_name = '{shelter_filter}'
-            ORDER BY Animals.id ASC;""")
+        # Filter Animal Shelters that are NULL
+        if shelter_filter == 'None':
+            db_animals_filtered = execute_query(f"""
+                SELECT Animals.id, shelter_id, animal_name,
+                    birthdate, gender, species_type, breed, personality,
+                    image_url, intake_date, adopted_date, adoption_fee, Shelters.id, 
+                    shelter_name
+                FROM Animals 
+                LEFT JOIN Shelters ON shelter_id = Shelters.id
+                WHERE shelter_name IS NULL
+                ORDER BY Animals.id ASC;""")
+        else:
+            db_animals_filtered = execute_query(f"""
+                SELECT Animals.id, shelter_id, animal_name, birthdate, gender, species_type, breed, personality, image_url, intake_date, adopted_date, adoption_fee, Shelters.id, shelter_name
+                FROM Animals 
+                LEFT JOIN Shelters ON shelter_id = Shelters.id
+                WHERE shelter_name = '{shelter_filter}'
+                ORDER BY Animals.id ASC;""")
         return render_template('nw57_animals.j2', animals_data=db_animals_filtered, distinct_shelters=distinct_shelters, distinct_species_type=distinct_species_type)
     elif available_filter:
         if available_filter == 'available':
@@ -227,27 +248,19 @@ def animals():
 
 @app.route('/animals/<int:animal_id>', methods=['GET', 'POST'])
 def pet_profile(animal_id):
-    if request.method == 'POST': 
-        # Implement a method for this POST
-        animalID = animal_id
-        homeOwnership = request.form["homeOwnership"]
-        children = request.form["children"]
-        firstPet = request.form["firstPet"]
-        petsInHome = request.form["petsInHome"]
-
-        print('Submitted New Application for animalID:', animalID)
-        return redirect(url_for('pet_profile', animal_id=animal_id))
-    else:
-        db_animals = execute_query(f"""
-            SELECT Animals.id, shelter_id, animal_name, birthdate, gender, species_type, breed, personality, image_url, intake_date, adopted_date, adoption_fee, Shelters.id, shelter_name
-            FROM Animals 
-            LEFT JOIN Shelters ON shelter_id = Shelters.id
-            WHERE Animals.id = {animal_id};""")
-        try: 
-            animal = db_animals[0]
-            return render_template('nw57_pet_profile.j2', animal_id=animal_id, animal=animal)
-        except IndexError as error:
-            return('Animal not found')
+    db_animals = execute_query(f"""
+        SELECT Animals.id, shelter_id, animal_name, birthdate, gender, species_type, breed, personality, image_url, intake_date, adopted_date, adoption_fee, Shelters.id, shelter_name
+        FROM Animals 
+        LEFT JOIN Shelters ON shelter_id = Shelters.id
+        WHERE Animals.id = {animal_id};""")
+    db_users = execute_query(f"""
+        SELECT id, first_name, last_name FROM Users;
+        """)
+    try: 
+        animal = db_animals[0]
+        return render_template('nw57_pet_profile.j2', animal_id=animal_id, animal=animal, users=db_users)
+    except IndexError as error:
+        return('Animal not found')
 
 
 @app.route("/insert-animal", methods=['GET', 'POST'])
@@ -356,7 +369,8 @@ def edit_apps():
         'a.animal_name, u.first_name, u.last_name ' \
         'FROM Applications AS app ' \
         'INNER JOIN Animals as a ON app.animal_id = a.id ' \
-        'INNER JOIN Users as u ON app.user_id = u.id;'
+        'INNER JOIN Users as u ON app.user_id = u.id ' \
+        'ORDER BY app.id ASC;'
     db_animal_apps = execute_query(select_app_query)
     return render_template(
         'nw57_edit_apps.j2', animal_apps=db_animal_apps)
@@ -389,6 +403,25 @@ def update_app_approval(app_id, app_status):
     users_roles_redirect_url = "/edit-apps/" + str(app_id)
     return redirect(users_roles_redirect_url)
 
+# INSERT Application for specific animal
+@app.route("/insert-app/<int:animal_id>", methods=['GET', 'POST'])
+def insert_app(animal_id):
+    req = request.form
+    insert_app_query = f"""
+        INSERT INTO Applications(
+            user_id, animal_id, application_date, home_ownership,
+            has_children, first_pet, pets_in_home, approval_status)
+        VALUES (
+            {req['user-select']}, {str(animal_id)}, 
+            {f"'{req['appDate']}'" if req['appDate'] else 'NULL'},
+            {req['homeOwnership']}, {req['children']}, {req['firstPet']},
+            {req['petsInHome']}, NULL
+        );
+        """
+    execute_query(insert_app_query)
+    flash("Application submitted successfully!")
+    profile_redirect_url = '/animals/' + str(animal_id)
+    return redirect(profile_redirect_url)
 
 @app.route("/shelters")
 def shelters():
