@@ -17,6 +17,7 @@ user = os.environ.get("DB_USER")
 pw = os.environ.get("DB_PW")
 db = os.environ.get("DB_NAME")
 
+
 # Connect to database
 # Note: Disable Firewall or this may not work
 def connect_to_db(host = host, port=port, user = user, pw = pw, db = db):
@@ -38,13 +39,22 @@ def run_query(db_connection = None, query = None, query_params = ()):
     if query is None or len(query.strip()) == 0:
         print("Error: Query is empty")
         return None
+    # Added try/exception based on https://stackoverflow.com/questions/207981/
+    # Attempt to reconnect to database if query fails
+    try:
+        # Create cursor to execute query
+        cursor = db_connection.cursor(MySQL.cursors.DictCursor)
+         # Execute query, query_params is tuple
+        cursor.execute(query, query_params)
+    # Failure to connect to db server (Reconnect and try again)
+    except (AttributeError, MySQL.OperationalError):
+        db_connection = connect_to_db()
+        cursor = db_connection.cursor(MySQL.cursors.DictCursor)
+        cursor.execute(query, query_params)
 
-    # Create cursor to execute query
-    cursor = db_connection.cursor(MySQL.cursors.DictCursor)
-    # Execute query, query_params is tuple
-    cursor.execute(query, query_params)
     # Save changes
     db_connection.commit()
+
     return cursor
 
 if __name__ == '__main__':
