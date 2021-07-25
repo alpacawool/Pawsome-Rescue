@@ -189,14 +189,26 @@ def animals():
     shelter_filter = request.args.get('shelter', type = str)
     available_filter = request.args.get('available', type = str)
     species_type_filter = request.args.get('species_type', type = str)
-    
+    print(shelter_filter)
     if shelter_filter:
-        db_animals_filtered = execute_query(f"""
-            SELECT Animals.id, shelter_id, animal_name, birthdate, gender, species_type, breed, personality, image_url, intake_date, adopted_date, adoption_fee, Shelters.id, shelter_name
-            FROM Animals 
-            LEFT JOIN Shelters ON shelter_id = Shelters.id
-            WHERE shelter_name = '{shelter_filter}'
-            ORDER BY Animals.id ASC;""")
+        # Filter Animal Shelters that are NULL
+        if shelter_filter == 'None':
+            db_animals_filtered = execute_query(f"""
+                SELECT Animals.id, shelter_id, animal_name,
+                    birthdate, gender, species_type, breed, personality,
+                    image_url, intake_date, adopted_date, adoption_fee, Shelters.id, 
+                    shelter_name
+                FROM Animals 
+                LEFT JOIN Shelters ON shelter_id = Shelters.id
+                WHERE shelter_name IS NULL
+                ORDER BY Animals.id ASC;""")
+        else:
+            db_animals_filtered = execute_query(f"""
+                SELECT Animals.id, shelter_id, animal_name, birthdate, gender, species_type, breed, personality, image_url, intake_date, adopted_date, adoption_fee, Shelters.id, shelter_name
+                FROM Animals 
+                LEFT JOIN Shelters ON shelter_id = Shelters.id
+                WHERE shelter_name = '{shelter_filter}'
+                ORDER BY Animals.id ASC;""")
         return render_template('nw57_animals.j2', animals_data=db_animals_filtered, distinct_shelters=distinct_shelters, distinct_species_type=distinct_species_type)
     elif available_filter:
         if available_filter == 'available':
