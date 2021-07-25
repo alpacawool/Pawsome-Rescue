@@ -1,4 +1,8 @@
 {% extends "nw57_layout.j2" %}
+
+{# track current page #}
+{% set active_page = 'shelters' %}
+
 {% block title %}Pawsome Animal Rescue - Shelters{% endblock title %} 
 {% block body_content %}
 <br>
@@ -15,7 +19,7 @@
                     {{shelter.street}}<br>
                     {{shelter.city}} {{shelter.state}} {{shelter.zip_code}} 
                     </address>
-                    <a href="/animals" class="btn btn-primary">View Animals At This Location</a>
+                    <a href="/animals?shelter={{ shelter.shelter_name }}" class="btn btn-primary">View Animals At This Location</a>
                 </div>
             </div>
         </div>

@@ -173,8 +173,8 @@ def animals():
     db_animals = execute_query("""
             SELECT Animals.id, shelter_id, animal_name, birthdate, gender, species_type, breed, personality, image_url, intake_date, adopted_date, adoption_fee, Shelters.id, shelter_name
             FROM Animals 
-            INNER JOIN Shelters ON shelter_id = Shelters.id
-            ORDER BY intake_date ASC;""")
+            LEFT JOIN Shelters ON shelter_id = Shelters.id
+            ORDER BY Animals.id ASC;""")
             
     # find distinct attributes for populating filters
     all_shelters = []
@@ -194,33 +194,33 @@ def animals():
         db_animals_filtered = execute_query(f"""
             SELECT Animals.id, shelter_id, animal_name, birthdate, gender, species_type, breed, personality, image_url, intake_date, adopted_date, adoption_fee, Shelters.id, shelter_name
             FROM Animals 
-            INNER JOIN Shelters ON shelter_id = Shelters.id
+            LEFT JOIN Shelters ON shelter_id = Shelters.id
             WHERE shelter_name = '{shelter_filter}'
-            ORDER BY intake_date ASC;""")
+            ORDER BY Animals.id ASC;""")
         return render_template('nw57_animals.j2', animals_data=db_animals_filtered, distinct_shelters=distinct_shelters, distinct_species_type=distinct_species_type)
     elif available_filter:
         if available_filter == 'available':
             db_animals_filtered = execute_query("""
             SELECT Animals.id, shelter_id, animal_name, birthdate, gender, species_type, breed, personality, image_url, intake_date, adopted_date, adoption_fee, Shelters.id, shelter_name
             FROM Animals 
-            INNER JOIN Shelters ON shelter_id = Shelters.id
+            LEFT JOIN Shelters ON shelter_id = Shelters.id
             WHERE adopted_date IS NULL
-            ORDER BY intake_date ASC;""")
+            ORDER BY Animals.id ASC;""")
         else:   # if available_filter == 'adopted'
             db_animals_filtered = execute_query("""
             SELECT Animals.id, shelter_id, animal_name, birthdate, gender, species_type, breed, personality, image_url, intake_date, adopted_date, adoption_fee, Shelters.id, shelter_name
             FROM Animals 
-            INNER JOIN Shelters ON shelter_id = Shelters.id
+            LEFT JOIN Shelters ON shelter_id = Shelters.id
             WHERE adopted_date IS NOT NULL
-            ORDER BY intake_date ASC;""")
+            ORDER BY Animals.id ASC;""")
         return render_template('nw57_animals.j2', animals_data=db_animals_filtered, distinct_shelters=distinct_shelters, distinct_species_type=distinct_species_type)
     elif species_type_filter:
         db_animals_filtered = execute_query(f"""
             SELECT Animals.id, shelter_id, animal_name, birthdate, gender, species_type, breed, personality, image_url, intake_date, adopted_date, adoption_fee, Shelters.id, shelter_name
             FROM Animals 
-            INNER JOIN Shelters ON shelter_id = Shelters.id
+            LEFT JOIN Shelters ON shelter_id = Shelters.id
             WHERE species_type = '{species_type_filter}'
-            ORDER BY intake_date ASC;""")
+            ORDER BY Animals.id ASC;""")
         return render_template('nw57_animals.j2', animals_data=db_animals_filtered, distinct_shelters=distinct_shelters, distinct_species_type=distinct_species_type)
     else:   # no filters
         return render_template('nw57_animals.j2', animals_data=db_animals, distinct_shelters=distinct_shelters, distinct_species_type=distinct_species_type)
@@ -241,11 +241,14 @@ def pet_profile(animal_id):
         db_animals = execute_query(f"""
             SELECT Animals.id, shelter_id, animal_name, birthdate, gender, species_type, breed, personality, image_url, intake_date, adopted_date, adoption_fee, Shelters.id, shelter_name
             FROM Animals 
-            INNER JOIN Shelters ON shelter_id = Shelters.id
+            LEFT JOIN Shelters ON shelter_id = Shelters.id
             WHERE Animals.id = {animal_id};""")
-        for animal in db_animals:
+        try: 
+            animal = db_animals[0]
             return render_template('nw57_pet_profile.j2', animal_id=animal_id, animal=animal)
-        return 'Pet not found'
+        except IndexError as error:
+            return('Animal not found')
+
 
 @app.route("/insert-animal", methods=['GET', 'POST'])
 def insert_animal():
@@ -265,9 +268,15 @@ def insert_animal():
             adoptedDate = None
         adoptionFee = request.form['adoptionFee']
 
+        # utiized this answer to help with inserting dates or NULLs into db: https://stackoverflow.com/a/66739228
         query = f"""
-            INSERT INTO Animals(shelter_id, animal_name, birthdate, gender, species_type, breed, personality, image_url, intake_date, adopted_date, adoption_fee)
-            VALUES ({shelterId}, '{animalName}', '{birthdate}', '{gender}', '{speciesType}', '{breed}', '{personality}', '{imageURL}', '{intakeDate}', {"'{}'".format(adoptedDate) if adoptedDate else 'NULL'}, {adoptionFee});
+            INSERT INTO Animals(shelter_id, animal_name, birthdate, \
+            gender, species_type, breed, personality, image_url, \
+            intake_date, adopted_date, adoption_fee)
+            VALUES ({f"'{shelterId}'" if shelterId else 'NULL'}, '{animalName}', '{birthdate}', \
+            '{gender}', '{speciesType}', '{breed}', '{personality}', \
+            '{imageURL}', '{intakeDate}', \
+            {f"'{adoptedDate}'" if adoptedDate else 'NULL'}, {adoptionFee});
             """
         execute_query(query)
         return redirect(url_for('edit_animals'))
@@ -277,32 +286,66 @@ def insert_animal():
             FROM Shelters;""")
         return render_template('nw57_add_animal.j2', shelters = shelterQueryResult)
 
-# View general information of the animal
+# View general information of all the animals
 @app.route("/edit-animals")
 def edit_animals():
     db_animals = execute_query("""
             SELECT *
             FROM Animals 
-            INNER JOIN Shelters ON shelter_id = Shelters.id
+            LEFT JOIN Shelters ON shelter_id = Shelters.id
             ORDER BY Animals.id ASC;""")
     return render_template('nw57_update_animals.j2', animals_data=db_animals)
 
-# View more detail of animal and update information if necessary
+# View more detail of a single animal and update information if necessary
 @app.route("/edit-animals/<int:animal_id>",methods =['GET', 'POST'])
 def edit_animal_detail(animal_id):
-    current_animal = None
-    for animal in animals_data:
-        print(animal.animal_name)
-        if animal.animal_id == animal_id:
-            current_animal = animal
-            break
-    return render_template('nw57_update_animal_detail.j2', animal = current_animal)
+    db_animals = execute_query(f"""
+            SELECT *
+            FROM Animals 
+            LEFT JOIN Shelters ON shelter_id = Shelters.id
+            WHERE Animals.id = {animal_id};""")
+    db_shelters = execute_query("""
+            SELECT id, shelter_name
+            FROM Shelters;""")
+    try: 
+        animal = db_animals[0]
+        return render_template('nw57_update_animal_detail.j2', animal_id = animal_id, animal = animal, shelters = db_shelters)
+    except IndexError as error:
+        return('Animal not found')
 
 @app.route("/update_animal/<int:animal_id>", methods=['GET', 'POST'])
 def update_animals(animal_id):
     if request.method == 'POST': 
-        # add Update to DB Logic
-        return render_template('nw57_update_animals.j2')
+        animalName = request.form['animalName']
+        shelterId = request.form['shelterId']
+        if shelterId == 'None':
+            shelterId = None
+        birthdate = request.form['birthdate']
+        gender = request.form['gender']
+        speciesType = request.form['speciesType']
+        breed = request.form['breed']
+        personality = request.form['personality']
+        imageURL = request.form['imageURL']
+        intakeDate = request.form['intakeDate']
+        if request.form['adoptedDate']:
+            adoptedDate = request.form['adoptedDate']
+        else:
+            adoptedDate = None
+        adoptionFee = request.form['adoptionFee']
+
+        update_query = f"""
+            UPDATE Animals 
+            SET shelter_id = {f"{shelterId}" if shelterId else 'NULL'}, animal_name = '{animalName}', \
+                birthdate = '{birthdate}', gender = '{gender}', \
+                species_type = '{speciesType}', breed = '{breed}', \
+                personality = '{personality}', image_url = '{imageURL}', \
+                intake_date = '{intakeDate}', \
+                adopted_date = {f"'{adoptedDate}'" if adoptedDate else 'NULL'}, \
+                adoption_fee = {adoptionFee}
+            WHERE id = {animal_id};"""
+        print(update_query)
+        execute_query(update_query)
+        return redirect(url_for('edit_animals'))
     else:
         return redirect(url_for('edit_animals'))
 
@@ -349,27 +392,39 @@ def update_app_approval(app_id, app_status):
 
 @app.route("/shelters")
 def shelters():
-    return render_template('nw57_shelters.j2', shelters_data=shelters_data)
+    query = """
+            SELECT *
+            FROM Shelters;
+            """
+    db_shelters = execute_query(query)
+    return render_template('nw57_shelters.j2', shelters_data=db_shelters)
 
 @app.route("/edit-shelters")
 def edit_shelters():
-    return render_template('nw57_edit_shelters.j2', shelters_data=shelters_data)
+    query = """
+            SELECT *
+            FROM Shelters;
+            """
+    db_shelters = execute_query(query)
+    return render_template('nw57_edit_shelters.j2', shelters_data=db_shelters)
 
 @app.route("/delete-shelter/<int:shelter_id>", methods=['POST'])
 def delete_shelter(shelter_id):
-    shelterID = shelter_id
-    print("Deleting Shelter ID: ", shelterID)
+    delete_query = f"""
+            DELETE FROM Shelters WHERE id = {shelter_id};
+            """
+    # print(delete_query)
+    execute_query(delete_query)
     return redirect(url_for('edit_shelters'))
 
 @app.route("/insert-shelter", methods=['POST'])
 def insert_shelter():
-    if request.method == "POST":
-        shelterName = request.form['shelter_name']
-        street = request.form['street']
-        city = request.form['city']
-        state = request.form['state']
-        zipCode = request.form['zip_code']
-        print("Adding New Shelter:", shelterName)
+    insert_query = f"""
+            INSERT INTO Shelters(shelter_name, street, city, state, zip_code)
+            VALUES ("{request.form['shelter_name']}", "{request.form['street']}", "{request.form['city']}", "{request.form['state']}", "{request.form['zip_code']}");
+            """
+    # print(insert_query)
+    execute_query(insert_query)
     return redirect(url_for('edit_shelters'))
 
 if __name__ == "__main__":

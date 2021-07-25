@@ -8,7 +8,7 @@
 <a href="/edit-animals"><button class="btn btn-secondary">Back to All Animals</button></a>
 <br><br>
 
-<form action="/insert-animal" method="POST">
+<form action="/update_animal/{{animal_id}}" method="POST">
     <div class="form-group">
         <label for="animalName">Animal Name</label>
         <input type="text" class="form-control" name="animalName" id="animalName" value="{{animal.animal_name}}">
@@ -18,17 +18,14 @@
     {# Select default value based on https://stackoverflow.com/questions/57896326/ #}
     {# TODO: Import shelter names instead of hardcoding #}
     <div class="form-group">
-        <label for="shelterName">Shelter Name</label>
-        <select class="form-control" name="shelterName" id="shelterName" value='{{animal.shelter_name}}'>
-            <option value="Wag'on Town" {{ "selected = 'selected' " if animal.shelter_name == "Wag'on Town" else "" }}>
-                Wag'on Town
+        <label for="shelterId">Shelter Name</label>
+        <select class="form-control" name="shelterId" id="shelterId" value='{{animal.shelter_name}}'>
+            <option value="None">None</option>
+            {% for shelter in shelters %}
+            <option value="{{ shelter.id }}" {{ "selected = 'selected' " if animal.shelter_name == shelter.shelter_name else "" }}>
+                {{ shelter.shelter_name }}
             </option>
-            <option value="Frosty Knoll" {{ "selected = 'selected' " if animal.shelter_name == "Frosty Knoll" else "" }}>
-                Frosty Knoll
-            </option>
-            <option value="The Comfy Couch" {{ "selected = 'selected' " if animal.shelter_name == "The Comfy Couch" else "" }}>
-                The Comfy Couch
-            </option>
+            {% endfor %}
         </select>
     </div>
     <br>
