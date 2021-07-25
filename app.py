@@ -1,7 +1,6 @@
 from flask import Flask, render_template, request, redirect, flash, url_for
 import database.db_connector as db
 import os
-import json
 
 # Database connection
 db_connection = db.connect_to_db()
@@ -189,7 +188,6 @@ def animals():
     shelter_filter = request.args.get('shelter', type = str)
     available_filter = request.args.get('available', type = str)
     species_type_filter = request.args.get('species_type', type = str)
-    print(shelter_filter)
     if shelter_filter:
         # Filter Animal Shelters that are NULL
         if shelter_filter == 'None':
@@ -239,27 +237,19 @@ def animals():
 
 @app.route('/animals/<int:animal_id>', methods=['GET', 'POST'])
 def pet_profile(animal_id):
-    if request.method == 'POST': 
-        # Implement a method for this POST
-        animalID = animal_id
-        homeOwnership = request.form["homeOwnership"]
-        children = request.form["children"]
-        firstPet = request.form["firstPet"]
-        petsInHome = request.form["petsInHome"]
-
-        print('Submitted New Application for animalID:', animalID)
-        return redirect(url_for('pet_profile', animal_id=animal_id))
-    else:
-        db_animals = execute_query(f"""
-            SELECT Animals.id, shelter_id, animal_name, birthdate, gender, species_type, breed, personality, image_url, intake_date, adopted_date, adoption_fee, Shelters.id, shelter_name
-            FROM Animals 
-            LEFT JOIN Shelters ON shelter_id = Shelters.id
-            WHERE Animals.id = {animal_id};""")
-        try: 
-            animal = db_animals[0]
-            return render_template('nw57_pet_profile.j2', animal_id=animal_id, animal=animal)
-        except IndexError as error:
-            return('Animal not found')
+    db_animals = execute_query(f"""
+        SELECT Animals.id, shelter_id, animal_name, birthdate, gender, species_type, breed, personality, image_url, intake_date, adopted_date, adoption_fee, Shelters.id, shelter_name
+        FROM Animals 
+        LEFT JOIN Shelters ON shelter_id = Shelters.id
+        WHERE Animals.id = {animal_id};""")
+    db_users = execute_query(f"""
+        SELECT id, first_name, last_name FROM Users;
+        """)
+    try: 
+        animal = db_animals[0]
+        return render_template('nw57_pet_profile.j2', animal_id=animal_id, animal=animal, users=db_users)
+    except IndexError as error:
+        return('Animal not found')
 
 
 @app.route("/insert-animal", methods=['GET', 'POST'])
@@ -401,6 +391,25 @@ def update_app_approval(app_id, app_status):
     users_roles_redirect_url = "/edit-apps/" + str(app_id)
     return redirect(users_roles_redirect_url)
 
+# INSERT Application for specific animal
+@app.route("/insert-app/<int:animal_id>", methods=['GET', 'POST'])
+def insert_app(animal_id):
+    req = request.form
+    insert_app_query = f"""
+        INSERT INTO Applications(
+            user_id, animal_id, application_date, home_ownership,
+            has_children, first_pet, pets_in_home, approval_status)
+        VALUES (
+            {req['user-select']}, {str(animal_id)}, 
+            {f"'{req['appDate']}'" if req['appDate'] else 'NULL'},
+            {req['homeOwnership']}, {req['children']}, {req['firstPet']},
+            {req['petsInHome']}, NULL
+        );
+        """
+    execute_query(insert_app_query)
+    flash("Application submitted successfully!")
+    profile_redirect_url = '/animals/' + str(animal_id)
+    return redirect(profile_redirect_url)
 
 @app.route("/shelters")
 def shelters():
