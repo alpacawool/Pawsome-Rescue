@@ -5,24 +5,23 @@ import os
 # Database connection
 db_connection = db.connect_to_db()
 
+# # Testing with User Object Below
+# from test_object.test_users import User, test_users
+# from test_object.test_roles import Role, test_roles
+# from test_object.test_users_roles import User_Role, test_users_roles
+# from test_object.test_animals import Animal, test_animals
+# from test_object.test_shelters import Shelter, test_shelters
+# from test_object.test_apps import Apply, test_apps
 
-# Testing with User Object Below
-from test_object.test_users import User, test_users
-from test_object.test_roles import Role, test_roles
-from test_object.test_users_roles import User_Role, test_users_roles
-from test_object.test_animals import Animal, test_animals
-from test_object.test_shelters import Shelter, test_shelters
-from test_object.test_apps import Apply, test_apps
-
-users = test_users
-roles = test_roles
-users_roles = test_users_roles
-roles = test_roles
-users_roles = test_users_roles
-animals_data = test_animals
-shelters_data = test_shelters
-animal_apps = test_apps # preventing confusion with app
-# End Testing Content Above
+# users = test_users
+# roles = test_roles
+# users_roles = test_users_roles
+# roles = test_roles
+# users_roles = test_users_roles
+# animals_data = test_animals
+# shelters_data = test_shelters
+# animal_apps = test_apps # preventing confusion with app
+# # End Testing Content Above
 
 # Database execute query and return results
 def execute_query(query):
@@ -49,15 +48,23 @@ def index_page():
 def settings():
     return render_template('nw57_settings.j2')
 
+# Users Routes
+
+"""
+/edit-users
+Entity: Users
+Functions: SELECT all Users
+"""
 @app.route("/edit-users")
 def edit_users():
     db_users = execute_query("SELECT * FROM Users;")
-    return render_template('nw57_edit_users.j2', users = db_users)
+    return render_template('Users/nw57_edit_users.j2', users = db_users)
 
-@app.route("/signup")
-def signup():
-    return render_template("nw57_signup.j2")
-
+"""
+/create-user
+Entity: Users
+Functions: INSERT new User
+"""
 @app.route("/create-user", methods=['POST'])
 def create_user():
     req = request.form
@@ -73,6 +80,11 @@ def create_user():
         return redirect('/edit-users')
     return redirect("/")
 
+"""
+/update-user/<int:user_id>
+Entity: Users
+Functions: UPDATE individual Users
+"""
 @app.route("/update-user/<int:user_id>", methods=['GET', 'POST'])
 def update_user(user_id):
     if request.method == 'POST':
@@ -88,12 +100,23 @@ def update_user(user_id):
         flash(update_user_success)
     return redirect("/edit-users")
 
+# Roles Routes
 
+"""
+/edit-roles
+Entity: Roles
+Functions: SELECT all Roles
+"""
 @app.route("/edit-roles")
 def edit_roles():
     db_roles = execute_query('SELECT * FROM Roles;')
-    return render_template('nw57_edit_roles.j2', roles=db_roles)
+    return render_template('Roles/nw57_edit_roles.j2', roles=db_roles)
 
+"""
+/insert-roles
+Entity: Roles
+Functions: INSERT new Role
+"""
 @app.route("/insert-role", methods=['POST'])
 def insert_role():
     if request.method == 'POST':
@@ -106,7 +129,11 @@ def insert_role():
         flash(success_message)
     return redirect("/edit-roles")
 
-
+"""
+/update-role/<int:role_id>
+Entity: Roles
+Functions: UPDATE individual Role
+"""
 @app.route("/update-role/<int:role_id>", methods=['GET', 'POST'])
 def update_role(role_id):
     if request.method == 'POST':
@@ -116,9 +143,16 @@ def update_role(role_id):
             '" WHERE id = ' + str(role_id) + ';'
         execute_query(update_role_query)
         flash("Updated role successfully!")
-
     return redirect("/edit-roles")
 
+# Users_Roles Routes
+
+"""
+/edit-users/roles/<int:user_id>
+Entity: Users_Roles
+Functions: SELECT Users_Roles (Roles that belong to individual Users)
+Relationships: Users and Roles (M:M)
+"""
 @app.route("/edit-users/roles/<int:user_id>")
 def edit_users_roles(user_id):
     db_user_query = 'SELECT * FROM Users ' \
@@ -131,13 +165,18 @@ def edit_users_roles(user_id):
     db_users_roles = execute_query(db_user_role_query)
     db_roles = execute_query('SELECT * FROM Roles;')
     return render_template(
-        "nw57_user_role_list.j2", 
+        "Users_Roles/nw57_user_role_list.j2", 
         users_roles = db_users_roles,
         user = db_user,
         roles = db_roles
     )
 
-# Assign new Roles and Users relationship
+"""
+/create-users-roles/<int:user_id>
+Entity: Users_Roles
+Functions: INSERT new Users_Roles
+Relationships: Users and Roles (M:M)
+"""
 @app.route("/create-users-roles/<int:user_id>", methods=['POST'])
 def create_users_roles(user_id):
     role_id = request.form.get('roles')
@@ -148,7 +187,12 @@ def create_users_roles(user_id):
     flash('Added role successfully!' , 'insert')
     return redirect(users_roles_redirect_url)
 
-# Delete Roles and Users relationship
+"""
+/delete-users-roles/<int:users_roles_id>
+Entity: Users_Roles
+Functions: DELETE individual Users_Roles
+Relationships: Users and Roles (M:M)
+"""
 @app.route("/delete-users-roles/<int:users_roles_id>", methods=['POST'])
 def delete_users_roles(users_roles_id):
     current_user_id_query = 'SELECT user_id FROM Users_Roles ' \
@@ -163,6 +207,14 @@ def delete_users_roles(users_roles_id):
     users_roles_redirect_url = "/edit-users/roles/" + str(current_user_id)
     return redirect(users_roles_redirect_url)
 
+"""
+/view-users-roles
+Entity: Users_Roles, Users, Roles
+Functions: SELECT all Users_Roles,
+           SELECT Users first_name, last_name
+           SELECT Roles role_name
+Relationships: Users and Roles (M:M)
+"""
 @app.route("/view-users-roles")
 def view_users_roles():
     select_users_roles_query = """
@@ -176,12 +228,25 @@ def view_users_roles():
         ORDER BY r.id ASC;
         """
     db_users_roles = execute_query(select_users_roles_query)
-    return render_template("nw57_view_users_roles.j2", users_roles = db_users_roles)
+    return render_template("Users_Roles/nw57_view_users_roles.j2", 
+        users_roles = db_users_roles)
 
+# Animals Routes
+
+"""
+Entity: Animals, Shelters
+Functions: SELECT all Animals and
+           SELECT all Shelters
+           Filter Animals by shelter, availability, or species
+Relationships: M:1 relationship between Animals and Shelters
+"""
 @app.route("/animals")
 def animals():
     db_animals = execute_query("""
-            SELECT Animals.id, shelter_id, animal_name, birthdate, gender, species_type, breed, personality, image_url, intake_date, adopted_date, adoption_fee, Shelters.id, shelter_name
+            SELECT Animals.id, shelter_id, animal_name, birthdate, 
+                   gender, species_type, breed, personality, image_url, 
+                   intake_date, adopted_date, adoption_fee, Shelters.id, 
+                   shelter_name
             FROM Animals 
             LEFT JOIN Shelters ON shelter_id = Shelters.id
             ORDER BY Animals.id ASC;""")
@@ -205,51 +270,90 @@ def animals():
             db_animals_filtered = execute_query(f"""
                 SELECT Animals.id, shelter_id, animal_name,
                     birthdate, gender, species_type, breed, personality,
-                    image_url, intake_date, adopted_date, adoption_fee, Shelters.id, 
-                    shelter_name
+                    image_url, intake_date, adopted_date, adoption_fee, 
+                    Shelters.id, shelter_name
                 FROM Animals 
                 LEFT JOIN Shelters ON shelter_id = Shelters.id
                 WHERE shelter_name IS NULL
                 ORDER BY Animals.id ASC;""")
         else:
             db_animals_filtered = execute_query(f"""
-                SELECT Animals.id, shelter_id, animal_name, birthdate, gender, species_type, breed, personality, image_url, intake_date, adopted_date, adoption_fee, Shelters.id, shelter_name
+                SELECT Animals.id, shelter_id, animal_name, 
+                    birthdate, gender, species_type, breed, personality, 
+                    image_url, intake_date, adopted_date, adoption_fee, 
+                    Shelters.id, shelter_name
                 FROM Animals 
                 LEFT JOIN Shelters ON shelter_id = Shelters.id
                 WHERE shelter_name = '{shelter_filter}'
                 ORDER BY Animals.id ASC;""")
-        return render_template('nw57_animals.j2', animals_data=db_animals_filtered, distinct_shelters=distinct_shelters, distinct_species_type=distinct_species_type)
+        return render_template('Animals/nw57_animals.j2', 
+            animals_data=db_animals_filtered, 
+            distinct_shelters=distinct_shelters, 
+            distinct_species_type=distinct_species_type
+        )
     elif available_filter:
         if available_filter == 'available':
             db_animals_filtered = execute_query("""
-            SELECT Animals.id, shelter_id, animal_name, birthdate, gender, species_type, breed, personality, image_url, intake_date, adopted_date, adoption_fee, Shelters.id, shelter_name
+            SELECT Animals.id, shelter_id, animal_name,
+                birthdate, gender, species_type, breed, personality, 
+                image_url, intake_date, adopted_date, adoption_fee, 
+                Shelters.id, shelter_name
             FROM Animals 
             LEFT JOIN Shelters ON shelter_id = Shelters.id
             WHERE adopted_date IS NULL
             ORDER BY Animals.id ASC;""")
         else:   # if available_filter == 'adopted'
             db_animals_filtered = execute_query("""
-            SELECT Animals.id, shelter_id, animal_name, birthdate, gender, species_type, breed, personality, image_url, intake_date, adopted_date, adoption_fee, Shelters.id, shelter_name
+            SELECT Animals.id, shelter_id, animal_name, 
+                birthdate, gender, species_type, breed, personality, 
+                image_url, intake_date, adopted_date, adoption_fee,
+                Shelters.id, shelter_name
             FROM Animals 
             LEFT JOIN Shelters ON shelter_id = Shelters.id
             WHERE adopted_date IS NOT NULL
             ORDER BY Animals.id ASC;""")
-        return render_template('nw57_animals.j2', animals_data=db_animals_filtered, distinct_shelters=distinct_shelters, distinct_species_type=distinct_species_type)
+        return render_template('Animals/nw57_animals.j2', 
+            animals_data=db_animals_filtered, 
+            distinct_shelters=distinct_shelters, 
+            distinct_species_type=distinct_species_type
+        )
     elif species_type_filter:
         db_animals_filtered = execute_query(f"""
-            SELECT Animals.id, shelter_id, animal_name, birthdate, gender, species_type, breed, personality, image_url, intake_date, adopted_date, adoption_fee, Shelters.id, shelter_name
+            SELECT Animals.id, shelter_id, animal_name, birthdate, 
+                gender, species_type, breed, personality, image_url, 
+                intake_date, adopted_date, adoption_fee, 
+                Shelters.id, shelter_name
             FROM Animals 
             LEFT JOIN Shelters ON shelter_id = Shelters.id
             WHERE species_type = '{species_type_filter}'
             ORDER BY Animals.id ASC;""")
-        return render_template('nw57_animals.j2', animals_data=db_animals_filtered, distinct_shelters=distinct_shelters, distinct_species_type=distinct_species_type)
+        return render_template('Animals/nw57_animals.j2', 
+            animals_data=db_animals_filtered, 
+            distinct_shelters=distinct_shelters, 
+            distinct_species_type=distinct_species_type
+        )
     else:   # no filters
-        return render_template('nw57_animals.j2', animals_data=db_animals, distinct_shelters=distinct_shelters, distinct_species_type=distinct_species_type)
+        return render_template('Animals/nw57_animals.j2', 
+            animals_data=db_animals, 
+            distinct_shelters=distinct_shelters, 
+            distinct_species_type=distinct_species_type
+        )
 
+"""
+/animals/<int:animal_id>
+Entity: Animals, Shelters, Users
+Function: SELECT individual Animals to view their pet profile
+          SELECT individual Shelters
+          SELECT all Users (for /insert-app/ route in Applications)
+Relationships: M:1 relationship between Animals and Shelters
+"""
 @app.route('/animals/<int:animal_id>', methods=['GET', 'POST'])
 def pet_profile(animal_id):
     db_animals = execute_query(f"""
-        SELECT Animals.id, shelter_id, animal_name, birthdate, gender, species_type, breed, personality, image_url, intake_date, adopted_date, adoption_fee, Shelters.id, shelter_name
+        SELECT Animals.id, shelter_id, animal_name, birthdate,
+            gender, species_type, breed, personality, image_url, 
+            intake_date, adopted_date, adoption_fee,
+            Shelters.id, shelter_name
         FROM Animals 
         LEFT JOIN Shelters ON shelter_id = Shelters.id
         WHERE Animals.id = {animal_id};""")
@@ -258,11 +362,21 @@ def pet_profile(animal_id):
         """)
     try: 
         animal = db_animals[0]
-        return render_template('nw57_pet_profile.j2', animal_id=animal_id, animal=animal, users=db_users)
+        return render_template('Animals/nw57_pet_profile.j2', 
+            animal_id=animal_id, 
+            animal=animal, 
+            users=db_users
+        )
     except IndexError as error:
         return('Animal not found')
 
-
+"""
+/insert-animal
+Entity: Animals, Shelters
+Functions: INSERT individual Animals
+           SELECT Shelter by id, shelter_name
+Relationships: M:1 Relationship between Animals and Shelters
+"""
 @app.route("/insert-animal", methods=['GET', 'POST'])
 def insert_animal():
     if request.method == 'POST': 
@@ -281,12 +395,14 @@ def insert_animal():
             adoptedDate = None
         adoptionFee = request.form['adoptionFee']
 
-        # utiized this answer to help with inserting dates or NULLs into db: https://stackoverflow.com/a/66739228
+        # utiized this answer to help with inserting dates or NULLs into db: 
+        # https://stackoverflow.com/a/66739228
         query = f"""
             INSERT INTO Animals(shelter_id, animal_name, birthdate, \
             gender, species_type, breed, personality, image_url, \
             intake_date, adopted_date, adoption_fee)
-            VALUES ({f"'{shelterId}'" if shelterId else 'NULL'}, '{animalName}', '{birthdate}', \
+            VALUES ({f"'{shelterId}'" if shelterId else 'NULL'}, \
+            '{animalName}', '{birthdate}', \
             '{gender}', '{speciesType}', '{breed}', '{personality}', \
             '{imageURL}', '{intakeDate}', \
             {f"'{adoptedDate}'" if adoptedDate else 'NULL'}, {adoptionFee});
@@ -297,9 +413,15 @@ def insert_animal():
         shelterQueryResult = execute_query("""
             SELECT id, shelter_name
             FROM Shelters;""")
-        return render_template('nw57_add_animal.j2', shelters = shelterQueryResult)
+        return render_template('Animals/nw57_add_animal.j2', shelters = shelterQueryResult)
 
-# View general information of all the animals
+"""
+/edit-animals
+Entity: Animals, Shelters
+Functions: SELECT all Animals
+           SELECT Shelters by id
+Relationships: M:1 relationship between Animals and Shelters
+"""
 @app.route("/edit-animals")
 def edit_animals():
     db_animals = execute_query("""
@@ -307,9 +429,15 @@ def edit_animals():
             FROM Animals 
             LEFT JOIN Shelters ON shelter_id = Shelters.id
             ORDER BY Animals.id ASC;""")
-    return render_template('nw57_update_animals.j2', animals_data=db_animals)
+    return render_template('Animals/nw57_update_animals.j2', animals_data=db_animals)
 
-# View more detail of a single animal and update information if necessary
+"""
+/edit-animals/<int:animal_id>
+Entity: Animals, Shelters
+Functions: SELECT individual Animals
+           SELECT all Shelters
+Relationships: M:1 Relationship between Animals and Shelters
+"""
 @app.route("/edit-animals/<int:animal_id>",methods =['GET', 'POST'])
 def edit_animal_detail(animal_id):
     db_animals = execute_query(f"""
@@ -322,10 +450,19 @@ def edit_animal_detail(animal_id):
             FROM Shelters;""")
     try: 
         animal = db_animals[0]
-        return render_template('nw57_update_animal_detail.j2', animal_id = animal_id, animal = animal, shelters = db_shelters)
+        return render_template('Animals/nw57_update_animal_detail.j2', 
+            animal_id = animal_id, 
+            animal = animal, 
+            shelters = db_shelters
+        )
     except IndexError as error:
         return('Animal not found')
 
+"""
+/update_animal/<int:animal_id>
+Entity: Animals
+Functions: UPDATE individual Animals
+"""
 @app.route("/update_animal/<int:animal_id>", methods=['GET', 'POST'])
 def update_animals(animal_id):
     if request.method == 'POST': 
@@ -348,7 +485,9 @@ def update_animals(animal_id):
 
         update_query = f"""
             UPDATE Animals 
-            SET shelter_id = {f"{shelterId}" if shelterId else 'NULL'}, animal_name = '{animalName}', \
+            SET shelter_id = \
+            {f"{shelterId}" if shelterId else 'NULL'}, \
+                animal_name = '{animalName}', \
                 birthdate = '{birthdate}', gender = '{gender}', \
                 species_type = '{speciesType}', breed = '{breed}', \
                 personality = '{personality}', image_url = '{imageURL}', \
@@ -362,6 +501,17 @@ def update_animals(animal_id):
     else:
         return redirect(url_for('edit_animals'))
 
+# Applications Routes
+
+"""
+/edit-apps
+Entity: Applications, Animals, Users
+Functions: SELECT all Applications,
+           SELECT Users by Users.id,
+           SELECT Animals by Animal.id
+Relationships: M:1 Relationship between Applications and Animals
+               M:1 Relationship between Applications and Users
+"""
 @app.route("/edit-apps")
 def edit_apps():
     select_app_query = 'SELECT app.id, app.user_id, app.animal_id, ' \
@@ -373,8 +523,17 @@ def edit_apps():
         'ORDER BY app.id ASC;'
     db_animal_apps = execute_query(select_app_query)
     return render_template(
-        'nw57_edit_apps.j2', animal_apps=db_animal_apps)
+        'Applications/nw57_edit_apps.j2', animal_apps=db_animal_apps)
 
+"""
+/edit-apps/<int:app_id>
+Entity: Applications, Animals, Users
+Functions: SELECT individual Applications,
+           SELECT individual Users by Users.id,
+           SELECT individual Animals by Animal.id
+Relationships: M:1 Relationship between Applications and Animals
+               M:1 Relationship between Applications and Users
+"""
 @app.route("/edit-apps/<int:app_id>")
 def edit_app_detail(app_id):
     select_app_detail_query = 'SELECT app.*, ' \
@@ -385,9 +544,14 @@ def edit_app_detail(app_id):
         'WHERE app.id = ' + str(app_id) + ';'
     db_current_app = execute_query(select_app_detail_query)
     return render_template(
-        'nw57_edit_app_detail.j2', 
+        'Applications/nw57_edit_app_detail.j2', 
             current_app = db_current_app[0])
 
+"""
+/update-app/<int:app_id>/<int:app_status>
+Entity: Applications
+Functions: UPDATE Application approval boolean
+"""
 @app.route("/update-app/<int:app_id>/<int:app_status>")
 def update_app_approval(app_id, app_status):
     approval_string = None
@@ -403,7 +567,11 @@ def update_app_approval(app_id, app_status):
     users_roles_redirect_url = "/edit-apps/" + str(app_id)
     return redirect(users_roles_redirect_url)
 
-# INSERT Application for specific animal
+"""
+/insert-app/<int:animal_id>
+Entity: Applications
+Functions: INSERT individual Applications
+"""
 @app.route("/insert-app/<int:animal_id>", methods=['GET', 'POST'])
 def insert_app(animal_id):
     req = request.form
@@ -423,6 +591,13 @@ def insert_app(animal_id):
     profile_redirect_url = '/animals/' + str(animal_id)
     return redirect(profile_redirect_url)
 
+# Shelters Routes
+
+"""
+/shelters
+Entity: Shelters
+Functions: SELECT all Shelters
+"""
 @app.route("/shelters")
 def shelters():
     query = """
@@ -430,8 +605,13 @@ def shelters():
             FROM Shelters;
             """
     db_shelters = execute_query(query)
-    return render_template('nw57_shelters.j2', shelters_data=db_shelters)
+    return render_template('Shelters/nw57_shelters.j2', shelters_data=db_shelters)
 
+"""
+/edit-shelters
+Entity: Shelters
+Functions: SELECT all Shelters
+"""
 @app.route("/edit-shelters")
 def edit_shelters():
     query = """
@@ -439,8 +619,13 @@ def edit_shelters():
             FROM Shelters;
             """
     db_shelters = execute_query(query)
-    return render_template('nw57_edit_shelters.j2', shelters_data=db_shelters)
+    return render_template('Shelters/nw57_edit_shelters.j2', shelters_data=db_shelters)
 
+"""
+/delete-shelter/<int:shelter_id>
+Entity: Shelters
+Functions: DELETE individual Shelters
+"""
 @app.route("/delete-shelter/<int:shelter_id>", methods=['POST'])
 def delete_shelter(shelter_id):
     delete_query = f"""
@@ -450,11 +635,18 @@ def delete_shelter(shelter_id):
     execute_query(delete_query)
     return redirect(url_for('edit_shelters'))
 
+"""
+/insert-shelter
+Entity: Shelters
+Functions: INSERT individual Shelters
+"""
 @app.route("/insert-shelter", methods=['POST'])
 def insert_shelter():
     insert_query = f"""
-            INSERT INTO Shelters(shelter_name, street, city, state, zip_code)
-            VALUES ("{request.form['shelter_name']}", "{request.form['street']}", "{request.form['city']}", "{request.form['state']}", "{request.form['zip_code']}");
+            INSERT INTO Shelters (shelter_name, street, city, state, zip_code)
+            VALUES ("{request.form['shelter_name']}", 
+            "{request.form['street']}", "{request.form['city']}",
+             "{request.form['state']}", "{request.form['zip_code']}");
             """
     # print(insert_query)
     execute_query(insert_query)
