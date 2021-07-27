@@ -58,7 +58,7 @@ Functions: SELECT all Users
 @app.route("/edit-users")
 def edit_users():
     db_users = execute_query("SELECT * FROM Users;")
-    return render_template('nw57_edit_users.j2', users = db_users)
+    return render_template('Users/nw57_edit_users.j2', users = db_users)
 
 """
 /create-user
@@ -110,7 +110,7 @@ Functions: SELECT all Roles
 @app.route("/edit-roles")
 def edit_roles():
     db_roles = execute_query('SELECT * FROM Roles;')
-    return render_template('nw57_edit_roles.j2', roles=db_roles)
+    return render_template('Roles/nw57_edit_roles.j2', roles=db_roles)
 
 """
 /insert-roles
@@ -165,7 +165,7 @@ def edit_users_roles(user_id):
     db_users_roles = execute_query(db_user_role_query)
     db_roles = execute_query('SELECT * FROM Roles;')
     return render_template(
-        "nw57_user_role_list.j2", 
+        "Users_Roles/nw57_user_role_list.j2", 
         users_roles = db_users_roles,
         user = db_user,
         roles = db_roles
@@ -228,7 +228,7 @@ def view_users_roles():
         ORDER BY r.id ASC;
         """
     db_users_roles = execute_query(select_users_roles_query)
-    return render_template("nw57_view_users_roles.j2", 
+    return render_template("Users_Roles/nw57_view_users_roles.j2", 
         users_roles = db_users_roles)
 
 # Animals Routes
@@ -286,7 +286,7 @@ def animals():
                 LEFT JOIN Shelters ON shelter_id = Shelters.id
                 WHERE shelter_name = '{shelter_filter}'
                 ORDER BY Animals.id ASC;""")
-        return render_template('nw57_animals.j2', 
+        return render_template('Animals/nw57_animals.j2', 
             animals_data=db_animals_filtered, 
             distinct_shelters=distinct_shelters, 
             distinct_species_type=distinct_species_type
@@ -312,7 +312,7 @@ def animals():
             LEFT JOIN Shelters ON shelter_id = Shelters.id
             WHERE adopted_date IS NOT NULL
             ORDER BY Animals.id ASC;""")
-        return render_template('nw57_animals.j2', 
+        return render_template('Animals/nw57_animals.j2', 
             animals_data=db_animals_filtered, 
             distinct_shelters=distinct_shelters, 
             distinct_species_type=distinct_species_type
@@ -327,13 +327,13 @@ def animals():
             LEFT JOIN Shelters ON shelter_id = Shelters.id
             WHERE species_type = '{species_type_filter}'
             ORDER BY Animals.id ASC;""")
-        return render_template('nw57_animals.j2', 
+        return render_template('Animals/nw57_animals.j2', 
             animals_data=db_animals_filtered, 
             distinct_shelters=distinct_shelters, 
             distinct_species_type=distinct_species_type
         )
     else:   # no filters
-        return render_template('nw57_animals.j2', 
+        return render_template('Animals/nw57_animals.j2', 
             animals_data=db_animals, 
             distinct_shelters=distinct_shelters, 
             distinct_species_type=distinct_species_type
@@ -362,7 +362,7 @@ def pet_profile(animal_id):
         """)
     try: 
         animal = db_animals[0]
-        return render_template('nw57_pet_profile.j2', 
+        return render_template('Animals/nw57_pet_profile.j2', 
             animal_id=animal_id, 
             animal=animal, 
             users=db_users
@@ -413,7 +413,7 @@ def insert_animal():
         shelterQueryResult = execute_query("""
             SELECT id, shelter_name
             FROM Shelters;""")
-        return render_template('nw57_add_animal.j2', shelters = shelterQueryResult)
+        return render_template('Animals/nw57_add_animal.j2', shelters = shelterQueryResult)
 
 """
 /edit-animals
@@ -429,7 +429,7 @@ def edit_animals():
             FROM Animals 
             LEFT JOIN Shelters ON shelter_id = Shelters.id
             ORDER BY Animals.id ASC;""")
-    return render_template('nw57_update_animals.j2', animals_data=db_animals)
+    return render_template('Animals/nw57_update_animals.j2', animals_data=db_animals)
 
 """
 /edit-animals/<int:animal_id>
@@ -450,7 +450,7 @@ def edit_animal_detail(animal_id):
             FROM Shelters;""")
     try: 
         animal = db_animals[0]
-        return render_template('nw57_update_animal_detail.j2', 
+        return render_template('Animals/nw57_update_animal_detail.j2', 
             animal_id = animal_id, 
             animal = animal, 
             shelters = db_shelters
@@ -486,7 +486,7 @@ def update_animals(animal_id):
         update_query = f"""
             UPDATE Animals 
             SET shelter_id = \
-            {f"{shelterId}" if shelterId else 'NULL'}, 
+            {f"{shelterId}" if shelterId else 'NULL'}, \
                 animal_name = '{animalName}', \
                 birthdate = '{birthdate}', gender = '{gender}', \
                 species_type = '{speciesType}', breed = '{breed}', \
@@ -523,7 +523,7 @@ def edit_apps():
         'ORDER BY app.id ASC;'
     db_animal_apps = execute_query(select_app_query)
     return render_template(
-        'nw57_edit_apps.j2', animal_apps=db_animal_apps)
+        'Applications/nw57_edit_apps.j2', animal_apps=db_animal_apps)
 
 """
 /edit-apps/<int:app_id>
@@ -544,7 +544,7 @@ def edit_app_detail(app_id):
         'WHERE app.id = ' + str(app_id) + ';'
     db_current_app = execute_query(select_app_detail_query)
     return render_template(
-        'nw57_edit_app_detail.j2', 
+        'Applications/nw57_edit_app_detail.j2', 
             current_app = db_current_app[0])
 
 """
@@ -605,7 +605,7 @@ def shelters():
             FROM Shelters;
             """
     db_shelters = execute_query(query)
-    return render_template('nw57_shelters.j2', shelters_data=db_shelters)
+    return render_template('Shelters/nw57_shelters.j2', shelters_data=db_shelters)
 
 """
 /edit-shelters
@@ -619,7 +619,7 @@ def edit_shelters():
             FROM Shelters;
             """
     db_shelters = execute_query(query)
-    return render_template('nw57_edit_shelters.j2', shelters_data=db_shelters)
+    return render_template('Shelters/nw57_edit_shelters.j2', shelters_data=db_shelters)
 
 """
 /delete-shelter/<int:shelter_id>
@@ -643,8 +643,10 @@ Functions: INSERT individual Shelters
 @app.route("/insert-shelter", methods=['POST'])
 def insert_shelter():
     insert_query = f"""
-            INSERT INTO Shelters(shelter_name, street, city, state, zip_code)
-            VALUES ("{request.form['shelter_name']}", "{request.form['street']}", "{request.form['city']}", "{request.form['state']}", "{request.form['zip_code']}");
+            INSERT INTO Shelters (shelter_name, street, city, state, zip_code)
+            VALUES ("{request.form['shelter_name']}", 
+            "{request.form['street']}", "{request.form['city']}",
+             "{request.form['state']}", "{request.form['zip_code']}");
             """
     # print(insert_query)
     execute_query(insert_query)
