@@ -5,24 +5,6 @@ import os
 # Database connection
 db_connection = db.connect_to_db()
 
-# # Testing with User Object Below
-# from test_object.test_users import User, test_users
-# from test_object.test_roles import Role, test_roles
-# from test_object.test_users_roles import User_Role, test_users_roles
-# from test_object.test_animals import Animal, test_animals
-# from test_object.test_shelters import Shelter, test_shelters
-# from test_object.test_apps import Apply, test_apps
-
-# users = test_users
-# roles = test_roles
-# users_roles = test_users_roles
-# roles = test_roles
-# users_roles = test_users_roles
-# animals_data = test_animals
-# shelters_data = test_shelters
-# animal_apps = test_apps # preventing confusion with app
-# # End Testing Content Above
-
 # Database execute query and return results
 def execute_query(query):
     query = query
