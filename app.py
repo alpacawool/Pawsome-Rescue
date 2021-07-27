@@ -228,7 +228,8 @@ def view_users_roles():
         ORDER BY r.id ASC;
         """
     db_users_roles = execute_query(select_users_roles_query)
-    return render_template("nw57_view_users_roles.j2", users_roles = db_users_roles)
+    return render_template("nw57_view_users_roles.j2", 
+        users_roles = db_users_roles)
 
 # Animals Routes
 
@@ -242,7 +243,10 @@ Relationships: M:1 relationship between Animals and Shelters
 @app.route("/animals")
 def animals():
     db_animals = execute_query("""
-            SELECT Animals.id, shelter_id, animal_name, birthdate, gender, species_type, breed, personality, image_url, intake_date, adopted_date, adoption_fee, Shelters.id, shelter_name
+            SELECT Animals.id, shelter_id, animal_name, birthdate, 
+                   gender, species_type, breed, personality, image_url, 
+                   intake_date, adopted_date, adoption_fee, Shelters.id, 
+                   shelter_name
             FROM Animals 
             LEFT JOIN Shelters ON shelter_id = Shelters.id
             ORDER BY Animals.id ASC;""")
@@ -266,46 +270,74 @@ def animals():
             db_animals_filtered = execute_query(f"""
                 SELECT Animals.id, shelter_id, animal_name,
                     birthdate, gender, species_type, breed, personality,
-                    image_url, intake_date, adopted_date, adoption_fee, Shelters.id, 
-                    shelter_name
+                    image_url, intake_date, adopted_date, adoption_fee, 
+                    Shelters.id, shelter_name
                 FROM Animals 
                 LEFT JOIN Shelters ON shelter_id = Shelters.id
                 WHERE shelter_name IS NULL
                 ORDER BY Animals.id ASC;""")
         else:
             db_animals_filtered = execute_query(f"""
-                SELECT Animals.id, shelter_id, animal_name, birthdate, gender, species_type, breed, personality, image_url, intake_date, adopted_date, adoption_fee, Shelters.id, shelter_name
+                SELECT Animals.id, shelter_id, animal_name, 
+                    birthdate, gender, species_type, breed, personality, 
+                    image_url, intake_date, adopted_date, adoption_fee, 
+                    Shelters.id, shelter_name
                 FROM Animals 
                 LEFT JOIN Shelters ON shelter_id = Shelters.id
                 WHERE shelter_name = '{shelter_filter}'
                 ORDER BY Animals.id ASC;""")
-        return render_template('nw57_animals.j2', animals_data=db_animals_filtered, distinct_shelters=distinct_shelters, distinct_species_type=distinct_species_type)
+        return render_template('nw57_animals.j2', 
+            animals_data=db_animals_filtered, 
+            distinct_shelters=distinct_shelters, 
+            distinct_species_type=distinct_species_type
+        )
     elif available_filter:
         if available_filter == 'available':
             db_animals_filtered = execute_query("""
-            SELECT Animals.id, shelter_id, animal_name, birthdate, gender, species_type, breed, personality, image_url, intake_date, adopted_date, adoption_fee, Shelters.id, shelter_name
+            SELECT Animals.id, shelter_id, animal_name,
+                birthdate, gender, species_type, breed, personality, 
+                image_url, intake_date, adopted_date, adoption_fee, 
+                Shelters.id, shelter_name
             FROM Animals 
             LEFT JOIN Shelters ON shelter_id = Shelters.id
             WHERE adopted_date IS NULL
             ORDER BY Animals.id ASC;""")
         else:   # if available_filter == 'adopted'
             db_animals_filtered = execute_query("""
-            SELECT Animals.id, shelter_id, animal_name, birthdate, gender, species_type, breed, personality, image_url, intake_date, adopted_date, adoption_fee, Shelters.id, shelter_name
+            SELECT Animals.id, shelter_id, animal_name, 
+                birthdate, gender, species_type, breed, personality, 
+                image_url, intake_date, adopted_date, adoption_fee,
+                Shelters.id, shelter_name
             FROM Animals 
             LEFT JOIN Shelters ON shelter_id = Shelters.id
             WHERE adopted_date IS NOT NULL
             ORDER BY Animals.id ASC;""")
-        return render_template('nw57_animals.j2', animals_data=db_animals_filtered, distinct_shelters=distinct_shelters, distinct_species_type=distinct_species_type)
+        return render_template('nw57_animals.j2', 
+            animals_data=db_animals_filtered, 
+            distinct_shelters=distinct_shelters, 
+            distinct_species_type=distinct_species_type
+        )
     elif species_type_filter:
         db_animals_filtered = execute_query(f"""
-            SELECT Animals.id, shelter_id, animal_name, birthdate, gender, species_type, breed, personality, image_url, intake_date, adopted_date, adoption_fee, Shelters.id, shelter_name
+            SELECT Animals.id, shelter_id, animal_name, birthdate, 
+                gender, species_type, breed, personality, image_url, 
+                intake_date, adopted_date, adoption_fee, 
+                Shelters.id, shelter_name
             FROM Animals 
             LEFT JOIN Shelters ON shelter_id = Shelters.id
             WHERE species_type = '{species_type_filter}'
             ORDER BY Animals.id ASC;""")
-        return render_template('nw57_animals.j2', animals_data=db_animals_filtered, distinct_shelters=distinct_shelters, distinct_species_type=distinct_species_type)
+        return render_template('nw57_animals.j2', 
+            animals_data=db_animals_filtered, 
+            distinct_shelters=distinct_shelters, 
+            distinct_species_type=distinct_species_type
+        )
     else:   # no filters
-        return render_template('nw57_animals.j2', animals_data=db_animals, distinct_shelters=distinct_shelters, distinct_species_type=distinct_species_type)
+        return render_template('nw57_animals.j2', 
+            animals_data=db_animals, 
+            distinct_shelters=distinct_shelters, 
+            distinct_species_type=distinct_species_type
+        )
 
 """
 /animals/<int:animal_id>
@@ -318,7 +350,10 @@ Relationships: M:1 relationship between Animals and Shelters
 @app.route('/animals/<int:animal_id>', methods=['GET', 'POST'])
 def pet_profile(animal_id):
     db_animals = execute_query(f"""
-        SELECT Animals.id, shelter_id, animal_name, birthdate, gender, species_type, breed, personality, image_url, intake_date, adopted_date, adoption_fee, Shelters.id, shelter_name
+        SELECT Animals.id, shelter_id, animal_name, birthdate,
+            gender, species_type, breed, personality, image_url, 
+            intake_date, adopted_date, adoption_fee,
+            Shelters.id, shelter_name
         FROM Animals 
         LEFT JOIN Shelters ON shelter_id = Shelters.id
         WHERE Animals.id = {animal_id};""")
@@ -327,7 +362,11 @@ def pet_profile(animal_id):
         """)
     try: 
         animal = db_animals[0]
-        return render_template('nw57_pet_profile.j2', animal_id=animal_id, animal=animal, users=db_users)
+        return render_template('nw57_pet_profile.j2', 
+            animal_id=animal_id, 
+            animal=animal, 
+            users=db_users
+        )
     except IndexError as error:
         return('Animal not found')
 
@@ -356,12 +395,14 @@ def insert_animal():
             adoptedDate = None
         adoptionFee = request.form['adoptionFee']
 
-        # utiized this answer to help with inserting dates or NULLs into db: https://stackoverflow.com/a/66739228
+        # utiized this answer to help with inserting dates or NULLs into db: 
+        # https://stackoverflow.com/a/66739228
         query = f"""
             INSERT INTO Animals(shelter_id, animal_name, birthdate, \
             gender, species_type, breed, personality, image_url, \
             intake_date, adopted_date, adoption_fee)
-            VALUES ({f"'{shelterId}'" if shelterId else 'NULL'}, '{animalName}', '{birthdate}', \
+            VALUES ({f"'{shelterId}'" if shelterId else 'NULL'}, \
+            '{animalName}', '{birthdate}', \
             '{gender}', '{speciesType}', '{breed}', '{personality}', \
             '{imageURL}', '{intakeDate}', \
             {f"'{adoptedDate}'" if adoptedDate else 'NULL'}, {adoptionFee});
@@ -409,7 +450,11 @@ def edit_animal_detail(animal_id):
             FROM Shelters;""")
     try: 
         animal = db_animals[0]
-        return render_template('nw57_update_animal_detail.j2', animal_id = animal_id, animal = animal, shelters = db_shelters)
+        return render_template('nw57_update_animal_detail.j2', 
+            animal_id = animal_id, 
+            animal = animal, 
+            shelters = db_shelters
+        )
     except IndexError as error:
         return('Animal not found')
 
@@ -440,7 +485,9 @@ def update_animals(animal_id):
 
         update_query = f"""
             UPDATE Animals 
-            SET shelter_id = {f"{shelterId}" if shelterId else 'NULL'}, animal_name = '{animalName}', \
+            SET shelter_id = \
+            {f"{shelterId}" if shelterId else 'NULL'}, 
+                animal_name = '{animalName}', \
                 birthdate = '{birthdate}', gender = '{gender}', \
                 species_type = '{speciesType}', breed = '{breed}', \
                 personality = '{personality}', image_url = '{imageURL}', \
