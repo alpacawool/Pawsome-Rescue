@@ -5,8 +5,12 @@
 -- Animals
 -- Add Animals Page
 --  INSERT Animals
-INSERT INTO Animals(shelter_id, animal_name, birthdate, gender, species_type, breed, personality, image_url, intake_date, adopted_date, adoption_fee)
-VALUES (:shelter_id_from_shelter_SELECTion, :animal_name, :birthdate, :gender, :species_type, :breed, :personality, :image_url, :intake_date, :adopted_date, :adoption_fee);
+INSERT INTO Animals(shelter_id, animal_name, birthdate, gender, 
+    species_type, breed, personality, image_url, intake_date, 
+    adopted_date, adoption_fee)
+VALUES (:shelter_id_from_shelter_SELECTion, :animal_name, 
+    :birthdate, :gender, :species_type, :breed, :personality,
+    :image_url, :intake_date, :adopted_date, :adoption_fee);
 --  SELECT Shelters to populate Shelter Name Selection
 SELECT id, shelter_name
 FROM Shelters;
@@ -14,7 +18,12 @@ FROM Shelters;
 -- Update Animals Page
 --  UPDATE Animals
 UPDATE Animals 
-SET shelter_id = :shelter_id_from_shelter_SELECTion, animal_name = :animal_name, birthdate = :birthdate, gender = :gender, species_type = :species_type, breed = :breed, personality = :personality, image_url = :image_url, intake_date = :intake_date, adopted_date = :adopted_date, adoption_fee = :adoption_fee
+SET shelter_id = :shelter_id_from_shelter_SELECTion, 
+    animal_name = :animal_name, birthdate = :birthdate, 
+    gender = :gender, species_type = :species_type, 
+    breed = :breed, personality = :personality,
+     image_url = :image_url, intake_date = :intake_date, 
+     adopted_date = :adopted_date, adoption_fee = :adoption_fee
 WHERE id = :id_of_animal_to_be_updated;
 --  SELECT Shelters to populate Shelter Name Selection
 SELECT id, shelter_name
@@ -22,30 +31,56 @@ FROM Shelters;
 
 -- Filter Animals Page
 --  SELECT all Animals
-SELECT Animals.id, shelter_id, animal_name, birthdate, gender, species_type, breed, personality, image_url, intake_date, adopted_date, adoption_fee, Shelters.id, shelter_name
+SELECT Animals.id, shelter_id, animal_name, birthdate, 
+    gender, species_type, breed, personality, image_url, intake_date, 
+    adopted_date, adoption_fee, Shelters.id, shelter_name
 FROM Animals 
 LEFT JOIN Shelters ON shelter_id = Shelters.id
 ORDER BY Animals.id ASC;
+-- SELECT subset of Animals, based on Species, Shelter, and Adoption Filter
+-- Note: Available animals are filtered by : adopted_date is NULL
+--       Adopted animals are filtered by: adopted_date is NOT NULL
+--       Animals with no Shelter assigned are: shelter_name IS NULL
+SELECT Animals.id, shelter_id, animal_name,
+        birthdate, gender, species_type, breed, personality, 
+        image_url, intake_date, adopted_date, adoption_fee, 
+        Shelters.id, shelter_name
+FROM Animals 
+LEFT JOIN Shelters ON shelter_id = Shelters.id
+WHERE adopted_date IS NOT NULL
+    AND
+       species_type = :species_type_from_the_filter_dropdown
+    AND
+       shelter_name :shelter_name_from_the_filter_dropdown
+ORDER BY Animals.id ASC;
 --  SELECT subset of Animals - based on the Species Type Filter
-SELECT Animals.id, shelter_id, animal_name, birthdate, gender, species_type, breed, personality, image_url, intake_date, adopted_date, adoption_fee, Shelters.id, shelter_name
+SELECT Animals.id, shelter_id, animal_name, birthdate, gender, 
+    species_type, breed, personality, image_url, intake_date, 
+    adopted_date, adoption_fee, Shelters.id, shelter_name
 FROM Animals 
 LEFT JOIN Shelters ON shelter_id = Shelters.id
 WHERE species_type = :species_type_from_the_filter_dropdown
 ORDER BY Animals.id ASC;
 --  SELECT subset of Animals - based on the Shelter Name Filter
-SELECT Animals.id, shelter_id, animal_name, birthdate, gender, species_type, breed, personality, image_url, intake_date, adopted_date, adoption_fee, Shelters.id, shelter_name
+SELECT Animals.id, shelter_id, animal_name, birthdate, gender, 
+    species_type, breed, personality, image_url, intake_date, 
+    adopted_date, adoption_fee, Shelters.id, shelter_name
 FROM Animals 
 LEFT JOIN Shelters ON shelter_id = Shelters.id
 WHERE shelter_name = :shelter_name_from_the_filter_dropdown
 ORDER BY Animals.id ASC;
 --  SELECT subset of Animals - based on the Available Filter - Available
-SELECT Animals.id, shelter_id, animal_name, birthdate, gender, species_type, breed, personality, image_url, intake_date, adopted_date, adoption_fee, Shelters.id, shelter_name
+SELECT Animals.id, shelter_id, animal_name, birthdate, gender,
+    species_type, breed, personality, image_url, intake_date, 
+    adopted_date, adoption_fee, Shelters.id, shelter_name
 FROM Animals 
 LEFT JOIN Shelters ON shelter_id = Shelters.id
 WHERE adopted_date IS NULL
 ORDER BY Animals.id ASC;
 --  SELECT subset of Animals - based on the Available Filter - Adopted
-SELECT Animals.id, shelter_id, animal_name, birthdate, gender, species_type, breed, personality, image_url, intake_date, adopted_date, adoption_fee, Shelters.id, shelter_name
+SELECT Animals.id, shelter_id, animal_name, birthdate, gender, 
+    species_type, breed, personality, image_url, intake_date, 
+    adopted_date, adoption_fee, Shelters.id, shelter_name
 FROM Animals 
 LEFT JOIN Shelters ON shelter_id = Shelters.id
 WHERE adopted_date IS NOT NULL
@@ -53,7 +88,9 @@ ORDER BY Animals.id ASC;
 
 -- Pet Profile Pages (available from "Learn More About Me" links on Filter Animals Page)
 -- SELECT single pet by animal_id
-SELECT Animals.id, shelter_id, animal_name, birthdate, gender, species_type, breed, personality, image_url, intake_date, adopted_date, adoption_fee, Shelters.id, shelter_name
+SELECT Animals.id, shelter_id, animal_name, birthdate, gender, 
+    species_type, breed, personality, image_url, intake_date, 
+    adopted_date, adoption_fee, Shelters.id, shelter_name
 FROM Animals 
 LEFT JOIN Shelters ON shelter_id = Shelters.id
 WHERE Animals.id = :id_of_desired_animal;
@@ -121,7 +158,8 @@ SELECT * FROM Users;
 UPDATE Users
 SET first_name = :input_first_name,
     last_name = :input_last_name,
-    email_address = :input_email
+    email_address = :input_email,
+    password = :input_password
 WHERE id = :id_of_user;
 
 -- SELECT Roles for Specific User (Users_Roles)

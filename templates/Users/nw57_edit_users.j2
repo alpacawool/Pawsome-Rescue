@@ -1,9 +1,11 @@
 {% extends "nw57_layout.j2" %}
+
+{# track current page #}
+{% set active_page = 'settings' %}
+
 {% block title %}Pawsome Animal Rescue - Edit Users{% endblock title %} 
 {% block body_content %}
 
-{# Pencil Icon #}
-<script src="https://kit.fontawesome.com/e820c6b421.js" crossorigin="anonymous"></script>
 
 <br>
 <h2>Edit Users</h2>
@@ -66,6 +68,7 @@ M:M relationship with Roles, using intersection table Users_Roles with two forei
             <th scope="col">First</th>
             <th scope="col">Last</th>
             <th scope="col">Email Address</th>
+            <th scope="col">Password</th>
             <th scope="col"></th>
         </tr>
         </thead>
@@ -78,6 +81,7 @@ M:M relationship with Roles, using intersection table Users_Roles with two forei
             <td><input type="text" class="form-control" id="user_first" name="user_first" value="{{user.first_name}}"></td>
             <td><input type="text" class="form-control" id="user_last" name="user_last" value="{{user.last_name}}"></td>
             <td><input type="text" class="form-control" id="user_email" name="user_email" value="{{user.email_address}}"></td>
+            <td><input type="text" class="form-control" id="user_pass" name="user_pass" value="{{user.password}}"></td>
             <td><button class="btn btn-primary">Update</button></td>
             </form>
         </tr>

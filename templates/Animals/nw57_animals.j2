@@ -5,41 +5,89 @@
 
 {% block title %}Pawsome Animal Rescue - Animals{% endblock title %} 
 {% block body_content %}
+
+<script>
+  // Show selected dropdowns based on
+  // https://stackoverflow.com/questions/33413106
+  $('.dropdown-menu a').click(function(){
+    $('#selected').text($(this).text());
+  });
+</script>
+
 <br>
 <h1>Animals</h1>
 <br>
 
 {# Add filter options #}
-<span> Filter By: </span>
+<span> <b>Filter By: </b> </span>
 
 <div class="btn-group">
   <button type="button" class="btn btn-secondary dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false">
-    Shelter
+    {% if current_shelter %}
+      {{ current_shelter }}
+    {% else %}  
+      Shelter
+    {% endif %}
   </button>
   <ul class="dropdown-menu">
     {% for shelter in distinct_shelters %}
-        <li><a class="dropdown-item" href="/animals?shelter={{ shelter }}">{{ shelter }}</a></li>
+        {% if current_species and current_available %}
+           <li><a class="dropdown-item" href="/animals?shelter={{ shelter }}&species_type={{ current_species }}&available={{current_available}}">{{ shelter }}</a></li>
+        {% elif current_species %}
+          <li><a class="dropdown-item" href="/animals?shelter={{ shelter }}&species_type={{ current_species }}">{{ shelter }}</a></li>
+        {% elif current_available %}
+          <li><a class="dropdown-item" href="/animals?shelter={{ shelter }}&available={{ current_available }}">{{ shelter }}</a></li>
+        {% else %}
+          <li><a class="dropdown-item" href="/animals?shelter={{ shelter }}">{{ shelter }}</a></li>
+        {% endif %}
     {% endfor %}
   </ul>
 </div>
 
 <div class="btn-group">
   <button type="button" class="btn btn-secondary dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false">
-    Availability
+    {% if current_available %}
+      {{ current_available }}
+    {% else %}  
+      Availability
+    {% endif %}
   </button>
   <ul class="dropdown-menu">
-    <li><a class="dropdown-item" href="/animals?available=available">Available</a></li>
-    <li><a class="dropdown-item" href="/animals?available=adopted">Adopted</a></li>
+    {% if current_shelter and current_species %}
+    <li><a class="dropdown-item" href="/animals?available=Available&shelter={{current_shelter}}&species_type={{current_species}}">Available</a></li>
+    <li><a class="dropdown-item" href="/animals?available=Adopted&shelter={{current_shelter}}&species_type={{current_species}}">Adopted</a></li>
+    {% elif current_shelter %}
+    <li><a class="dropdown-item" href="/animals?available=Available&shelter={{current_shelter}}">Available</a></li>
+    <li><a class="dropdown-item" href="/animals?available=Adopted&shelter={{current_shelter}}">Adopted</a></li>
+    {% elif current_species %}
+    <li><a class="dropdown-item" href="/animals?available=Available&species_type={{current_species}}">Available</a></li>
+    <li><a class="dropdown-item" href="/animals?available=Adopted&species_type={{current_species}}">Adopted</a></li>
+    {% else %}
+    <li><a class="dropdown-item" href="/animals?available=Available">Available</a></li>
+    <li><a class="dropdown-item" href="/animals?available=Adopted">Adopted</a></li>
+    {% endif %}
   </ul>
 </div>
 
 <div class="btn-group">
   <button type="button" class="btn btn-secondary dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false">
-    Species Type
+    {% if current_species %}
+      {{ current_species }}
+    {% else %}  
+      Species
+    {% endif %}
   </button>
   <ul class="dropdown-menu">
     {% for species_type in distinct_species_type %}
+        {% if current_shelter and current_available %}
+        <li><a class="dropdown-item" href="/animals?species_type={{ species_type }}&shelter={{current_shelter}}&available={{current_available}}">{{ species_type }}</a></li>
+        {% elif current_shelter %}
+        <li><a class="dropdown-item" href="/animals?species_type={{ species_type }}&shelter={{current_shelter}}">{{ species_type }}</a></li>
+        {% elif current_available %}
+        <li><a class="dropdown-item" href="/animals?species_type={{ species_type }}&available={{current_available}}">{{ species_type }}</a></li>
+        {% else %}
         <li><a class="dropdown-item" href="/animals?species_type={{ species_type }}">{{ species_type }}</a></li>
+        {% endif %}
     {% endfor %}
   </ul>
 </div>
@@ -51,37 +99,41 @@
 
 {# Add if/then for showing all animals or filtered animals #}
 
-{% for animal in animals_data %}
-    <div class="row justify-content-center">
-        <div class="col-sm-8">
-            <div class="card">
-                <div class="row g-0">
-                    <div class="col-md-4">
-                        <img src="{{url_for('static', filename='img/'+ animal.image_url)}}" class="img-fluid rounded-start" alt="picture of animal">
-                    </div>
-                    <div class="col-md-8">
-                        <div class="card-body">
-                            <h5 class="card-title">{{animal.animal_name}}</h5>
-                            <h6 class="card-subtitle mb-2 text-muted">{{animal.breed}} - {{animal.species_type}}</h6>
-                            <p class="card-text">
-                                <ul>
-                                    <li>Personality: {{animal.personality}}</li>
-                                    {% if animal.adopted_date %}
-                                        <li>Adopted on: {{animal.adopted_date}}</li>
-                                    {% else %}
-                                        <li>Needs a Home! Learn More & Apply Below.</li>
-                                    {% endif %}
-                                </ul>
-                            </p>
-                            <p class="card-text"><small class="text-muted">Photo from <a href="https://unsplash.com/s/photos/cat-and-dog-pet?utm_source=unsplash&utm_medium=referral&utm_content=creditCopyText">Unsplash</a></small></p>
-                            <a href="/animals/{{animal.id}}" class="card-link">Learn More About Me</a>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
-    <br>
-{% endfor %}
+{% if animals_data|length < 1 %}
+<p>There were no animals found with this filter.</p>
+{% else %}
+  {% for animal in animals_data %}
+      <div class="row justify-content-center">
+          <div class="col-sm-8">
+              <div class="card">
+                  <div class="row g-0">
+                      <div class="col-md-4">
+                          <img src="{{url_for('static', filename='img/'+ animal.image_url)}}" class="img-fluid rounded-start" alt="picture of animal">
+                      </div>
+                      <div class="col-md-8">
+                          <div class="card-body">
+                              <h5 class="card-title">{{animal.animal_name}}</h5>
+                              <h6 class="card-subtitle mb-2 text-muted">{{animal.breed}} - {{animal.species_type}}</h6>
+                              <p class="card-text">
+                                  <ul>
+                                      <li>Personality: {{animal.personality}}</li>
+                                      {% if animal.adopted_date %}
+                                          <li>Adopted on: {{animal.adopted_date}}</li>
+                                      {% else %}
+                                          <li>Needs a Home! Learn More & Apply Below.</li>
+                                      {% endif %}
+                                  </ul>
+                              </p>
+                              <p class="card-text"><small class="text-muted">Photo from <a href="https://unsplash.com/s/photos/cat-and-dog-pet?utm_source=unsplash&utm_medium=referral&utm_content=creditCopyText">Unsplash</a></small></p>
+                              <a href="/animals/{{animal.id}}" class="card-link">Learn More About Me</a>
+                          </div>
+                      </div>
+                  </div>
+              </div>
+          </div>
+      </div>
+      <br>
+  {% endfor %}
+{% endif %}
 
 {% endblock body_content %}

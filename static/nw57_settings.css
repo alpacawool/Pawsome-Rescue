@@ -2,3 +2,16 @@
 .settings-grid a:hover, .settings-grid a:visited, .settings-grid a:link, .settings-grid a:active {
     text-decoration: none;
 }
+
+/* Style of each square in settings grid */
+.settings-square {
+    background:#525b63;
+    color:#edeeef;
+    border-radius:0.3em;
+}
+
+/* Settings grid square hover */
+.settings-square:hover {
+    background:#32373d;
+    color:#fff;
+}

@@ -8,23 +8,26 @@
 <br>
 <h1>Shelters</h1>
 <br>
-
-{% for shelter in shelters_data %}
-    <div class="row justify-content-center">
-        <div class="col-sm-6">
-            <div class="card text-center">
-                <div class="card-body">
-                    <h3 class="card-title">{{shelter.shelter_name}}</h3>
-                    <address>
-                    {{shelter.street}}<br>
-                    {{shelter.city}} {{shelter.state}} {{shelter.zip_code}} 
-                    </address>
-                    <a href="/animals?shelter={{ shelter.shelter_name }}" class="btn btn-primary">View Animals At This Location</a>
+{% if shelters_data|length < 1 %}
+<p>There are no existing shelters.</p>
+{% else %}
+    {% for shelter in shelters_data %}
+        <div class="row justify-content-center">
+            <div class="col-sm-6">
+                <div class="card text-center">
+                    <div class="card-body">
+                        <h3 class="card-title">{{shelter.shelter_name}}</h3>
+                        <address>
+                        {{shelter.street}}<br>
+                        {{shelter.city}} {{shelter.state}} {{shelter.zip_code}} 
+                        </address>
+                        <a href="/animals?shelter={{ shelter.shelter_name }}" class="btn btn-primary">View Animals At This Location</a>
+                    </div>
                 </div>
             </div>
         </div>
-    </div>
-    <br>
-{% endfor %}
+        <br>
+    {% endfor %}
+{% endif %}
 
 {% endblock body_content %}
