@@ -13,8 +13,7 @@
     <title>{% block title %}{% endblock title %}</title>
 </head>
 
-{# FontAwesome Icons #}
-<script src="https://kit.fontawesome.com/e820c6b421.js" crossorigin="anonymous"></script>
+
 
 
 <script type="text/javascript">
@@ -26,7 +25,7 @@
 <body>
 <nav class="navbar navbar-expand-sm navbar-dark bg-dark">
   <div class="container-fluid">
-    <a class="navbar-brand" href="/"><i class="fas fa-paw"></i> Pawsome</a>
+    <a class="navbar-brand p-1" href="/"><i class="fas fa-paw"></i> Pawsome</a>
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
       <span class="navbar-toggler-icon"></span>
     </button>
@@ -72,6 +71,7 @@
             <li><a class="dropdown-item" href="/edit-shelters">Shelters</a></li>
             <li><a class="dropdown-item" href="/edit-users">Users</a></li>
             <li><a class="dropdown-item" href="/edit-roles">Roles</a></li>
+            <li><a class="dropdown-item" href="/view-users-roles">Users_Roles</a></li>
           </ul>
         </li>
       </ul>
@@ -90,6 +90,8 @@
     </ul>
     </footer>
 
+    {# FontAwesome Icons #}
+    <script src="https://kit.fontawesome.com/e820c6b421.js" crossorigin="anonymous"></script>
     {# Popper and JQuery needed for navbar #}
     {# JQuery #}
     <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js"></script>
