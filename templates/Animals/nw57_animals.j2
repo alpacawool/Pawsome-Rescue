@@ -5,16 +5,29 @@
 
 {% block title %}Pawsome Animal Rescue - Animals{% endblock title %} 
 {% block body_content %}
+
+<script>
+  // Show selected dropdowns based on
+  // https://stackoverflow.com/questions/33413106
+  $('.dropdown-menu a').click(function(){
+    $('#selected').text($(this).text());
+  });
+</script>
+
 <br>
 <h1>Animals</h1>
 <br>
 
 {# Add filter options #}
-<span> Filter By: </span>
+<span> <b>Filter By: </b> </span>
 
 <div class="btn-group">
   <button type="button" class="btn btn-secondary dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false">
-    Shelter
+    {% if current_shelter %}
+      {{ current_shelter }}
+    {% else %}  
+      Shelter
+    {% endif %}
   </button>
   <ul class="dropdown-menu">
     {% for shelter in distinct_shelters %}
@@ -25,17 +38,25 @@
 
 <div class="btn-group">
   <button type="button" class="btn btn-secondary dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false">
-    Availability
+    {% if current_available %}
+      {{ current_available }}
+    {% else %}  
+      Availability
+    {% endif %}
   </button>
   <ul class="dropdown-menu">
-    <li><a class="dropdown-item" href="/animals?available=available">Available</a></li>
-    <li><a class="dropdown-item" href="/animals?available=adopted">Adopted</a></li>
+    <li><a class="dropdown-item" href="/animals?available=Available">Available</a></li>
+    <li><a class="dropdown-item" href="/animals?available=Adopted">Adopted</a></li>
   </ul>
 </div>
 
 <div class="btn-group">
   <button type="button" class="btn btn-secondary dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false">
-    Species Type
+    {% if current_species %}
+      {{ current_species }}
+    {% else %}  
+      Species
+    {% endif %}
   </button>
   <ul class="dropdown-menu">
     {% for species_type in distinct_species_type %}

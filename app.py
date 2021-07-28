@@ -272,10 +272,11 @@ def animals():
         return render_template('Animals/nw57_animals.j2', 
             animals_data=db_animals_filtered, 
             distinct_shelters=distinct_shelters, 
-            distinct_species_type=distinct_species_type
+            distinct_species_type=distinct_species_type,
+            current_shelter = shelter_filter
         )
     elif available_filter:
-        if available_filter == 'available':
+        if available_filter == 'Available':
             db_animals_filtered = execute_query("""
             SELECT Animals.id, shelter_id, animal_name,
                 birthdate, gender, species_type, breed, personality, 
@@ -298,7 +299,8 @@ def animals():
         return render_template('Animals/nw57_animals.j2', 
             animals_data=db_animals_filtered, 
             distinct_shelters=distinct_shelters, 
-            distinct_species_type=distinct_species_type
+            distinct_species_type=distinct_species_type,
+            current_available = available_filter
         )
     elif species_type_filter:
         db_animals_filtered = execute_query(f"""
@@ -313,7 +315,8 @@ def animals():
         return render_template('Animals/nw57_animals.j2', 
             animals_data=db_animals_filtered, 
             distinct_shelters=distinct_shelters, 
-            distinct_species_type=distinct_species_type
+            distinct_species_type=distinct_species_type,
+            current_species = species_type_filter
         )
     else:   # no filters
         return render_template('Animals/nw57_animals.j2', 
