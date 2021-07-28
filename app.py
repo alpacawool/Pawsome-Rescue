@@ -247,6 +247,205 @@ def animals():
     shelter_filter = request.args.get('shelter', type = str)
     available_filter = request.args.get('available', type = str)
     species_type_filter = request.args.get('species_type', type = str)
+
+    # All Three Filters
+    if shelter_filter and available_filter and species_type_filter:
+        if shelter_filter == 'None' and available_filter == 'Adopted':
+            db_animals_filtered = execute_query(f"""
+                SELECT Animals.id, shelter_id, animal_name,
+                    birthdate, gender, species_type, breed, personality, 
+                    image_url, intake_date, adopted_date, adoption_fee, 
+                    Shelters.id, shelter_name
+                FROM Animals 
+                LEFT JOIN Shelters ON shelter_id = Shelters.id
+                WHERE adopted_date IS NOT NULL
+                    AND
+                      species_type = '{species_type_filter}'
+                    AND
+                      shelter_name IS NULL
+                ORDER BY Animals.id ASC;""")
+        elif shelter_filter == 'None' and available_filter == 'Available':
+            db_animals_filtered = execute_query(f"""
+                SELECT Animals.id, shelter_id, animal_name,
+                    birthdate, gender, species_type, breed, personality, 
+                    image_url, intake_date, adopted_date, adoption_fee, 
+                    Shelters.id, shelter_name
+                FROM Animals 
+                LEFT JOIN Shelters ON shelter_id = Shelters.id
+                WHERE adopted_date IS NULL
+                    AND
+                      species_type = '{species_type_filter}'
+                    AND
+                      shelter_name IS NULL
+                ORDER BY Animals.id ASC;""")
+        elif available_filter == 'Available': 
+             db_animals_filtered = execute_query(f"""
+                SELECT Animals.id, shelter_id, animal_name,
+                    birthdate, gender, species_type, breed, personality, 
+                    image_url, intake_date, adopted_date, adoption_fee, 
+                    Shelters.id, shelter_name
+                FROM Animals 
+                LEFT JOIN Shelters ON shelter_id = Shelters.id
+                WHERE adopted_date IS NULL
+                    AND
+                      species_type = '{species_type_filter}'
+                    AND
+                      shelter_name = '{shelter_filter}'
+                ORDER BY Animals.id ASC;""") 
+        else:
+             db_animals_filtered = execute_query(f"""
+                SELECT Animals.id, shelter_id, animal_name,
+                    birthdate, gender, species_type, breed, personality, 
+                    image_url, intake_date, adopted_date, adoption_fee, 
+                    Shelters.id, shelter_name
+                FROM Animals 
+                LEFT JOIN Shelters ON shelter_id = Shelters.id
+                WHERE adopted_date IS NOT NULL
+                    AND
+                      species_type = '{species_type_filter}'
+                    AND
+                      shelter_name = '{shelter_filter}'
+                ORDER BY Animals.id ASC;""") 
+        return render_template('Animals/nw57_animals.j2', 
+            animals_data=db_animals_filtered, 
+            distinct_shelters=distinct_shelters, 
+            distinct_species_type=distinct_species_type,
+            current_species = species_type_filter,
+            current_available = available_filter,
+            current_shelter = shelter_filter)
+  
+
+    # Combined Filter: Availability and Species Type
+    if species_type_filter and available_filter:
+        if available_filter == 'Available':
+            db_animals_filtered = execute_query(f"""
+                SELECT Animals.id, shelter_id, animal_name,
+                    birthdate, gender, species_type, breed, personality, 
+                    image_url, intake_date, adopted_date, adoption_fee, 
+                    Shelters.id, shelter_name
+                FROM Animals 
+                LEFT JOIN Shelters ON shelter_id = Shelters.id
+                WHERE adopted_date IS NULL
+                    AND
+                      species_type = '{species_type_filter}'
+                ORDER BY Animals.id ASC;""")
+        else:
+            db_animals_filtered = execute_query(f"""
+                SELECT Animals.id, shelter_id, animal_name,
+                    birthdate, gender, species_type, breed, personality, 
+                    image_url, intake_date, adopted_date, adoption_fee, 
+                    Shelters.id, shelter_name
+                FROM Animals 
+                LEFT JOIN Shelters ON shelter_id = Shelters.id
+                WHERE adopted_date IS NOT NULL
+                    AND
+                      species_type = '{species_type_filter}'
+                ORDER BY Animals.id ASC;""")
+        return render_template('Animals/nw57_animals.j2', 
+            animals_data=db_animals_filtered, 
+            distinct_shelters=distinct_shelters, 
+            distinct_species_type=distinct_species_type,
+            current_species = species_type_filter,
+            current_available = available_filter)
+
+    
+    # Combined Filter: Shelter and Availability
+    if shelter_filter and available_filter:
+        if shelter_filter == 'None' and available_filter == 'Available':
+            db_animals_filtered = execute_query(f"""
+             SELECT Animals.id, shelter_id, animal_name,
+                    birthdate, gender, species_type, breed, personality,
+                    image_url, intake_date, adopted_date, adoption_fee, 
+                    Shelters.id, shelter_name
+                FROM Animals 
+                LEFT JOIN Shelters ON shelter_id = Shelters.id
+                WHERE shelter_name IS NULL
+					AND
+					  adopted_date IS NULL
+                ORDER BY Animals.id ASC;
+            """)
+        elif shelter_filter == 'None' and available_filter == 'Adopted':
+            db_animals_filtered = execute_query(f"""
+             SELECT Animals.id, shelter_id, animal_name,
+                    birthdate, gender, species_type, breed, personality,
+                    image_url, intake_date, adopted_date, adoption_fee, 
+                    Shelters.id, shelter_name
+                FROM Animals 
+                LEFT JOIN Shelters ON shelter_id = Shelters.id
+                WHERE shelter_name IS NULL
+					AND
+					  adopted_date IS NOT NULL
+                ORDER BY Animals.id ASC;
+            """)
+        elif available_filter == 'Available':
+            db_animals_filtered = execute_query(f"""
+             SELECT Animals.id, shelter_id, animal_name,
+                    birthdate, gender, species_type, breed, personality,
+                    image_url, intake_date, adopted_date, adoption_fee, 
+                    Shelters.id, shelter_name
+                FROM Animals 
+                LEFT JOIN Shelters ON shelter_id = Shelters.id
+                WHERE shelter_name = '{shelter_filter}'
+					AND
+					  adopted_date IS NULL
+                ORDER BY Animals.id ASC;
+            """)
+        else:
+            db_animals_filtered = execute_query(f"""
+             SELECT Animals.id, shelter_id, animal_name,
+                    birthdate, gender, species_type, breed, personality,
+                    image_url, intake_date, adopted_date, adoption_fee, 
+                    Shelters.id, shelter_name
+                FROM Animals 
+                LEFT JOIN Shelters ON shelter_id = Shelters.id
+                WHERE shelter_name = '{shelter_filter}'
+					AND
+					  adopted_date IS NOT NULL
+                ORDER BY Animals.id ASC;
+            """)
+        return render_template('Animals/nw57_animals.j2', 
+                animals_data=db_animals_filtered, 
+                distinct_shelters=distinct_shelters, 
+                distinct_species_type=distinct_species_type,
+                current_shelter = shelter_filter,
+                current_available = available_filter)
+    
+    # Combined Filter: Shelter and Species
+    if shelter_filter and species_type_filter:
+        if shelter_filter == 'None':
+            db_animals_filtered = execute_query(f"""
+             SELECT Animals.id, shelter_id, animal_name,
+                    birthdate, gender, species_type, breed, personality,
+                    image_url, intake_date, adopted_date, adoption_fee, 
+                    Shelters.id, shelter_name
+                FROM Animals 
+                LEFT JOIN Shelters ON shelter_id = Shelters.id
+                WHERE shelter_name IS NULL
+					AND
+					  species_type = '{species_type_filter}'
+                ORDER BY Animals.id ASC;
+            """)
+        else:
+            db_animals_filtered = execute_query(f"""
+             SELECT Animals.id, shelter_id, animal_name,
+                    birthdate, gender, species_type, breed, personality,
+                    image_url, intake_date, adopted_date, adoption_fee, 
+                    Shelters.id, shelter_name
+                FROM Animals 
+                LEFT JOIN Shelters ON shelter_id = Shelters.id
+                WHERE shelter_name = '{shelter_filter}'
+					AND
+					  species_type = '{species_type_filter}'
+                ORDER BY Animals.id ASC;
+            """)
+        return render_template('Animals/nw57_animals.j2', 
+            animals_data=db_animals_filtered, 
+            distinct_shelters=distinct_shelters, 
+            distinct_species_type=distinct_species_type,
+            current_shelter = shelter_filter,
+            current_species = species_type_filter)
+            
+
     if shelter_filter:
         # Filter Animal Shelters that are NULL
         if shelter_filter == 'None':
