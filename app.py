@@ -644,7 +644,10 @@ def edit_animal_detail(animal_id):
             shelters = db_shelters
         )
     except IndexError as error:
-        return('Animal not found')
+        # return('Animal not found')
+        return render_template('Animals/nw57_update_animal_detail.j2', 
+            error_message="Animal Not Found"
+        )
 
 """
 /update_animal/<int:animal_id>
