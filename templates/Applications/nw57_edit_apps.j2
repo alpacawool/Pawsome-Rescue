@@ -1,3 +1,14 @@
+{# 
+Routes: /edit-apps
+Entity: Applications, Animals, Users
+Functions: SELECT all Applications,
+           SELECT Users by Users.id,
+           SELECT Animals by Animal.id,
+           INSERT new Application
+Relationships: M:1 Relationship between Applications and Animals
+               M:1 Relationship between Applications and Users 
+#}
+
 {% extends "nw57_layout.j2" %}
 
 {# track current page #}

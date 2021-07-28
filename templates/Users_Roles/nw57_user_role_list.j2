@@ -1,3 +1,12 @@
+{# 
+Routes: /edit-users/roles/<int:user_id>
+Entity: Users_Roles
+Functions: SELECT Users_Roles (Roles that belong to individual Users)
+           INSERT Users_Roles
+           DELETE Users_Roles
+Relationships: Users and Roles (M:M)
+#}
+
 {% extends "nw57_layout.j2" %}
 
 {# track current page #}
@@ -11,12 +20,6 @@
 
 <a href="/edit-users"><button class="btn btn-secondary">Back to All Users</button></a>
 <br><br>
-
-{# {% for message in get_flashed_messages() %}
-  <div id="update-success">
-      {{ message }}
-  </div>
-{% endfor %} #}
 
 {% with insert = get_flashed_messages(category_filter=["insert"]) %}
   {% if insert %}

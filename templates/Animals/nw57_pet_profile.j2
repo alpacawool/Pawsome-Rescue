@@ -1,3 +1,11 @@
+{# 
+Routes: /animals/<int:animal_id>
+Entity: Animals, Shelters, Users
+Function: SELECT individual Animals to view their pet profile
+          SELECT individual Shelters
+          SELECT all Users (for /insert-app/ route in Applications)
+Relationships: M:1 relationship between Animals and Shelters 
+#}
 {% extends "nw57_layout.j2" %}
 {% block title %}Pawsome Animal Rescue - Pet Profile{% endblock title %} 
 {% block body_content %}
