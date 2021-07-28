@@ -27,33 +27,49 @@ Relationships: M:1 relationship between Animals and Shelters
       {{ message }}
   </div>
 {% endfor %}
+{# Animals: Records the details of pets with connections to our animal shelter
+animal_id: INT, auto_increment, unique, NOT NULL, PK
+animal_name: VARCHAR(50), NOT NULL
+birthdate: DATE NOT NULL
+gender: CHAR(1)
+species_type: VARCHAR(50)
+breed: VARCHAR(50)
+personality: VARCHAR(255)
+image_url: VARCHAR(255)
+intake_date: DATE NOT NULL
+adopted_date: DATE
+adoption_fee: DECIMAL(5,2)
+Relationships: 
+1:M relationship between Applications, using animal_id as fk implemented inside Applications
+1:M relationship between Shelters, using shelter_id as fk implemented inside Animals #}
 
-<table class="table">
-    <thead>
-        <tr>
-            <th scope="col">Animal ID</th>
-            <th scope="col">Name</th>
-            <th scope="col">Shelter</th>
-            <th scope="col">Gender</th>
-            <th scope="col">Species</th>
-            <th scope="col">Breed</th>
-            <th scope="col"></th>
-        </tr>
-    </thead>
-    <tbody>
-        {% for animal in animals_data %}
+
+    <table class="table">
+        <thead>
             <tr>
-                <td>{{animal.id}}</td>
-                <td>{{animal.animal_name}}</td>
-                <td>{{animal.shelter_name}}</td>
-                <td>{{animal.gender}}</td>
-                <td>{{animal.species_type}}</td>
-                <td>{{animal.breed}}</td>
-                <td><form action="/edit-animals/{{animal.id}}" method="POST">
-                <button type="submit" class="btn btn-primary">Edit</button></form></td>
+                <th scope="col">Animal ID</th>
+                <th scope="col">Name</th>
+                <th scope="col">Shelter</th>
+                <th scope="col">Gender</th>
+                <th scope="col">Species</th>
+                <th scope="col">Breed</th>
+                <th scope="col"></th>
             </tr>
-        {% endfor %}
-    </tbody>
-</table>
+        </thead>
+        <tbody>
+            {% for animal in animals_data %}
+                <tr>
+                    <td>{{animal.id}}</td>
+                    <td>{{animal.animal_name}}</td>
+                    <td>{{animal.shelter_name}}</td>
+                    <td>{{animal.gender}}</td>
+                    <td>{{animal.species_type}}</td>
+                    <td>{{animal.breed}}</td>
+                    <td><form action="/edit-animals/{{animal.id}}" method="POST">
+                    <button type="submit" class="btn btn-primary">Edit</button></form></td>
+                </tr>
+            {% endfor %}
+        </tbody>
+    </table>
 
 {% endblock body_content %}

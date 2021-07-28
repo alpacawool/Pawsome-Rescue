@@ -27,7 +27,7 @@ Relationships: M:1 relationship between Animals and Shelters
 <h1>Animals</h1>
 <br>
 
-{# Filter options #}
+{# Add filter options #}
 <span> <b>Filter By: </b> </span>
 
 <div class="btn-group">
@@ -106,49 +106,12 @@ Relationships: M:1 relationship between Animals and Shelters
 <br>
 <br>
 
-{# for animal pagination - move to app #}
-{% set per_page = 5 %}
+{# Add if/then for showing all animals or filtered animals #}
 
 {% if animals_data|length < 1 %}
-  <p>There were no animals found with this filter.</p>
-{# If results all fit on one page: no need to paginate #}
-{% elif animals_data|length < (per_page+1) %}
-  {% for animal in animals_data %}
-      <div class="row justify-content-center">
-          <div class="col-sm-8">
-              <div class="card">
-                  <div class="row g-0">
-                      <div class="col-md-4">
-                          <img src="{{url_for('static', filename='img/'+ animal.image_url)}}" class="img-fluid rounded-start" alt="picture of animal">
-                      </div>
-                      <div class="col-md-8">
-                          <div class="card-body">
-                              <h5 class="card-title">{{animal.animal_name}}</h5>
-                              <h6 class="card-subtitle mb-2 text-muted">{{animal.breed}} - {{animal.species_type}}</h6>
-                              <p class="card-text">
-                                  <ul>
-                                      <li>Personality: {{animal.personality}}</li>
-                                      {% if animal.adopted_date %}
-                                          <li>Adopted on: {{animal.adopted_date}}</li>
-                                      {% else %}
-                                          <li>Needs a Home! Learn More & Apply Below.</li>
-                                      {% endif %}
-                                  </ul>
-                              </p>
-                              <p class="card-text"><small class="text-muted">Photo from <a href="https://unsplash.com/s/photos/cat-and-dog-pet?utm_source=unsplash&utm_medium=referral&utm_content=creditCopyText">Unsplash</a></small></p>
-                              <a href="/animals/{{animal.id}}" class="card-link">Learn More About Me</a>
-                          </div>
-                      </div>
-                  </div>
-              </div>
-          </div>
-      </div>
-      <br>
-  {% endfor %}
-{# If need to paginate #}
+<p>There were no animals found with this filter.</p>
 {% else %}
   {% for animal in animals_data %}
-    {% if ((2*per_page)-4)<=loop.index<((2*per_page)+1) %}
       <div class="row justify-content-center">
           <div class="col-sm-8">
               <div class="card">
@@ -179,18 +142,7 @@ Relationships: M:1 relationship between Animals and Shelters
           </div>
       </div>
       <br>
-    {% else %}
-      <p>other animals</p>
-    {% endif %}
   {% endfor %}
-  <div>
-    <ul class="pagination justify-content-center">
-      {% set num_pages = 3 %}
-      {% for page in (range(num_pages)) %}
-        <li class="page-item"><a class="page-link" href="#">{{page+1}}</a></li>
-      {% endfor %}
-    </ul>
-  </div>
 {% endif %}
 
 {% endblock body_content %}

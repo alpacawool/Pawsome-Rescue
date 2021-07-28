@@ -13,148 +13,144 @@ Relationships: M:1 relationship between Animals and Shelters
 <h1>Pet Profile</h1>
 <br>
 
-{% if error_message %}
-    <p>{{ error_message }}</p>
+{% for message in get_flashed_messages() %}
+  <div id="update-success">
+      {{ message }}
+  </div>
+{% endfor %}
+
+<div class="col-sm-12">
+    <div class="card">
+        <div class="row g-0">
+            <div class="col-md-8">
+                <div class="card-body">
+                    <h5 class="card-title">{{animal.animal_name}}</h5>
+                    <h6 class="card-subtitle mb-2 text-muted">{{animal.breed}} - {{animal.species_type}}</h6>
+                    <p class="card-text">
+                        <ul>
+                            <li>Birthdate: {{animal.birthdate}}</li>
+                            <li>Animal ID: {{animal.id}}</li>
+                            <li>Location: {{animal.shelter_name}}</li>
+                            <li>Personality: {{animal.personality}}</li>
+                            <li>Gender: {{animal.gender}}</li>
+                            <li>Intake Date: {{animal.intake_date}}</li>
+                            {% if animal.adopted_date %}
+                                <li>Adopted on: {{animal.adopted_date}}</li>
+                            {% else %}
+                                <li>Needs a Home! Apply Below.</li>
+                                <li>Adoption Fee: {{animal.adoption_fee}}</li>
+                            {% endif %}
+                        </ul>
+                    </p>  
+                </div> 
+            </div>
+            <div class="col-md-4">
+                <img src="{{url_for('static', filename='img/'+ animal.image_url)}}" class="img-fluid float-end rounded-end" alt="picture of animal">
+            </div>
+        </div>
+    </div>
+</div>
+
+{% if animal.adopted_date %}
+    <br>
+    <h2>{{animal.animal_name}} already has a home. Yay!</h2>
+    <br>
 {% else %}
-    {% for message in get_flashed_messages() %}
-    <div id="update-success">
-        {{ message }}
-    </div>
-    {% endfor %}
 
-    <div class="col-sm-12">
-        <div class="card">
-            <div class="row g-0">
-                <div class="col-md-8">
-                    <div class="card-body">
-                        <h5 class="card-title">{{animal.animal_name}}</h5>
-                        <h6 class="card-subtitle mb-2 text-muted">{{animal.breed}} - {{animal.species_type}}</h6>
-                        <p class="card-text">
-                            <ul>
-                                <li>Birthdate: {{animal.birthdate}}</li>
-                                <li>Animal ID: {{animal.id}}</li>
-                                <li>Location: {{animal.shelter_name}}</li>
-                                <li>Personality: {{animal.personality}}</li>
-                                <li>Gender: {{animal.gender}}</li>
-                                <li>Intake Date: {{animal.intake_date}}</li>
-                                {% if animal.adopted_date %}
-                                    <li>Adopted on: {{animal.adopted_date}}</li>
-                                {% else %}
-                                    <li>Needs a Home! Apply Below.</li>
-                                    <li>Adoption Fee: {{animal.adoption_fee}}</li>
-                                {% endif %}
-                            </ul>
-                        </p>  
-                    </div> 
-                </div>
-                <div class="col-md-4">
-                    <img src="{{url_for('static', filename='img/'+ animal.image_url)}}" class="img-fluid float-end rounded-end" alt="picture of animal">
-                </div>
-            </div>
-        </div>
-    </div>
-
-    {% if animal.adopted_date %}
+    <div class = "m-1 p-2">
         <br>
-        <h2>{{animal.animal_name}} already has a home. Yay!</h2>
+        <h2>Apply below to adopt {{animal.animal_name}}.</h2>
         <br>
-    {% else %}
 
-        <div class = "m-1 p-2">
-            <br>
-            <h2>Apply below to adopt {{animal.animal_name}}.</h2>
-            <br>
-
-            <form action="/insert-app/{{animal.id}}" method="POST">
-            <div class="form-group">
-                <label for="user-select"><b>User:</b></label><br>
-                <select class="form-control w-auto" name="user-select" id="user-select">
-                    {% for user in users %}
-                        <option value="{{ user.id }}">
-                            #{{ user.id}}. {{ user.first_name }} {{ user.last_name }}
-                        </option>
-                    {% endfor %}
-                </select>
-            </div>
-            <br>
-            <div class="form-group">
-                <label for="appDate"><b>Date:</b></label>
-                <input type="date" class="form-control w-auto" name="appDate" id="appDate">
-            </div>
-            <fieldset class="form-group">
-                <br>
-                <div class="row">
-                <legend class="col-form-label col-sm-6 pt-0"><b>Do you own your home?</b></legend>
-                <div class="col-sm-10">
-                    <div class="form-check">
-                    <input class="form-check-input" type="radio" name="homeOwnership" id="homeOwnership1" value="0">
-                    <label class="form-check-label" for="homeOwnership1">No</label>
-                    </div>
-                    <div class="form-check">
-                    <input class="form-check-input" type="radio" name="homeOwnership" id="homeOwnership2" value="1">
-                    <label class="form-check-label" for="homeOwnership2">Yes</label>
-                    </div>
-                </div>
-                </div>
-            </fieldset>
-            <br>
-
-            <fieldset class="form-group">
-                <div class="row">
-                <legend class="col-form-label col-sm-6 pt-0"><b>Do you have children?</b></legend>
-                <div class="col-sm-10">
-                    <div class="form-check">
-                    <input class="form-check-input" type="radio" name="children" id="children1" value="0">
-                    <label class="form-check-label" for="children1">No</label>
-                    </div>
-                    <div class="form-check">
-                    <input class="form-check-input" type="radio" name="children" id="children2" value="1">
-                    <label class="form-check-label" for="children2">Yes</label>
-                    </div>
-                </div>
-                </div>
-            </fieldset>
-            <br>
-
-            <fieldset class="form-group">
-                <div class="row">
-                <legend class="col-form-label col-sm-6 pt-0"><b>Will this be your first pet?</b></legend>
-                <div class="col-sm-10">
-                    <div class="form-check">
-                    <input class="form-check-input" type="radio" name="firstPet" id="firstPet1" value="0">
-                    <label class="form-check-label" for="firstPet1">No</label>
-                    </div>
-                    <div class="form-check">
-                    <input class="form-check-input" type="radio" name="firstPet" id="firstPet2" value="1">
-                    <label class="form-check-label" for="firstPet2">Yes</label>
-                    </div>
-                </div>
-                </div>
-            </fieldset>
-            <br>
-
-            <div class="form-group">
-                <label for="petsInHome"><b>How many pets do you currently have at home?</b></label>
-                <select class="form-control w-auto" name="petsInHome" id="petsInHome">
-                <option>0</option>
-                <option>1</option>
-                <option>2</option>
-                <option>3</option>
-                <option>4</option>
-                <option>5</option>
-                <option>6</option>
-                <option>7</option>
-                <option>8</option>
-                <option>9</option>
-                <option>10</option>
-                </select>
-            </div>
-            <br>
-
-            <button type="submit" class="btn btn-primary">Submit Application</button>
-            </form>
+        <form action="/insert-app/{{animal.id}}" method="POST">
+        <div class="form-group">
+            <label for="user-select"><b>User:</b></label><br>
+            <select class="form-control w-auto" name="user-select" id="user-select">
+                {% for user in users %}
+                     <option value="{{ user.id }}">
+                        #{{ user.id}}. {{ user.first_name }} {{ user.last_name }}
+                    </option>
+                {% endfor %}
+            </select>
         </div>
-    {% endif %}
+        <br>
+        <div class="form-group">
+            <label for="appDate"><b>Date:</b></label>
+            <input type="date" class="form-control w-auto" name="appDate" id="appDate">
+        </div>
+        <fieldset class="form-group">
+            <br>
+            <div class="row">
+            <legend class="col-form-label col-sm-6 pt-0"><b>Do you own your home?</b></legend>
+            <div class="col-sm-10">
+                <div class="form-check">
+                <input class="form-check-input" type="radio" name="homeOwnership" id="homeOwnership1" value="0">
+                <label class="form-check-label" for="homeOwnership1">No</label>
+                </div>
+                <div class="form-check">
+                <input class="form-check-input" type="radio" name="homeOwnership" id="homeOwnership2" value="1">
+                <label class="form-check-label" for="homeOwnership2">Yes</label>
+                </div>
+            </div>
+            </div>
+        </fieldset>
+        <br>
+
+        <fieldset class="form-group">
+            <div class="row">
+            <legend class="col-form-label col-sm-6 pt-0"><b>Do you have children?</b></legend>
+            <div class="col-sm-10">
+                <div class="form-check">
+                <input class="form-check-input" type="radio" name="children" id="children1" value="0">
+                <label class="form-check-label" for="children1">No</label>
+                </div>
+                <div class="form-check">
+                <input class="form-check-input" type="radio" name="children" id="children2" value="1">
+                <label class="form-check-label" for="children2">Yes</label>
+                </div>
+            </div>
+            </div>
+        </fieldset>
+        <br>
+
+        <fieldset class="form-group">
+            <div class="row">
+            <legend class="col-form-label col-sm-6 pt-0"><b>Will this be your first pet?</b></legend>
+            <div class="col-sm-10">
+                <div class="form-check">
+                <input class="form-check-input" type="radio" name="firstPet" id="firstPet1" value="0">
+                <label class="form-check-label" for="firstPet1">No</label>
+                </div>
+                <div class="form-check">
+                <input class="form-check-input" type="radio" name="firstPet" id="firstPet2" value="1">
+                <label class="form-check-label" for="firstPet2">Yes</label>
+                </div>
+            </div>
+            </div>
+        </fieldset>
+        <br>
+
+        <div class="form-group">
+            <label for="petsInHome"><b>How many pets do you currently have at home?</b></label>
+            <select class="form-control w-auto" name="petsInHome" id="petsInHome">
+            <option>0</option>
+            <option>1</option>
+            <option>2</option>
+            <option>3</option>
+            <option>4</option>
+            <option>5</option>
+            <option>6</option>
+            <option>7</option>
+            <option>8</option>
+            <option>9</option>
+            <option>10</option>
+            </select>
+        </div>
+        <br>
+
+        <button type="submit" class="btn btn-primary">Submit Application</button>
+        </form>
+    </div>
 {% endif %}
 
 {% endblock body_content %}

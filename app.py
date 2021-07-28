@@ -553,9 +553,7 @@ def pet_profile(animal_id):
             users=db_users
         )
     except IndexError as error:
-        return render_template('Animals/nw57_pet_profile.j2', 
-            error_message="Animal Not Found"
-        )
+        return('Animal not found')
 
 """
 /insert-animal
@@ -644,9 +642,7 @@ def edit_animal_detail(animal_id):
             shelters = db_shelters
         )
     except IndexError as error:
-        return render_template('Animals/nw57_update_animal_detail.j2', 
-            error_message="Animal Not Found"
-        )
+        return('Animal not found')
 
 """
 /update_animal/<int:animal_id>
@@ -866,6 +862,7 @@ def delete_shelter(shelter_id):
     delete_query = f"""
             DELETE FROM Shelters WHERE id = {shelter_id};
             """
+    # print(delete_query)
     execute_query(delete_query)
     flash('Deleted Shelter successfully!' , 'delete')
     return redirect(url_for('edit_shelters'))
@@ -883,6 +880,7 @@ def insert_shelter():
             "{request.form['street']}", "{request.form['city']}",
              "{request.form['state']}", "{request.form['zip_code']}");
             """
+    # print(insert_query)
     execute_query(insert_query)
     flash('Added shelter successfully!' , 'insert')
     return redirect(url_for('edit_shelters'))
