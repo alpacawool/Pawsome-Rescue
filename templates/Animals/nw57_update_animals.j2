@@ -8,10 +8,17 @@
 <br>
 <h2>Edit Animals</h2>
 <br>
+
 <a href="/settings"><button class="btn btn-secondary">Back to Settings</button></a> 
 <a href="/animals"><button class="btn btn-secondary">Filter Animals</button></a>
 <a href="/insert-animal"><button class="btn btn-success">Add Animal</button></a>
 <br><br>
+
+{% for message in get_flashed_messages() %}
+  <div id="update-success">
+      {{ message }}
+  </div>
+{% endfor %}
 {# Animals: Records the details of pets with connections to our animal shelter
 animal_id: INT, auto_increment, unique, NOT NULL, PK
 animal_name: VARCHAR(50), NOT NULL

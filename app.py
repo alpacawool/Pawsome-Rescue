@@ -391,6 +391,7 @@ def insert_animal():
             {f"'{adoptedDate}'" if adoptedDate else 'NULL'}, {adoptionFee});
             """
         execute_query(query)
+        flash("Added animal successfully!")
         return redirect(url_for('edit_animals'))
     else:
         shelterQueryResult = execute_query("""
@@ -480,6 +481,7 @@ def update_animals(animal_id):
             WHERE id = {animal_id};"""
         print(update_query)
         execute_query(update_query)
+        flash("Updated animal successfully!")
         return redirect(url_for('edit_animals'))
     else:
         return redirect(url_for('edit_animals'))
@@ -616,6 +618,7 @@ def delete_shelter(shelter_id):
             """
     # print(delete_query)
     execute_query(delete_query)
+    flash('Deleted Shelter successfully!' , 'delete')
     return redirect(url_for('edit_shelters'))
 
 """
@@ -633,6 +636,7 @@ def insert_shelter():
             """
     # print(insert_query)
     execute_query(insert_query)
+    flash('Added shelter successfully!' , 'insert')
     return redirect(url_for('edit_shelters'))
 
 if __name__ == "__main__":

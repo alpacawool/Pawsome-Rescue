@@ -24,6 +24,26 @@ Relationship:
 <a href="/settings"><button class="btn btn-secondary">Back to Settings</button></a> 
 <br><br>
 
+{% with insert = get_flashed_messages(category_filter=["insert"]) %}
+  {% if insert %}
+    {% for message in get_flashed_messages() %}
+      <div id="update-success">
+          {{ message }}
+      </div>
+    {% endfor %}
+  {% endif %}
+{% endwith %}
+
+{% with delete = get_flashed_messages(category_filter=["delete"]) %}
+  {% if delete %}
+    {% for message in get_flashed_messages() %}
+      <div id="delete-success">
+          {{ message }}
+      </div>
+    {% endfor %}
+  {% endif %}
+{% endwith %}
+
 <h4>Add New Shelter</h4>
 
 <table class="table">
