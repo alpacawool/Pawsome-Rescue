@@ -74,7 +74,8 @@ def update_user(user_id):
         update_user_query = 'UPDATE Users ' \
             'SET first_name = "' + req["user_first"] + '", ' \
             'last_name = "' + req["user_last"] + '", ' \
-            'email_address = "' + req["user_email"] + '" ' \
+            'email_address = "' + req["user_email"] + '", ' \
+            'password = "' + req["user_pass"] + '" ' \
             'WHERE id = ' + str(user_id) + ';'
         execute_query(update_user_query)
         update_user_success = 'Updated ' + req["user_first"] \

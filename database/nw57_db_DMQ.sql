@@ -121,7 +121,8 @@ SELECT * FROM Users;
 UPDATE Users
 SET first_name = :input_first_name,
     last_name = :input_last_name,
-    email_address = :input_email
+    email_address = :input_email,
+    password = :input_password
 WHERE id = :id_of_user;
 
 -- SELECT Roles for Specific User (Users_Roles)
