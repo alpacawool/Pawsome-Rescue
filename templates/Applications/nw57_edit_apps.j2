@@ -12,6 +12,168 @@
 <a href="/settings"><button class="btn btn-secondary">Back to Settings</button></a> 
 <br><br>
 
+{% for message in get_flashed_messages() %}
+  <div id="update-success">
+      {{ message }}
+  </div>
+{% endfor %}
+
+<h4>Add New Application</h4>
+
+{% if animals|length < 1 %}
+<p>There are no animals available to adopt. 
+Either there are no animals, or all animals in the system are adopted.</p>
+<p><a href="/insert-animal">
+Please add an adoptable animal</a> in order to use the new application form.</p>
+{% else %}
+<form action="/edit-apps/new-app" method="POST">
+<table class = "table w-auto mb-4">
+    <thead>
+        <tr>
+            <th scope="col"></th> <th scope="col"></th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr>
+            <th scope="row">User</th>
+            <td>
+                <div class="form-group">
+                    <select class="form-control w-auto" name="user-select" id="user-select">
+                        {% for user in users %}
+                            <option value="{{ user.id }}">
+                                #{{ user.id}}. {{ user.first_name }} {{ user.last_name }}
+                            </option>
+                        {% endfor %}
+                    </select>
+                </div>
+            </td>
+        </tr>
+
+        <tr>
+            <th scope="row">Animal</th>
+            <td>
+                <div class="form-group">
+                    <select class="form-control w-auto" name="animal-select" id="animal-select">
+                        {% for animal in animals %}
+                            <option value="{{ animal.id }}">
+                                #{{ animal.id}}. {{ animal.animal_name }}
+                            </option>
+                        {% endfor %}
+                    </select>
+                </div>
+            </td>
+        </tr>
+
+        <tr>
+            <th scope="row">Date</th>
+            <td>
+                <div class="form-group">
+                    <input type="date" class="form-control w-auto" name="appDate" id="appDate">
+                </div>
+            </td>
+        </tr>
+
+        <tr>
+            <th scope="row">Home Ownership</th>
+            <td>
+                <div class="form-check">
+                    <input class="form-check-input" type="radio" name="homeOwnership" id="homeOwnership1" value="0">
+                    <label class="form-check-label" for="homeOwnership1">No</label>
+                </div>
+                <div class="form-check">
+                    <input class="form-check-input" type="radio" name="homeOwnership" id="homeOwnership2" value="1">
+                    <label class="form-check-label" for="homeOwnership2">Yes</label>
+                </div>
+            </td>
+        </tr>
+        
+        <tr>
+            <th scope="row">Children</th>
+            <td>
+                <div class="form-group">
+                    <div class="form-check">
+                        <input class="form-check-input" type="radio" name="children" id="children1" value="0">
+                        <label class="form-check-label" for="children1">No</label>
+                    </div>
+                    <div class="form-check">
+                        <input class="form-check-input" type="radio" name="children" id="children2" value="1">
+                        <label class="form-check-label" for="children2">Yes</label>
+                    </div>
+                </div>
+            </td>
+        </tr>
+
+        <tr>
+            <th scope="row">First Pet</th>
+            <td>
+                <div class="form-group">
+                    <div class="form-check">
+                        <input class="form-check-input" type="radio" name="firstPet" id="firstPet1" value="0">
+                        <label class="form-check-label" for="firstPet1">No</label>
+                    </div>
+                    <div class="form-check">
+                        <input class="form-check-input" type="radio" name="firstPet" id="firstPet2" value="1">
+                        <label class="form-check-label" for="firstPet2">Yes</label>
+                    </div>
+                </div>
+            
+            </td>
+        </tr>
+
+        <tr>
+            <th scope="row">Currently Owned Pets</th>
+            <td>
+                <div class="form-group">
+                    <select class="form-control w-auto" name="petsInHome" id="petsInHome">
+                    <option>0</option>
+                    <option>1</option>
+                    <option>2</option>
+                    <option>3</option>
+                    <option>4</option>
+                    <option>5</option>
+                    <option>6</option>
+                    <option>7</option>
+                    <option>8</option>
+                    <option>9</option>
+                    <option>10</option>
+                    </select>
+                </div>
+            </td>
+        </tr>
+
+        <tr>
+            <th scope="row">Approval</th>
+            <td>
+                <div class="form-group">
+                    <div class="form-check">
+                        <input class="form-check-input" type="radio" name="approvalStat" id="approvalStat1" value="1">
+                        <label class="form-check-label" for="approvalStat1">Approved</label>
+                    </div>
+
+                    <div class="form-check">
+                        <input class="form-check-input" type="radio" name="approvalStat" id="approvalStat3" value="3">
+                        <label class="form-check-label" for="approvalStat3">Pending</label>
+                    </div>
+
+                    <div class="form-check">
+                        <input class="form-check-input" type="radio" name="approvalStat" id="approvalStat2" value="0">
+                        <label class="form-check-label" for="approvalStat2">Rejected</label>
+                    </div>
+                </div>
+            
+            </td>
+        </tr>
+
+        <tr>
+        <td><button type="submit" class="btn btn-success">Add Application</button>
+        <td></td>
+        </tr>
+    </tbody>
+</table>
+</form>
+{%endif%}
+
+<h4>Current Applications</h4>
 {% if animal_apps|length < 1 %}
 <p>There are no existing applications.</p>
 {% else %}

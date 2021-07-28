@@ -699,7 +699,7 @@ Functions: SELECT all Applications,
 Relationships: M:1 Relationship between Applications and Animals
                M:1 Relationship between Applications and Users
 """
-@app.route("/edit-apps")
+@app.route("/edit-apps", methods=['GET', 'POST'])
 def edit_apps():
     select_app_query = 'SELECT app.id, app.user_id, app.animal_id, ' \
         'app.application_date, app.approval_status, ' \
@@ -708,9 +708,26 @@ def edit_apps():
         'INNER JOIN Animals as a ON app.animal_id = a.id ' \
         'INNER JOIN Users as u ON app.user_id = u.id ' \
         'ORDER BY app.id ASC;'
+    # For Add Application Form
+    select_users_query = """
+        SELECT u.id, u.first_name, u.last_name
+        FROM Users as u;
+    """
+    # Query animals that are available to adopt to process application
+    available_animals_query = """
+        SELECT a.id, a.animal_name
+        FROM Animals as a
+        WHERE a.adopted_date IS NULL;
+    """
     db_animal_apps = execute_query(select_app_query)
+    db_users = execute_query(select_users_query)
+    db_animals = execute_query(available_animals_query)
     return render_template(
-        'Applications/nw57_edit_apps.j2', animal_apps=db_animal_apps)
+        'Applications/nw57_edit_apps.j2', 
+        animal_apps=db_animal_apps,
+        users = db_users,
+        animals = db_animals
+    )
 
 """
 /edit-apps/<int:app_id>
@@ -757,7 +774,7 @@ def update_app_approval(app_id, app_status):
 """
 /insert-app/<int:animal_id>
 Entity: Applications
-Functions: INSERT individual Applications
+Functions: INSERT individual Applications by Animal ID (On Pet Profile)
 """
 @app.route("/insert-app/<int:animal_id>", methods=['GET', 'POST'])
 def insert_app(animal_id):
@@ -777,6 +794,33 @@ def insert_app(animal_id):
     flash("Application submitted successfully!")
     profile_redirect_url = '/animals/' + str(animal_id)
     return redirect(profile_redirect_url)
+
+
+"""
+/insert-app/
+Entity: Applications
+Functions: INSERT individual Applications by Animal ID (On Edit Apps)
+"""
+@app.route("/edit-apps/new-app", methods=['GET', 'POST'])
+def insert_new_app():
+    req = request.form
+    approval_status = req['approvalStat']
+    if approval_status == '3':
+        approval_status = 'NULL'
+    insert_app_query = f"""
+        INSERT INTO Applications(
+            user_id, animal_id, application_date, home_ownership,
+            has_children, first_pet, pets_in_home, approval_status)
+        VALUES (
+            {req['user-select']}, {req['animal-select']}, 
+            {f"'{req['appDate']}'" if req['appDate'] else 'NULL'},
+            {req['homeOwnership']}, {req['children']}, {req['firstPet']},
+            {req['petsInHome']}, {approval_status}
+        );
+        """
+    execute_query(insert_app_query)
+    flash("Application added successfully!")
+    return redirect("/edit-apps")
 
 # Shelters Routes
 

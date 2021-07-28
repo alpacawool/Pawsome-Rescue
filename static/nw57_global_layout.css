@@ -30,3 +30,8 @@
 .navbar .dropdown-item:hover {
     color:#fff;
 }
+
+/* Remove link underlines */
+a:link, a:visited, a:hover {
+    text-decoration:None;
+}

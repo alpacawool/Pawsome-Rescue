@@ -24,13 +24,13 @@ M:M relationship with Users, using intersection table Users_Roles with two forei
   </div>
 {% endfor %}
 
-<h4>Add New Role<h4>
+<h4>Add New Role</h4>
 <form name="create_a_role" action="/insert-role" method="POST">
-<table class="table table-sm w-auto table-borderless">
+<table class="table w-auto table-borderless">
   <tbody>
   <tr>
     <td><input type="text" name="name" value="" placeholder="Name"></td>
-    <td><button class="btn btn-primary">Create</button>
+    <td><button class="btn btn-success btn-block">Create</button>
   </tr>
   </tbody>
 </table>
