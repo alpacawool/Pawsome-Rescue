@@ -1,4 +1,8 @@
 {% extends "nw57_layout.j2" %}
+
+{# track current page #}
+{% set active_page = 'settings' %}
+
 {% block title %}Pawsome Animal Rescue - Edit Shelters{% endblock title %} 
 {% block body_content %}
 
@@ -12,6 +16,8 @@ state: VARCHAR(2)
 zip_code: INT(5)
 Relationship: 
 1:M relationship with Animals, using shelter_id as fk implemented inside Animals #}
+
+
 <br>
 <h2>Edit Shelters</h2>
 <br>
