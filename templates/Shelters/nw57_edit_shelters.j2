@@ -73,6 +73,9 @@ Relationship:
 <br>
 <h4>Delete Shelters</h4>
 <br>
+{% if shelters_data|length < 1 %}
+<p>There are no existing shelters.</p>
+{% else %}
 <table class="table">
     <thead>
         <tr>
@@ -101,6 +104,7 @@ Relationship:
         {% endfor %}
     </tbody>
 </table>
+{% endif %}
 
 
 {% endblock body_content %}
