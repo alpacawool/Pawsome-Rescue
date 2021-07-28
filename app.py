@@ -553,7 +553,9 @@ def pet_profile(animal_id):
             users=db_users
         )
     except IndexError as error:
-        return('Animal not found')
+        return render_template('Animals/nw57_pet_profile.j2', 
+            error_message="Animal Not Found"
+        )
 
 """
 /insert-animal
