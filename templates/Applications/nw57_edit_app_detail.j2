@@ -16,37 +16,42 @@
   </div>
 {% endfor %}
 
-<br>
-<b>Submission Date:</b> {{current_app.application_date}} <br>
-<b>Animal Name:</b> {{current_app.animal_name}} <br>
-<b>Animal ID:</b> {{current_app.animal_id}}<br><br>
+<table class="table w-auto">
+<thead><tr><th scope="col"></th><th scope="col"></th></tr></thead>
+<tbody>
+<tr> <td><b>Submission Date:</b> </td> <td>{{current_app.application_date}} </td> </tr>
+<tr> <td><b>Animal Name:</b> </td> <td> {{current_app.animal_name}}  </td></tr>
+<tr> <td><b>Animal ID:</b> </td> <td> {{current_app.animal_id}} </td> </tr>
 
-<h4>Applicant Information</h4>
-<b>Name:</b> {{current_app.first_name}} {{current_app.last_name}} <br>
-<b>User ID:</b> {{current_app.user_id}} <br>
-<b>Home Ownership:</b>
+<tr> </tr>
+
+<tr><td> <h5>Applicant Information</h5> </td> <td></td></tr>
+<tr><td><b>Name:</b> </td> <td> {{current_app.first_name}} {{current_app.last_name}} </td> </tr>
+<tr><td><b>User ID:</b> </td> <td> {{current_app.user_id}} </td> </tr>
+<tr><td><b>Home Ownership:</b></td><td>
 {% if current_app.home_ownership %}
      Yes
 {% else %}
      No
 {% endif %}
-<br>
-<b>Children:</b>
+</td>
+</tr>
+<tr><td><b>Children:</b> </td><td>
 {% if current_app.has_children %}
      Yes
 {% else %}
      No
 {% endif %}
-<br>
-<b>Would {{current_app.animal_name}} be their first pet?</b>
+</td></tr>
+<tr><td><b>Would {{current_app.animal_name}} be their first pet?</b></td><td>
 {% if current_app.first_pet %}
      Yes
 {% else %}
      No
 {% endif %}
-<br>
-<b>Number of Pets Owned: </b> {{current_app.pets_in_home}}
-<br><b>Current Approval Status: </b>
+</td></tr>
+<tr><td><b>Number of Pets Owned: </b></td> <td> {{current_app.pets_in_home}}</td></tr>
+<tr><td><b>Current Approval Status: </b></td><td>
      {% if current_app.approval_status is not none %}
           {% if current_app.approval_status %}
                Approved
@@ -56,8 +61,9 @@
      {% else %}
           Pending
      {% endif %}
-<br>
-<br>
+</td></tr>
+</table>
+
 <h5>Update Application Approval </h5>
 <a href= "/update-app/{{current_app.id}}/1"><button class="btn btn-success">Approve</button></a> <a href="/update-app/{{current_app.id}}/0"><button class="btn btn-danger">Reject</button></a>
 <a href="/update-app/{{current_app.id}}/3"><button class="btn btn-secondary">Pending</button>
