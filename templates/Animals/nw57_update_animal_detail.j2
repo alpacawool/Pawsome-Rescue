@@ -5,105 +5,109 @@
 
 {% block title %}Pawsome Animal Rescue - Update Animals{% endblock title %} 
 {% block body_content %}
-<br>
-<h2>Update {{animal.animal_name}}</h2>
-<br>
 
-{% for message in get_flashed_messages() %}
-  <div id="update-success">
-      {{ message }}
-  </div>
-{% endfor %}
-
-<a href="/edit-animals"><button class="btn btn-secondary">Back to All Animals</button></a>
-<br><br>
-
-<form action="/update_animal/{{animal_id}}" method="POST">
-    <div class="form-group">
-        <label for="animalName">Animal Name</label>
-        <input type="text" class="form-control" name="animalName" id="animalName" value="{{animal.animal_name}}">
-    </div>
+{% if error_message %}
+    <br>
+    <p>{{ error_message }}</p>
+{% else %}
+    <br>
+    <h2>Update {{animal.animal_name}}</h2>
     <br>
 
-    {# Select default value based on https://stackoverflow.com/questions/57896326/ #}
-    {# TODO: Import shelter names instead of hardcoding #}
-    <div class="form-group">
-        <label for="shelterId">Shelter Name</label>
-        <select class="form-control" name="shelterId" id="shelterId" value='{{animal.shelter_name}}'>
-            <option value="None">None</option>
-            {% for shelter in shelters %}
-            <option value="{{ shelter.id }}" {{ "selected = 'selected' " if animal.shelter_name == shelter.shelter_name else "" }}>
-                {{ shelter.shelter_name }}
-            </option>
-            {% endfor %}
-        </select>
+    {% for message in get_flashed_messages() %}
+    <div id="update-success">
+        {{ message }}
     </div>
-    <br>
+    {% endfor %}
 
-    <div class="form-group">
-        <label for="birthdate">Birthdate</label>
-        <input type="date" class="form-control" name="birthdate" id="birthdate" value="{{animal.birthdate}}">
-    </div>
-    <br>
+    <a href="/edit-animals"><button class="btn btn-secondary">Back to All Animals</button></a>
+    <br><br>
 
-    <div class="form-group">
-        <label for="gender">Gender</label>
-        <select class="form-control" name="gender" id="gender" value="{{ animal.gender }}">
-            <option value ='F' {{ " selected='selected' " if animal.gender == 'F' else "" }}>F</option>
-            <option value ='M' {{ " selected='selected' " if animal.gender == 'M' else "" }}>M</option>
-        </select>
-    </div>
-    <br>
+    <form action="/update_animal/{{animal_id}}" method="POST">
+        <div class="form-group">
+            <label for="animalName">Animal Name</label>
+            <input type="text" class="form-control" name="animalName" id="animalName" value="{{animal.animal_name}}">
+        </div>
+        <br>
 
-    <div class="form-group">
-        <label for="speciesType">Species Type</label>
-        <select class="form-control" name="speciesType" id="speciesType" value="{{ animal.species_type }}">
-            <option value='Cat' {{ " selected = 'selected' " if animal.species_type == 'Cat' else "" }}>Cat</option>
-            <option value='Dog' {{ " selected = 'selected' " if animal.species_type == 'Dog' else "" }}>Dog</option>
-            <option value='Bird' {{ " selected = 'selected' " if animal.species_type == 'Bird' else "" }}>Bird</option>
-            <option value='Other' {{ " selected = 'selected' " if animal.species_type == 'Other' else "" }}>Other</option>
-        </select>
-    </div>
-    <br>
+        {# Select default value based on https://stackoverflow.com/questions/57896326/ #}
+        <div class="form-group">
+            <label for="shelterId">Shelter Name</label>
+            <select class="form-control" name="shelterId" id="shelterId" value='{{animal.shelter_name}}'>
+                <option value="None">None</option>
+                {% for shelter in shelters %}
+                <option value="{{ shelter.id }}" {{ "selected = 'selected' " if animal.shelter_name == shelter.shelter_name else "" }}>
+                    {{ shelter.shelter_name }}
+                </option>
+                {% endfor %}
+            </select>
+        </div>
+        <br>
 
-    <div class="form-group">
-        <label for="breed">Breed</label>
-        <input type="text" class="form-control" name="breed" id="breed" value="{{animal.breed}}">
-    </div>
-    <br>
+        <div class="form-group">
+            <label for="birthdate">Birthdate</label>
+            <input type="date" class="form-control" name="birthdate" id="birthdate" value="{{animal.birthdate}}">
+        </div>
+        <br>
 
-    <div class="form-group">
-        <label for="personality">Personality</label>
-        <input type="text" class="form-control" name="personality" id="personality" value="{{animal.personality}}">
-    </div>
-    <br>
+        <div class="form-group">
+            <label for="gender">Gender</label>
+            <select class="form-control" name="gender" id="gender" value="{{ animal.gender }}">
+                <option value ='F' {{ " selected='selected' " if animal.gender == 'F' else "" }}>F</option>
+                <option value ='M' {{ " selected='selected' " if animal.gender == 'M' else "" }}>M</option>
+            </select>
+        </div>
+        <br>
 
-    <div class="form-group">
-        <label for="imageURL">Image Name in Static Folder</label>
-        <input type="text" class="form-control" name="imageURL" id="imageURL" value="{{animal.image_url}}">
-    </div>
-    <br>
-    
-    <div class="form-group">
-        <label for="intakeDate">Intake Date</label>
-        <input type="date" class="form-control" name="intakeDate" id="intakeDate" value="{{animal.intake_date}}">
-    </div>
-    <br>
+        <div class="form-group">
+            <label for="speciesType">Species Type</label>
+            <select class="form-control" name="speciesType" id="speciesType" value="{{ animal.species_type }}">
+                <option value='Cat' {{ " selected = 'selected' " if animal.species_type == 'Cat' else "" }}>Cat</option>
+                <option value='Dog' {{ " selected = 'selected' " if animal.species_type == 'Dog' else "" }}>Dog</option>
+                <option value='Bird' {{ " selected = 'selected' " if animal.species_type == 'Bird' else "" }}>Bird</option>
+                <option value='Other' {{ " selected = 'selected' " if animal.species_type == 'Other' else "" }}>Other</option>
+            </select>
+        </div>
+        <br>
 
-    <div class="form-group">
-        <label for="adoptedDate">Adopted Date (leave blank if not yet adopted)</label>
-        <input type="date" class="form-control" name="adoptedDate" id="adoptedDate" value={{animal.adopted_date}}>
-    </div>
-    <br>
+        <div class="form-group">
+            <label for="breed">Breed</label>
+            <input type="text" class="form-control" name="breed" id="breed" value="{{animal.breed}}">
+        </div>
+        <br>
 
-    <div class="form-group">
-        <label for="adoptionFee">Adoption Fee</label>
-        <input type="number" class="form-control" name="adoptionFee" id="adoptionFee" value="{{animal.adoption_fee}}" step="0.01" min="0" max="99.99">
-    </div>
-    <br>
+        <div class="form-group">
+            <label for="personality">Personality</label>
+            <input type="text" class="form-control" name="personality" id="personality" value="{{animal.personality}}">
+        </div>
+        <br>
 
-  <button type="submit" class="btn btn-primary">Update Animal</button>
-</form>
+        <div class="form-group">
+            <label for="imageURL">Image Name in Static Folder</label>
+            <input type="text" class="form-control" name="imageURL" id="imageURL" value="{{animal.image_url}}">
+        </div>
+        <br>
+        
+        <div class="form-group">
+            <label for="intakeDate">Intake Date</label>
+            <input type="date" class="form-control" name="intakeDate" id="intakeDate" value="{{animal.intake_date}}">
+        </div>
+        <br>
 
+        <div class="form-group">
+            <label for="adoptedDate">Adopted Date (leave blank if not yet adopted)</label>
+            <input type="date" class="form-control" name="adoptedDate" id="adoptedDate" value={{animal.adopted_date}}>
+        </div>
+        <br>
+
+        <div class="form-group">
+            <label for="adoptionFee">Adoption Fee</label>
+            <input type="number" class="form-control" name="adoptionFee" id="adoptionFee" value="{{animal.adoption_fee}}" step="0.01" min="0" max="99.99">
+        </div>
+        <br>
+
+    <button type="submit" class="btn btn-primary">Update Animal</button>
+    </form>
+{% endif %}
 
 {% endblock body_content %}
