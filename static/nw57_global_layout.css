@@ -40,3 +40,15 @@ a:link, a:visited, a:hover {
 .hidden {
     display:none;
 }
+
+/* Word-wrap text */
+.wordwrap {
+    word-wrap:break-word;
+}
+
+/* Box for forms */
+.form-box {
+    border: 1px solid #D9D9D9;
+    padding:0.8em;
+    border-radius:0.3em;
+}

@@ -28,38 +28,47 @@ Relationships: M:1 Relationship between Animals and Shelters
 
 
 <h4>Update Animal Image</h4>
+<div class="container-fluid w-auto">
 <form class="mb-4" action="/update-image/{{animal.id}}" method="POST" enctype="multipart/form-data">
-    <div class="form-group">
-            Currently using <i>{{animal.image_url}}</i><br>
-            <img src="{{animal.image_url}}" class="img-thumbnail">
+    <div class="form-group row justify-content-md-left mt-3 form-box">
+            <div class ="col-md-3 d-flex justify-content-center">
+                <img src="{{animal.image_url}}" class="img-thumbnail">
+            </div>
+
+            <div class = "col-md-9">
+                <div class="col wordwrap">
+                    <B>Current Image: </b><i>{{animal.image_url}}</i>
+                </div>
             <!-- 1. Default Static Image -->
-           <div class="form-check mt-3">
-                <input class="form-check-input" type="radio" name="imageURL" id="imageOption1" value="1" required>
-                <label class="form-check-label" for="imageOption1">Select Default Image</label>
+                <div class="form-check mt-3">
+                    <input class="form-check-input" type="radio" name="imageURL" id="imageOption1" value="1" required>
+                    <label class="form-check-label" for="imageOption1">Select Default Image</label>
+                </div>
+                <select class="form-control" name="imageSelect" id="imageSelect" value='imageURLDefault'>
+                    <option value="/static/img/cat1.png">cat1.png</option>
+                    <option value="/static/img/dog1.png">dog1.png</option>
+                </select>
+                <!-- 2. Custom URL -->
+                <div class="form-check">
+                    <input class="form-check-input" type="radio" name="imageURL" id="imageOption2" value="2">
+                    <label class="form-check-label" for="imageOption2">Upload from Custom Image URL</label>
+                </div>
+                <input type="text" class="form-control" name="imageURLtext" id="imageURLtext" placeholder="www.image.com/image.jpg">
+                <!-- 3. Photo Upload -->
+                <div class="form-check">
+                    <input class="form-check-input" type="radio" name="imageURL" id="imageOption3" value="3">
+                    <label class="form-check-label" for="imageOption3">Upload from Computer</label>
+                </div>
+                    <input type="file" class="form-control mt-2 " id="customFile" name="customFile" />
+                    <button type="submit" class="btn btn-primary mt-2" id='uploadButton'>Update Image</button>
             </div>
-            <select class="form-control" name="imageSelect" id="imageSelect" value='imageURLDefault'>
-                <option value="/static/img/cat1.png">cat1.png</option>
-                <option value="/static/img/dog1.png">dog1.png</option>
-            </select>
-             <!-- 2. Custom URL -->
-            <div class="form-check">
-                <input class="form-check-input" type="radio" name="imageURL" id="imageOption2" value="2">
-                <label class="form-check-label" for="imageOption2">Upload from Custom Image URL</label>
-            </div>
-            <input type="text" class="form-control" name="imageURLtext" id="imageURLtext" placeholder="www.image.com/image.jpg">
-             <!-- 3. Photo Upload -->
-            <div class="form-check">
-                <input class="form-check-input" type="radio" name="imageURL" id="imageOption3" value="3">
-                <label class="form-check-label" for="imageOption3">Upload from Computer</label>
-            </div>
-                <input type="file" class="form-control mt-2 " id="customFile" name="customFile" />
-                <button type="submit" class="btn btn-primary mt-2" id='uploadButton'>Update Image</button>
     </div>
 </form>
+</div>
 
 
 <h4>Update Animal Information</h4>
-<form action="/update_animal/{{animal_id}}" method="POST">
+<form action="/update_animal/{{animal_id}}" method="POST" class="form-box mt-3">
     <div class="form-group">
         <label for="animalName">Animal Name</label>
         <input type="text" class="form-control" name="animalName" id="animalName" value="{{animal.animal_name}}">
