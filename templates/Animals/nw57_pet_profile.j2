@@ -5,11 +5,14 @@
 <h1>Pet Profile</h1>
 <br>
 
-{% for message in get_flashed_messages() %}
-  <div id="update-success">
-      {{ message }}
-  </div>
-{% endfor %}
+{% if error_message %}
+    <p>{{ error_message }}</p>
+{% else %}
+    {% for message in get_flashed_messages() %}
+    <div id="update-success">
+        {{ message }}
+    </div>
+    {% endfor %}
 
 <div class="col-sm-12">
     <div class="card">
@@ -41,108 +44,108 @@
             </div>
         </div>
     </div>
-</div>
 
-{% if animal.adopted_date %}
-    <br>
-    <h2>{{animal.animal_name}} already has a home. Yay!</h2>
-    <br>
-{% else %}
+    {% if animal.adopted_date %}
+        <br>
+        <h2>{{animal.animal_name}} already has a home. Yay!</h2>
+        <br>
+    {% else %}
 
-    <div class = "m-1 p-2">
-        <br>
-        <h2>Apply below to adopt {{animal.animal_name}}.</h2>
-        <br>
-
-        <form action="/insert-app/{{animal.id}}" method="POST">
-        <div class="form-group">
-            <label for="user-select"><b>User:</b></label><br>
-            <select class="form-control w-auto" name="user-select" id="user-select">
-                {% for user in users %}
-                     <option value="{{ user.id }}">
-                        #{{ user.id}}. {{ user.first_name }} {{ user.last_name }}
-                    </option>
-                {% endfor %}
-            </select>
-        </div>
-        <br>
-        <div class="form-group">
-            <label for="appDate"><b>Date:</b></label>
-            <input type="date" class="form-control w-auto" name="appDate" id="appDate">
-        </div>
-        <fieldset class="form-group">
+        <div class = "m-1 p-2">
             <br>
-            <div class="row">
-            <legend class="col-form-label col-sm-6 pt-0"><b>Do you own your home?</b></legend>
-            <div class="col-sm-10">
-                <div class="form-check">
-                <input class="form-check-input" type="radio" name="homeOwnership" id="homeOwnership1" value="0">
-                <label class="form-check-label" for="homeOwnership1">No</label>
-                </div>
-                <div class="form-check">
-                <input class="form-check-input" type="radio" name="homeOwnership" id="homeOwnership2" value="1">
-                <label class="form-check-label" for="homeOwnership2">Yes</label>
-                </div>
-            </div>
-            </div>
-        </fieldset>
-        <br>
+            <h2>Apply below to adopt {{animal.animal_name}}.</h2>
+            <br>
 
-        <fieldset class="form-group">
-            <div class="row">
-            <legend class="col-form-label col-sm-6 pt-0"><b>Do you have children?</b></legend>
-            <div class="col-sm-10">
-                <div class="form-check">
-                <input class="form-check-input" type="radio" name="children" id="children1" value="0">
-                <label class="form-check-label" for="children1">No</label>
-                </div>
-                <div class="form-check">
-                <input class="form-check-input" type="radio" name="children" id="children2" value="1">
-                <label class="form-check-label" for="children2">Yes</label>
-                </div>
+            <form action="/insert-app/{{animal.id}}" method="POST">
+            <div class="form-group">
+                <label for="user-select"><b>User:</b></label><br>
+                <select class="form-control w-auto" name="user-select" id="user-select">
+                    {% for user in users %}
+                        <option value="{{ user.id }}">
+                            #{{ user.id}}. {{ user.first_name }} {{ user.last_name }}
+                        </option>
+                    {% endfor %}
+                </select>
             </div>
+            <br>
+            <div class="form-group">
+                <label for="appDate"><b>Date:</b></label>
+                <input type="date" class="form-control w-auto" name="appDate" id="appDate">
             </div>
-        </fieldset>
-        <br>
+            <fieldset class="form-group">
+                <br>
+                <div class="row">
+                <legend class="col-form-label col-sm-6 pt-0"><b>Do you own your home?</b></legend>
+                <div class="col-sm-10">
+                    <div class="form-check">
+                    <input class="form-check-input" type="radio" name="homeOwnership" id="homeOwnership1" value="0">
+                    <label class="form-check-label" for="homeOwnership1">No</label>
+                    </div>
+                    <div class="form-check">
+                    <input class="form-check-input" type="radio" name="homeOwnership" id="homeOwnership2" value="1">
+                    <label class="form-check-label" for="homeOwnership2">Yes</label>
+                    </div>
+                </div>
+                </div>
+            </fieldset>
+            <br>
 
-        <fieldset class="form-group">
-            <div class="row">
-            <legend class="col-form-label col-sm-6 pt-0"><b>Will this be your first pet?</b></legend>
-            <div class="col-sm-10">
-                <div class="form-check">
-                <input class="form-check-input" type="radio" name="firstPet" id="firstPet1" value="0">
-                <label class="form-check-label" for="firstPet1">No</label>
+            <fieldset class="form-group">
+                <div class="row">
+                <legend class="col-form-label col-sm-6 pt-0"><b>Do you have children?</b></legend>
+                <div class="col-sm-10">
+                    <div class="form-check">
+                    <input class="form-check-input" type="radio" name="children" id="children1" value="0">
+                    <label class="form-check-label" for="children1">No</label>
+                    </div>
+                    <div class="form-check">
+                    <input class="form-check-input" type="radio" name="children" id="children2" value="1">
+                    <label class="form-check-label" for="children2">Yes</label>
+                    </div>
                 </div>
-                <div class="form-check">
-                <input class="form-check-input" type="radio" name="firstPet" id="firstPet2" value="1">
-                <label class="form-check-label" for="firstPet2">Yes</label>
                 </div>
-            </div>
-            </div>
-        </fieldset>
-        <br>
+            </fieldset>
+            <br>
 
-        <div class="form-group">
-            <label for="petsInHome"><b>How many pets do you currently have at home?</b></label>
-            <select class="form-control w-auto" name="petsInHome" id="petsInHome">
-            <option>0</option>
-            <option>1</option>
-            <option>2</option>
-            <option>3</option>
-            <option>4</option>
-            <option>5</option>
-            <option>6</option>
-            <option>7</option>
-            <option>8</option>
-            <option>9</option>
-            <option>10</option>
-            </select>
+            <fieldset class="form-group">
+                <div class="row">
+                <legend class="col-form-label col-sm-6 pt-0"><b>Will this be your first pet?</b></legend>
+                <div class="col-sm-10">
+                    <div class="form-check">
+                    <input class="form-check-input" type="radio" name="firstPet" id="firstPet1" value="0">
+                    <label class="form-check-label" for="firstPet1">No</label>
+                    </div>
+                    <div class="form-check">
+                    <input class="form-check-input" type="radio" name="firstPet" id="firstPet2" value="1">
+                    <label class="form-check-label" for="firstPet2">Yes</label>
+                    </div>
+                </div>
+                </div>
+            </fieldset>
+            <br>
+
+            <div class="form-group">
+                <label for="petsInHome"><b>How many pets do you currently have at home?</b></label>
+                <select class="form-control w-auto" name="petsInHome" id="petsInHome">
+                <option>0</option>
+                <option>1</option>
+                <option>2</option>
+                <option>3</option>
+                <option>4</option>
+                <option>5</option>
+                <option>6</option>
+                <option>7</option>
+                <option>8</option>
+                <option>9</option>
+                <option>10</option>
+                </select>
+            </div>
+            <br>
+
+            <button type="submit" class="btn btn-primary">Submit Application</button>
+            </form>
         </div>
-        <br>
-
-        <button type="submit" class="btn btn-primary">Submit Application</button>
-        </form>
-    </div>
+    {% endif %}
 {% endif %}
 
 {% endblock body_content %}
