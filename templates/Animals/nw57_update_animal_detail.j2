@@ -13,19 +13,25 @@ Relationships: M:1 Relationship between Animals and Shelters
 
 {% block title %}Pawsome Animal Rescue - Update Animals{% endblock title %} 
 {% block body_content %}
-<br>
-<h2>Update {{animal.animal_name}}</h2>
-<br>
 
+<br><Br>
 <a href="/edit-animals"><button class="btn btn-secondary">Back to All Animals</button></a>
-<br><br>
 
-{% for message in get_flashed_messages() %}
-  <div id="update-success">
-      {{ message }}
-  </div>
-{% endfor %}
+{% if error_message %}
+    <br>
+    <p>{{ error_message }}</p>
+{% else %}
 
+    {% for message in get_flashed_messages() %}
+    <br><br>
+    <div id="update-success">
+        {{ message }}
+    </div>
+    {% endfor %}
+
+    <br><br>
+    <h2>Update {{animal.animal_name}}</h2>
+    <br>
 
 <h4>Update Animal Image</h4>
 <div class="container-fluid w-auto">
@@ -150,7 +156,7 @@ Relationships: M:1 Relationship between Animals and Shelters
   <button type="submit" class="btn btn-primary">Update Animal</button>
 </form>
 
-
+{% endif %}
 
 {% endblock body_content %}
 
