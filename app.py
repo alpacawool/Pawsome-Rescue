@@ -233,7 +233,7 @@ def animals():
         curr_page = on_page
     # check for positive pages only
     if curr_page < 0:
-        return("No!")
+        return("Not a valid page")
 
     # query for populating filters
     db_all_animals = execute_query(f"""
