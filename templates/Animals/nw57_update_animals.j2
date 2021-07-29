@@ -27,23 +27,6 @@ Relationships: M:1 relationship between Animals and Shelters
       {{ message }}
   </div>
 {% endfor %}
-{# Animals: Records the details of pets with connections to our animal shelter
-animal_id: INT, auto_increment, unique, NOT NULL, PK
-animal_name: VARCHAR(50), NOT NULL
-birthdate: DATE NOT NULL
-gender: CHAR(1)
-species_type: VARCHAR(50)
-breed: VARCHAR(50)
-personality: VARCHAR(255)
-image_url: VARCHAR(255)
-intake_date: DATE NOT NULL
-adopted_date: DATE
-adoption_fee: DECIMAL(5,2)
-Relationships: 
-1:M relationship between Applications, using animal_id as fk implemented inside Applications
-1:M relationship between Shelters, using shelter_id as fk implemented inside Animals #}
-
-
     <table class="table">
         <thead>
             <tr>

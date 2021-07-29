@@ -35,3 +35,8 @@
 a:link, a:visited, a:hover {
     text-decoration:None;
 }
+
+/* Add this class to hide something */
+.hidden {
+    display:none;
+}

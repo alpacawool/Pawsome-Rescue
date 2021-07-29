@@ -17,15 +17,48 @@ Relationships: M:1 Relationship between Animals and Shelters
 <h2>Update {{animal.animal_name}}</h2>
 <br>
 
+<a href="/edit-animals"><button class="btn btn-secondary">Back to All Animals</button></a>
+<br><br>
+
 {% for message in get_flashed_messages() %}
   <div id="update-success">
       {{ message }}
   </div>
 {% endfor %}
 
-<a href="/edit-animals"><button class="btn btn-secondary">Back to All Animals</button></a>
-<br><br>
 
+<h4>Update Animal Image</h4>
+<form class="mb-4" action="/update-image/{{animal.id}}" method="POST" enctype="multipart/form-data">
+    <div class="form-group">
+            Currently using <i>{{animal.image_url}}</i><br>
+            <img src="{{animal.image_url}}" class="img-thumbnail">
+            <!-- 1. Default Static Image -->
+           <div class="form-check mt-3">
+                <input class="form-check-input" type="radio" name="imageURL" id="imageOption1" value="1" required>
+                <label class="form-check-label" for="imageOption1">Select Default Image</label>
+            </div>
+            <select class="form-control" name="imageSelect" id="imageSelect" value='imageURLDefault'>
+                <option value="/static/img/cat1.png">cat1.png</option>
+                <option value="/static/img/dog1.png">dog1.png</option>
+            </select>
+             <!-- 2. Custom URL -->
+            <div class="form-check">
+                <input class="form-check-input" type="radio" name="imageURL" id="imageOption2" value="2">
+                <label class="form-check-label" for="imageOption2">Upload from Custom Image URL</label>
+            </div>
+            <input type="text" class="form-control" name="imageURLtext" id="imageURLtext" placeholder="www.image.com/image.jpg">
+             <!-- 3. Photo Upload -->
+            <div class="form-check">
+                <input class="form-check-input" type="radio" name="imageURL" id="imageOption3" value="3">
+                <label class="form-check-label" for="imageOption3">Upload from Computer</label>
+            </div>
+                <input type="file" class="form-control mt-2 " id="customFile" name="customFile" />
+                <button type="submit" class="btn btn-primary mt-2" id='uploadButton'>Update Image</button>
+    </div>
+</form>
+
+
+<h4>Update Animal Information</h4>
 <form action="/update_animal/{{animal_id}}" method="POST">
     <div class="form-group">
         <label for="animalName">Animal Name</label>
@@ -85,12 +118,6 @@ Relationships: M:1 Relationship between Animals and Shelters
         <input type="text" class="form-control" name="personality" id="personality" value="{{animal.personality}}">
     </div>
     <br>
-
-    <div class="form-group">
-        <label for="imageURL">Image Name in Static Folder</label>
-        <input type="text" class="form-control" name="imageURL" id="imageURL" value="{{animal.image_url}}">
-    </div>
-    <br>
     
     <div class="form-group">
         <label for="intakeDate">Intake Date</label>
@@ -114,4 +141,8 @@ Relationships: M:1 Relationship between Animals and Shelters
 </form>
 
 
+
 {% endblock body_content %}
+
+
+

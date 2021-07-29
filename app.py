@@ -1,4 +1,10 @@
 from flask import Flask, render_template, request, redirect, flash, url_for
+# For Image Upload
+from flask_cors import CORS, cross_origin  
+import cloudinary
+from cloudinary.uploader import upload
+from cloudinary.utils import cloudinary_url
+# For Database
 import database.db_connector as db
 import os
 
@@ -11,6 +17,16 @@ def execute_query(query):
     cursor = db.run_query(db_connection=db_connection, query=query)
     results = cursor.fetchall()
     return results
+
+# Cloudinary (Image Upload) Configuration
+# Need the following python installs
+# cloudinary==1.26.0
+# Flask-Cors==3.0.10
+cloudinary.config(
+    cloud_name = os.environ.get('CLOUD_NAME'), 
+    api_key=os.environ.get('API_KEY'), 
+    api_secret=os.environ.get('API_SECRET'),
+)
 
 app = Flask("Pawsome")
 app.secret_key = "1234" # For flask flash
@@ -661,7 +677,6 @@ def update_animals(animal_id):
         speciesType = request.form['speciesType']
         breed = request.form['breed']
         personality = request.form['personality']
-        imageURL = request.form['imageURL']
         intakeDate = request.form['intakeDate']
         if request.form['adoptedDate']:
             adoptedDate = request.form['adoptedDate']
@@ -676,7 +691,7 @@ def update_animals(animal_id):
                 animal_name = '{animalName}', \
                 birthdate = '{birthdate}', gender = '{gender}', \
                 species_type = '{speciesType}', breed = '{breed}', \
-                personality = '{personality}', image_url = '{imageURL}', \
+                personality = '{personality}',  \
                 intake_date = '{intakeDate}', \
                 adopted_date = {f"'{adoptedDate}'" if adoptedDate else 'NULL'}, \
                 adoption_fee = {adoptionFee}
@@ -687,6 +702,48 @@ def update_animals(animal_id):
         return redirect(url_for('edit_animals'))
     else:
         return redirect(url_for('edit_animals'))
+
+# Image Upload
+"""
+/update-image/<int:animal_id>
+Entity: Animals
+Functions: UPDATE individual Animals Image_URL (Picture)
+"""
+@app.route("/update-image/<int:animal_id>", methods=['GET','POST'])
+@cross_origin()
+def update_image(animal_id):
+    if request.method == 'POST':
+        image_choice = request.form['imageURL']
+        chosen_url = None
+        # 1. Default image in static folder
+        if image_choice == '1':
+            chosen_url = request.form['imageSelect']
+        # 2. Custom URL
+        elif image_choice == '2':
+            image_to_upload = request.form['imageURLtext']
+            uploaded_image = upload(image_to_upload)
+            image_url, options = cloudinary_url(uploaded_image['public_id'], format="jpg", height='320', width='320', crop='fill' )
+            chosen_url = image_url
+        # 3. Image Upload URL
+        elif image_choice == '3':
+            image_to_upload = request.files['customFile']
+            if image_to_upload:
+                uploaded_image = upload(image_to_upload)
+                image_url, options = cloudinary_url(uploaded_image['public_id'], format="jpg", height='320', width='320', crop='fill' )
+                chosen_url = image_url
+        
+        if chosen_url:
+            update_animal_img_query = f"""
+                UPDATE Animals 
+                SET image_url = '{chosen_url}'
+                WHERE id = {(animal_id)};
+            """
+            execute_query(update_animal_img_query)
+            flash('Image updated successfully!')
+        else:
+            flash('Was unable to update image')
+
+        return redirect(request.referrer)
 
 # Applications Routes
 
