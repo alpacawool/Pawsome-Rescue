@@ -579,8 +579,40 @@ Functions: INSERT individual Animals
 Relationships: M:1 Relationship between Animals and Shelters
 """
 @app.route("/insert-animal", methods=['GET', 'POST'])
+@cross_origin() # Needed for cloudinary image upload
 def insert_animal():
     if request.method == 'POST': 
+        # Retrieve image for animal
+        image_choice = request.form['imageURL']
+        chosen_url = None
+        # 1. Default image in static folder
+        if image_choice == '1':
+            chosen_url = request.form['imageSelect']
+        # 2. Custom URL
+        elif image_choice == '2':
+            image_to_upload = request.form['imageURLtext']
+            uploaded_image = upload(image_to_upload)
+            image_url, options = cloudinary_url(
+                uploaded_image['public_id'], 
+                format="jpg", 
+                height='320', 
+                width='320', 
+                crop='fill' 
+            )
+            chosen_url = image_url
+        #3. Image Upload URL
+        elif image_choice == '3':
+            image_to_upload = request.files['customFile']
+            if image_to_upload:
+                uploaded_image = upload(image_to_upload)
+                image_url, options = cloudinary_url(
+                    uploaded_image['public_id'], 
+                    format="jpg", 
+                    height='320', 
+                    width='320', 
+                    crop='fill' )
+                chosen_url = image_url
+
         animalName = request.form['animalName']
         shelterId = request.form['shelterId']
         birthdate = request.form['birthdate']
@@ -588,7 +620,7 @@ def insert_animal():
         speciesType = request.form['speciesType']
         breed = request.form['breed']
         personality = request.form['personality']
-        imageURL = request.form['imageURL']
+        imageURL = chosen_url
         intakeDate = request.form['intakeDate']
         if request.form['adoptedDate']:
             adoptedDate = request.form['adoptedDate']
@@ -596,8 +628,8 @@ def insert_animal():
             adoptedDate = None
         adoptionFee = request.form['adoptionFee']
 
-        # utiized this answer to help with inserting dates or NULLs into db: 
-        # https://stackoverflow.com/a/66739228
+        # # utiized this answer to help with inserting dates or NULLs into db: 
+        # # https://stackoverflow.com/a/66739228
         query = f"""
             INSERT INTO Animals(shelter_id, animal_name, birthdate, \
             gender, species_type, breed, personality, image_url, \
@@ -722,14 +754,24 @@ def update_image(animal_id):
         elif image_choice == '2':
             image_to_upload = request.form['imageURLtext']
             uploaded_image = upload(image_to_upload)
-            image_url, options = cloudinary_url(uploaded_image['public_id'], format="jpg", height='320', width='320', crop='fill' )
+            image_url, options = cloudinary_url(
+                uploaded_image['public_id'], 
+                format="jpg", 
+                height='320', 
+                width='320', 
+                crop='fill' )
             chosen_url = image_url
         # 3. Image Upload URL
         elif image_choice == '3':
             image_to_upload = request.files['customFile']
             if image_to_upload:
                 uploaded_image = upload(image_to_upload)
-                image_url, options = cloudinary_url(uploaded_image['public_id'], format="jpg", height='320', width='320', crop='fill' )
+                image_url, options = cloudinary_url(
+                    uploaded_image['public_id'], 
+                    format="jpg", 
+                    height='320', 
+                    width='320', 
+                    crop='fill' )
                 chosen_url = image_url
         
         if chosen_url:

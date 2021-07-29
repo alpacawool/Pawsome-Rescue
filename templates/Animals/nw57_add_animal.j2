@@ -19,7 +19,8 @@ Relationships: M:1 Relationship between Animals and Shelters
 
 <a href="/edit-animals"><button class="btn btn-secondary">Back to All Animals</button></a>
 <br><br>
-<form action="/insert-animal" method="POST">
+<!-- Note: You will need enctype="multipart/form-data" for image upload to work properly -->
+<form action="/insert-animal" method="POST" enctype="multipart/form-data">
     <div class="form-group">
         <label for="animalName">Animal Name</label>
         <input type="text" class="form-control" name="animalName" id="animalName" placeholder="Belinda">
@@ -76,8 +77,28 @@ Relationships: M:1 Relationship between Animals and Shelters
     <br>
 
     <div class="form-group">
-        <label for="imageURL">Image URL</label>
-        <input type="text" class="form-control" name="imageURL" id="imageURL" placeholder="/static/img/cat1.png">
+        <label for="imageURL">Animal Picture</label>
+            <!-- 1. Default Static Image -->
+            <div class="form-check mt-3">
+                <input class="form-check-input" type="radio" name="imageURL" id="imageOption1" value="1" required>
+                <label class="form-check-label" for="imageOption1">Select Default Image</label>
+            </div>
+            <select class="form-control" name="imageSelect" id="imageSelect" value='imageURLDefault'>
+                <option value="/static/img/cat1.png">cat1.png</option>
+                <option value="/static/img/dog1.png">dog1.png</option>
+            </select>
+            <!-- 2. Custom URL -->
+            <div class="form-check">
+                <input class="form-check-input" type="radio" name="imageURL" id="imageOption2" value="2">
+                 <label class="form-check-label" for="imageOption2">Upload from  Website URL</label>
+            </div>
+            <input type="text" class="form-control" name="imageURLtext" id="imageURLtext" placeholder="www.image.com/image.jpg">
+            <!-- 3. Photo Upload -->
+            <div class="form-check">
+                <input class="form-check-input" type="radio" name="imageURL" id="imageOption3" value="3">
+                <label class="form-check-label" for="imageOption3">Upload from Computer</label>
+            </div>
+                <input type="file" class="form-control mt-2 " id="customFile" name="customFile" />
     </div>
     <br>
     
