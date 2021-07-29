@@ -57,7 +57,8 @@ WHERE adopted_date IS NOT NULL
        species_type = :species_type_from_the_filter_dropdown
     AND
        shelter_name :shelter_name_from_the_filter_dropdown
-ORDER BY Animals.id ASC;
+ORDER BY Animals.id ASC
+LIMIT :results_per_page OFFSET :curr_page_offset;
 --  SELECT subset of Animals - based on the Species Type Filter
 SELECT Animals.id, shelter_id, animal_name, birthdate, gender, 
     species_type, breed, personality, image_url, intake_date, 
@@ -65,7 +66,8 @@ SELECT Animals.id, shelter_id, animal_name, birthdate, gender,
 FROM Animals 
 LEFT JOIN Shelters ON shelter_id = Shelters.id
 WHERE species_type = :species_type_from_the_filter_dropdown
-ORDER BY Animals.id ASC;
+ORDER BY Animals.id ASC
+LIMIT :results_per_page OFFSET :curr_page_offset;
 --  SELECT subset of Animals - based on the Shelter Name Filter
 SELECT Animals.id, shelter_id, animal_name, birthdate, gender, 
     species_type, breed, personality, image_url, intake_date, 
@@ -73,7 +75,8 @@ SELECT Animals.id, shelter_id, animal_name, birthdate, gender,
 FROM Animals 
 LEFT JOIN Shelters ON shelter_id = Shelters.id
 WHERE shelter_name = :shelter_name_from_the_filter_dropdown
-ORDER BY Animals.id ASC;
+ORDER BY Animals.id ASC
+LIMIT :results_per_page OFFSET :curr_page_offset;
 --  SELECT subset of Animals - based on the Available Filter - Available
 SELECT Animals.id, shelter_id, animal_name, birthdate, gender,
     species_type, breed, personality, image_url, intake_date, 
@@ -81,7 +84,8 @@ SELECT Animals.id, shelter_id, animal_name, birthdate, gender,
 FROM Animals 
 LEFT JOIN Shelters ON shelter_id = Shelters.id
 WHERE adopted_date IS NULL
-ORDER BY Animals.id ASC;
+ORDER BY Animals.id ASC
+LIMIT :results_per_page OFFSET :curr_page_offset;
 --  SELECT subset of Animals - based on the Available Filter - Adopted
 SELECT Animals.id, shelter_id, animal_name, birthdate, gender, 
     species_type, breed, personality, image_url, intake_date, 
@@ -89,7 +93,8 @@ SELECT Animals.id, shelter_id, animal_name, birthdate, gender,
 FROM Animals 
 LEFT JOIN Shelters ON shelter_id = Shelters.id
 WHERE adopted_date IS NOT NULL
-ORDER BY Animals.id ASC;
+ORDER BY Animals.id ASC
+LIMIT :results_per_page OFFSET :curr_page_offset;
 
 -- Pet Profile Pages (available from "Learn More About Me" links on Filter Animals Page)
 -- SELECT single pet by animal_id

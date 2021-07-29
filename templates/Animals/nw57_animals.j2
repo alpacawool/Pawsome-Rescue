@@ -106,43 +106,82 @@ Relationships: M:1 relationship between Animals and Shelters
 <br>
 <br>
 
-{# Add if/then for showing all animals or filtered animals #}
-
 {% if animals_data|length < 1 %}
-<p>There were no animals found with this filter.</p>
+  <p>There were no animals found with this filter.</p>
 {% else %}
   {% for animal in animals_data %}
-      <div class="row justify-content-center">
-          <div class="col-sm-8">
-              <div class="card">
-                  <div class="row g-0">
-                      <div class="col-md-4">
-                          <img src="{{animal.image_url}}" class="img-fluid rounded-start" alt="picture of animal">
-                      </div>
-                      <div class="col-md-8">
-                          <div class="card-body">
-                              <h5 class="card-title">{{animal.animal_name}}</h5>
-                              <h6 class="card-subtitle mb-2 text-muted">{{animal.breed}} - {{animal.species_type}}</h6>
-                              <p class="card-text">
-                                  <ul>
-                                      <li>Personality: {{animal.personality}}</li>
-                                      {% if animal.adopted_date %}
-                                          <li>Adopted on: {{animal.adopted_date}}</li>
-                                      {% else %}
-                                          <li>Needs a Home! Learn More & Apply Below.</li>
-                                      {% endif %}
-                                  </ul>
-                              </p>
-                              <p class="card-text"><small class="text-muted">Photo from <a href="https://unsplash.com/s/photos/cat-and-dog-pet?utm_source=unsplash&utm_medium=referral&utm_content=creditCopyText">Unsplash</a></small></p>
-                              <a href="/animals/{{animal.id}}" class="card-link">Learn More About Me</a>
-                          </div>
-                      </div>
-                  </div>
-              </div>
-          </div>
-      </div>
-      <br>
+    <div class="row justify-content-center">
+        <div class="col-sm-8">
+            <div class="card">
+                <div class="row g-0">
+                    <div class="col-md-4">
+                        <img src="{{animal.image_url}}" class="img-fluid rounded-start" alt="picture of animal">
+                    </div>
+                    <div class="col-md-8">
+                        <div class="card-body">
+                            <h5 class="card-title">{{animal.animal_name}}</h5>
+                            <h6 class="card-subtitle mb-2 text-muted">{{animal.breed}} - {{animal.species_type}}</h6>
+                            <p class="card-text">
+                                <ul>
+                                    <li>Personality: {{animal.personality}}</li>
+                                    {% if animal.adopted_date %}
+                                        <li>Adopted on: {{animal.adopted_date}}</li>
+                                    {% else %}
+                                        <li>Needs a Home! Learn More & Apply Below.</li>
+                                    {% endif %}
+                                </ul>
+                            </p>
+                            <p class="card-text"><small class="text-muted">Photo from <a href="https://unsplash.com/s/photos/cat-and-dog-pet?utm_source=unsplash&utm_medium=referral&utm_content=creditCopyText">Unsplash</a></small></p>
+                            <a href="/animals/{{animal.id}}" class="card-link">Learn More About Me</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <br>
   {% endfor %}
+  {# show pagination controls #}
+  <nav>
+    <ul class="pagination justify-content-center">
+      {# make prevous page links with current filters #}
+      {% if current_shelter and current_available and current_species %}
+        <li class="page-item"><a class="page-link" href="/animals?shelter={{current_shelter}}&available={{current_available}}&species_type={{current_species}}&page={{ curr_page-per_page }}">Previous Page</a></li>
+      {% elif current_available and current_species %}
+        <li class="page-item"><a class="page-link" href="/animals?available={{current_available}}&species_type={{current_species}}&page={{ curr_page-per_page }}">Previous Page</a></li>
+      {% elif current_shelter and current_available %}
+        <li class="page-item"><a class="page-link" href="/animals?shelter={{current_shelter}}&available={{current_available}}&page={{ curr_page-per_page }}">Previous Page</a></li>
+      {% elif current_shelter and current_species %}
+        <li class="page-item"><a class="page-link" href="/animals?shelter={{current_shelter}}&species_type={{current_species}}&page={{ curr_page-per_page }}">Previous Page</a></li>
+      {% elif current_shelter %}
+        <li class="page-item"><a class="page-link" href="/animals?shelter={{current_shelter}}&page={{ curr_page-per_page }}">Previous Page</a></li>
+      {% elif current_available %}
+        <li class="page-item"><a class="page-link" href="/animals?available={{current_available}}&page={{ curr_page-per_page }}">Previous Page</a></li>
+      {% elif current_species %}
+        <li class="page-item"><a class="page-link" href="/animals?species_type={{current_species}}&page={{ curr_page-per_page }}">Previous Page</a></li>
+      {% else %}
+        <li class="page-item"><a class="page-link" href="/animals?page={{ curr_page-per_page }}">Previous Page</a></li>
+      {% endif %}
+      {# make next page links with current filters #}
+      {% if current_shelter and current_available and current_species %}
+        <li class="page-item"><a class="page-link" href="/animals?shelter={{current_shelter}}&available={{current_available}}&species_type={{current_species}}&page={{ curr_page+per_page }}">Next Page</a></li>
+      {% elif current_available and current_species %}
+        <li class="page-item"><a class="page-link" href="/animals?available={{current_available}}&species_type={{current_species}}&page={{ curr_page+per_page }}">Next Page</a></li>
+      {% elif current_shelter and current_available %}
+        <li class="page-item"><a class="page-link" href="/animals?shelter={{current_shelter}}&available={{current_available}}&page={{ curr_page+per_page }}">Next Page</a></li>
+      {% elif current_shelter and current_species %}
+        <li class="page-item"><a class="page-link" href="/animals?shelter={{current_shelter}}&species_type={{current_species}}&page={{ curr_page+per_page }}">Next Page</a></li>
+      {% elif current_shelter %}
+        <li class="page-item"><a class="page-link" href="/animals?shelter={{current_shelter}}&page={{ curr_page+per_page }}">Next Page</a></li>
+      {% elif current_available %}
+        <li class="page-item"><a class="page-link" href="/animals?available={{current_available}}&page={{ curr_page+per_page }}">Next Page</a></li>
+      {% elif current_species %}
+        <li class="page-item"><a class="page-link" href="/animals?species_type={{current_species}}&page={{ curr_page+per_page }}">Next Page</a></li>
+      {% else %}
+        <li class="page-item"><a class="page-link" href="/animals?page={{ curr_page+per_page }}">Next Page</a></li>
+      {% endif %}
+    </ul>
+  </nav>
 {% endif %}
 
 {% endblock body_content %}
