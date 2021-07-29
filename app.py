@@ -231,21 +231,11 @@ def animals():
     on_page = request.args.get('page', type = int)
     if on_page:
         curr_page = on_page
-    # TODO: add check for positive pages only
-    # remember filters in url
-    # url_query_string = ""
-    # for attr in request.args:
-    #     if attr != 'page':
-    #         url_query_string += attr
-    #         url_query_string += "="
-    #         url_query_string += request.args[attr]
-    #         url_query_string += "&"
-    #     # print(attr)
-    #     # print(request.args[attr])
-    # print(url_query_string)
-    # print(request.args)
+    # check for positive pages only
+    if curr_page < 0:
+        return("No!")
 
-    # for populating filters
+    # query for populating filters
     db_all_animals = execute_query(f"""
             SELECT Animals.id, shelter_id, animal_name, birthdate, 
                    gender, species_type, breed, personality, image_url, 
