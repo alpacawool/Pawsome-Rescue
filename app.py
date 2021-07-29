@@ -225,7 +225,28 @@ Relationships: M:1 relationship between Animals and Shelters
 """
 @app.route("/animals")
 def animals():
-    db_animals = execute_query("""
+    # pagination
+    per_page = 5
+    curr_page = 0
+    on_page = request.args.get('page', type = int)
+    if on_page:
+        curr_page = on_page
+    # TODO: add check for positive pages only
+    # remember filters in url
+    # url_query_string = ""
+    # for attr in request.args:
+    #     if attr != 'page':
+    #         url_query_string += attr
+    #         url_query_string += "="
+    #         url_query_string += request.args[attr]
+    #         url_query_string += "&"
+    #     # print(attr)
+    #     # print(request.args[attr])
+    # print(url_query_string)
+    # print(request.args)
+
+    # for populating filters
+    db_all_animals = execute_query(f"""
             SELECT Animals.id, shelter_id, animal_name, birthdate, 
                    gender, species_type, breed, personality, image_url, 
                    intake_date, adopted_date, adoption_fee, Shelters.id, 
@@ -237,7 +258,7 @@ def animals():
     # find distinct attributes for populating filters
     all_shelters = []
     all_species_types = []
-    for animal in db_animals:
+    for animal in db_all_animals:
         all_shelters.append(animal['shelter_name'])
         all_species_types.append(animal['species_type'])
     distinct_shelters = set(all_shelters)
@@ -263,7 +284,8 @@ def animals():
                       species_type = '{species_type_filter}'
                     AND
                       shelter_name IS NULL
-                ORDER BY Animals.id ASC;""")
+                ORDER BY Animals.id ASC
+                LIMIT {per_page} OFFSET {curr_page};""")
         elif shelter_filter == 'None' and available_filter == 'Available':
             db_animals_filtered = execute_query(f"""
                 SELECT Animals.id, shelter_id, animal_name,
@@ -277,7 +299,8 @@ def animals():
                       species_type = '{species_type_filter}'
                     AND
                       shelter_name IS NULL
-                ORDER BY Animals.id ASC;""")
+                ORDER BY Animals.id ASC
+                LIMIT {per_page} OFFSET {curr_page};""")
         elif available_filter == 'Available': 
              db_animals_filtered = execute_query(f"""
                 SELECT Animals.id, shelter_id, animal_name,
@@ -291,7 +314,8 @@ def animals():
                       species_type = '{species_type_filter}'
                     AND
                       shelter_name = '{shelter_filter}'
-                ORDER BY Animals.id ASC;""") 
+                ORDER BY Animals.id ASC
+                LIMIT {per_page} OFFSET {curr_page};""") 
         else:
              db_animals_filtered = execute_query(f"""
                 SELECT Animals.id, shelter_id, animal_name,
@@ -305,14 +329,17 @@ def animals():
                       species_type = '{species_type_filter}'
                     AND
                       shelter_name = '{shelter_filter}'
-                ORDER BY Animals.id ASC;""") 
+                ORDER BY Animals.id ASC
+                LIMIT {per_page} OFFSET {curr_page};""") 
         return render_template('Animals/nw57_animals.j2', 
             animals_data=db_animals_filtered, 
             distinct_shelters=distinct_shelters, 
             distinct_species_type=distinct_species_type,
             current_species = species_type_filter,
             current_available = available_filter,
-            current_shelter = shelter_filter)
+            current_shelter = shelter_filter,
+            curr_page=curr_page, 
+            per_page=per_page)
   
 
     # Combined Filter: Availability and Species Type
@@ -328,7 +355,8 @@ def animals():
                 WHERE adopted_date IS NULL
                     AND
                       species_type = '{species_type_filter}'
-                ORDER BY Animals.id ASC;""")
+                ORDER BY Animals.id ASC
+                LIMIT {per_page} OFFSET {curr_page};""")
         else:
             db_animals_filtered = execute_query(f"""
                 SELECT Animals.id, shelter_id, animal_name,
@@ -340,13 +368,16 @@ def animals():
                 WHERE adopted_date IS NOT NULL
                     AND
                       species_type = '{species_type_filter}'
-                ORDER BY Animals.id ASC;""")
+                ORDER BY Animals.id ASC
+                LIMIT {per_page} OFFSET {curr_page};""")
         return render_template('Animals/nw57_animals.j2', 
             animals_data=db_animals_filtered, 
             distinct_shelters=distinct_shelters, 
             distinct_species_type=distinct_species_type,
             current_species = species_type_filter,
-            current_available = available_filter)
+            current_available = available_filter,
+            curr_page=curr_page, 
+            per_page=per_page)
 
     
     # Combined Filter: Shelter and Availability
@@ -362,7 +393,8 @@ def animals():
                 WHERE shelter_name IS NULL
 					AND
 					  adopted_date IS NULL
-                ORDER BY Animals.id ASC;
+                ORDER BY Animals.id ASC
+                LIMIT {per_page} OFFSET {curr_page};
             """)
         elif shelter_filter == 'None' and available_filter == 'Adopted':
             db_animals_filtered = execute_query(f"""
@@ -375,7 +407,8 @@ def animals():
                 WHERE shelter_name IS NULL
 					AND
 					  adopted_date IS NOT NULL
-                ORDER BY Animals.id ASC;
+                ORDER BY Animals.id ASC
+                LIMIT {per_page} OFFSET {curr_page};
             """)
         elif available_filter == 'Available':
             db_animals_filtered = execute_query(f"""
@@ -388,7 +421,8 @@ def animals():
                 WHERE shelter_name = '{shelter_filter}'
 					AND
 					  adopted_date IS NULL
-                ORDER BY Animals.id ASC;
+                ORDER BY Animals.id ASC
+                LIMIT {per_page} OFFSET {curr_page};
             """)
         else:
             db_animals_filtered = execute_query(f"""
@@ -401,14 +435,17 @@ def animals():
                 WHERE shelter_name = '{shelter_filter}'
 					AND
 					  adopted_date IS NOT NULL
-                ORDER BY Animals.id ASC;
+                ORDER BY Animals.id ASC
+                LIMIT {per_page} OFFSET {curr_page};
             """)
         return render_template('Animals/nw57_animals.j2', 
                 animals_data=db_animals_filtered, 
                 distinct_shelters=distinct_shelters, 
                 distinct_species_type=distinct_species_type,
                 current_shelter = shelter_filter,
-                current_available = available_filter)
+                current_available = available_filter,
+                curr_page=curr_page, 
+                per_page=per_page)
     
     # Combined Filter: Shelter and Species
     if shelter_filter and species_type_filter:
@@ -423,7 +460,8 @@ def animals():
                 WHERE shelter_name IS NULL
 					AND
 					  species_type = '{species_type_filter}'
-                ORDER BY Animals.id ASC;
+                ORDER BY Animals.id ASC
+                LIMIT {per_page} OFFSET {curr_page};
             """)
         else:
             db_animals_filtered = execute_query(f"""
@@ -436,14 +474,17 @@ def animals():
                 WHERE shelter_name = '{shelter_filter}'
 					AND
 					  species_type = '{species_type_filter}'
-                ORDER BY Animals.id ASC;
+                ORDER BY Animals.id ASC
+                LIMIT {per_page} OFFSET {curr_page};
             """)
         return render_template('Animals/nw57_animals.j2', 
             animals_data=db_animals_filtered, 
             distinct_shelters=distinct_shelters, 
             distinct_species_type=distinct_species_type,
             current_shelter = shelter_filter,
-            current_species = species_type_filter)
+            current_species = species_type_filter,
+            curr_page=curr_page, 
+            per_page=per_page)
             
 
     if shelter_filter:
@@ -457,7 +498,8 @@ def animals():
                 FROM Animals 
                 LEFT JOIN Shelters ON shelter_id = Shelters.id
                 WHERE shelter_name IS NULL
-                ORDER BY Animals.id ASC;""")
+                ORDER BY Animals.id ASC
+                LIMIT {per_page} OFFSET {curr_page};""")
         else:
             db_animals_filtered = execute_query(f"""
                 SELECT Animals.id, shelter_id, animal_name, 
@@ -467,16 +509,19 @@ def animals():
                 FROM Animals 
                 LEFT JOIN Shelters ON shelter_id = Shelters.id
                 WHERE shelter_name = '{shelter_filter}'
-                ORDER BY Animals.id ASC;""")
+                ORDER BY Animals.id ASC
+                LIMIT {per_page} OFFSET {curr_page};""")
         return render_template('Animals/nw57_animals.j2', 
             animals_data=db_animals_filtered, 
             distinct_shelters=distinct_shelters, 
             distinct_species_type=distinct_species_type,
-            current_shelter = shelter_filter
+            current_shelter = shelter_filter,
+            curr_page=curr_page, 
+            per_page=per_page
         )
     elif available_filter:
         if available_filter == 'Available':
-            db_animals_filtered = execute_query("""
+            db_animals_filtered = execute_query(f"""
             SELECT Animals.id, shelter_id, animal_name,
                 birthdate, gender, species_type, breed, personality, 
                 image_url, intake_date, adopted_date, adoption_fee, 
@@ -484,9 +529,10 @@ def animals():
             FROM Animals 
             LEFT JOIN Shelters ON shelter_id = Shelters.id
             WHERE adopted_date IS NULL
-            ORDER BY Animals.id ASC;""")
+            ORDER BY Animals.id ASC
+            LIMIT {per_page} OFFSET {curr_page};""")
         else:   # if available_filter == 'adopted'
-            db_animals_filtered = execute_query("""
+            db_animals_filtered = execute_query(f"""
             SELECT Animals.id, shelter_id, animal_name, 
                 birthdate, gender, species_type, breed, personality, 
                 image_url, intake_date, adopted_date, adoption_fee,
@@ -494,12 +540,15 @@ def animals():
             FROM Animals 
             LEFT JOIN Shelters ON shelter_id = Shelters.id
             WHERE adopted_date IS NOT NULL
-            ORDER BY Animals.id ASC;""")
+            ORDER BY Animals.id ASC
+            LIMIT {per_page} OFFSET {curr_page};""")
         return render_template('Animals/nw57_animals.j2', 
             animals_data=db_animals_filtered, 
             distinct_shelters=distinct_shelters, 
             distinct_species_type=distinct_species_type,
-            current_available = available_filter
+            current_available = available_filter,
+            curr_page=curr_page, 
+            per_page=per_page
         )
     elif species_type_filter:
         db_animals_filtered = execute_query(f"""
@@ -510,18 +559,32 @@ def animals():
             FROM Animals 
             LEFT JOIN Shelters ON shelter_id = Shelters.id
             WHERE species_type = '{species_type_filter}'
-            ORDER BY Animals.id ASC;""")
+            ORDER BY Animals.id ASC
+            LIMIT {per_page} OFFSET {curr_page};""")
         return render_template('Animals/nw57_animals.j2', 
             animals_data=db_animals_filtered, 
             distinct_shelters=distinct_shelters, 
             distinct_species_type=distinct_species_type,
-            current_species = species_type_filter
+            current_species = species_type_filter,
+            curr_page=curr_page, 
+            per_page=per_page
         )
     else:   # no filters
+        db_animals = execute_query(f"""
+            SELECT Animals.id, shelter_id, animal_name, birthdate, 
+                   gender, species_type, breed, personality, image_url, 
+                   intake_date, adopted_date, adoption_fee, Shelters.id, 
+                   shelter_name
+            FROM Animals 
+            LEFT JOIN Shelters ON shelter_id = Shelters.id
+            ORDER BY Animals.id ASC
+            LIMIT {per_page} OFFSET {curr_page};""")
         return render_template('Animals/nw57_animals.j2', 
             animals_data=db_animals, 
             distinct_shelters=distinct_shelters, 
-            distinct_species_type=distinct_species_type
+            distinct_species_type=distinct_species_type,
+            curr_page=curr_page, 
+            per_page=per_page
         )
 
 """
