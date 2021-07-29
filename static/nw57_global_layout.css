@@ -52,3 +52,13 @@ a:link, a:visited, a:hover {
     padding:0.8em;
     border-radius:0.3em;
 }
+
+/* Changing media query breakpoint for edit-animals page */
+/* If this conflicts, add as local css file instead */
+@media (min-width: 500px) and (max-width: 1050px) {
+    .col-md-3 {
+        -ms-flex: 0 0 100%;
+        flex: 0 0 100%;
+        max-width: 100%;
+    }
+}

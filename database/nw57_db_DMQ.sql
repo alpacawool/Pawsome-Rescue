@@ -29,6 +29,11 @@ WHERE id = :id_of_animal_to_be_updated;
 SELECT id, shelter_name
 FROM Shelters;
 
+-- UPDATE Animal (Image URL only)
+UPDATE Animals 
+SET image_url = :url_of_image
+WHERE id = :id_of_animal;
+
 -- Filter Animals Page
 --  SELECT all Animals
 SELECT Animals.id, shelter_id, animal_name, birthdate, 
