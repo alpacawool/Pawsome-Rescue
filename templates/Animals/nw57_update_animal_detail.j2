@@ -23,7 +23,6 @@ Relationships: M:1 Relationship between Animals and Shelters
 {% else %}
 
     {% for message in get_flashed_messages() %}
-    <br><br>
     <div id="update-success">
         {{ message }}
     </div>
