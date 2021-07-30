@@ -19,11 +19,16 @@ FROM Shelters;
 --  UPDATE Animals
 UPDATE Animals 
 SET shelter_id = :shelter_id_from_shelter_SELECTion, 
-    animal_name = :animal_name, birthdate = :birthdate, 
-    gender = :gender, species_type = :species_type, 
-    breed = :breed, personality = :personality,
-     image_url = :image_url, intake_date = :intake_date, 
-     adopted_date = :adopted_date, adoption_fee = :adoption_fee
+    animal_name = :animal_name, 
+    birthdate = :birthdate, 
+    gender = :gender, 
+    species_type = :species_type, 
+    breed = :breed, 
+    personality = :personality,
+    image_url = :image_url, 
+    intake_date = :intake_date, 
+    adopted_date = :adopted_date, 
+    adoption_fee = :adoption_fee
 WHERE id = :id_of_animal_to_be_updated;
 --  SELECT Shelters to populate Shelter Name Selection
 SELECT id, shelter_name
@@ -104,7 +109,6 @@ SELECT Animals.id, shelter_id, animal_name, birthdate, gender,
 FROM Animals 
 LEFT JOIN Shelters ON shelter_id = Shelters.id
 WHERE Animals.id = :id_of_desired_animal;
--- INSERT Application
 
 
 -- Shelters
