@@ -674,6 +674,8 @@ def insert_animal():
 
         animalName = request.form['animalName']
         shelterId = request.form['shelterId']
+        if shelterId == 'None':
+            shelterId = None
         birthdate = request.form['birthdate']
         gender = request.form['gender']
         speciesType = request.form['speciesType']
