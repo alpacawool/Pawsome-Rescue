@@ -283,63 +283,51 @@ def animals():
     if shelter_filter and available_filter and species_type_filter:
         if shelter_filter == 'None' and available_filter == 'Adopted':
             db_animals_filtered = execute_query(f"""
-                SELECT Animals.id, shelter_id, animal_name,
-                    birthdate, gender, species_type, breed, personality, 
-                    image_url, intake_date, adopted_date, adoption_fee, 
-                    Shelters.id, shelter_name
-                FROM Animals 
+                SELECT COUNT(*) OVER (), a.*
+                FROM Animals a
                 LEFT JOIN Shelters ON shelter_id = Shelters.id
                 WHERE adopted_date IS NOT NULL
                     AND
                       species_type = '{species_type_filter}'
                     AND
                       shelter_name IS NULL
-                ORDER BY Animals.id ASC
+                ORDER BY a.id ASC
                 LIMIT {per_page} OFFSET {curr_page};""")
         elif shelter_filter == 'None' and available_filter == 'Available':
             db_animals_filtered = execute_query(f"""
-                SELECT Animals.id, shelter_id, animal_name,
-                    birthdate, gender, species_type, breed, personality, 
-                    image_url, intake_date, adopted_date, adoption_fee, 
-                    Shelters.id, shelter_name
-                FROM Animals 
+                SELECT COUNT(*) OVER () as result_total, a.*
+                FROM Animals a 
                 LEFT JOIN Shelters ON shelter_id = Shelters.id
                 WHERE adopted_date IS NULL
                     AND
                       species_type = '{species_type_filter}'
                     AND
                       shelter_name IS NULL
-                ORDER BY Animals.id ASC
+                ORDER BY a.id ASC
                 LIMIT {per_page} OFFSET {curr_page};""")
         elif available_filter == 'Available': 
              db_animals_filtered = execute_query(f"""
-                SELECT Animals.id, shelter_id, animal_name,
-                    birthdate, gender, species_type, breed, personality, 
-                    image_url, intake_date, adopted_date, adoption_fee, 
-                    Shelters.id, shelter_name
-                FROM Animals 
+                SELECT COUNT(*) OVER () as result_total, a.*
+                FROM Animals a
                 LEFT JOIN Shelters ON shelter_id = Shelters.id
                 WHERE adopted_date IS NULL
                     AND
                       species_type = '{species_type_filter}'
                     AND
                       shelter_name = '{shelter_filter}'
-                ORDER BY Animals.id ASC
+                ORDER BY a.id ASC
                 LIMIT {per_page} OFFSET {curr_page};""") 
         else:
              db_animals_filtered = execute_query(f"""
-                SELECT Animals.id, shelter_id, animal_name,
-                    birthdate, gender, species_type, breed, personality, 
-                    image_url, intake_date, adopted_date, adoption_fee, 
-                    Shelters.id, shelter_name
-                FROM Animals 
+                SELECT COUNT(*) OVER () as result_total, a.*
+                FROM Animals a
                 LEFT JOIN Shelters ON shelter_id = Shelters.id
                 WHERE adopted_date IS NOT NULL
                     AND
                       species_type = '{species_type_filter}'
                     AND
                       shelter_name = '{shelter_filter}'
-                ORDER BY Animals.id ASC
+                ORDER BY a.id ASC
                 LIMIT {per_page} OFFSET {curr_page};""") 
         return render_template('Animals/nw57_animals.j2', 
             animals_data=db_animals_filtered, 
@@ -356,29 +344,23 @@ def animals():
     if species_type_filter and available_filter:
         if available_filter == 'Available':
             db_animals_filtered = execute_query(f"""
-                SELECT Animals.id, shelter_id, animal_name,
-                    birthdate, gender, species_type, breed, personality, 
-                    image_url, intake_date, adopted_date, adoption_fee, 
-                    Shelters.id, shelter_name
-                FROM Animals 
+                SELECT COUNT(*) OVER () as result_total, a.*
+                FROM Animals a 
                 LEFT JOIN Shelters ON shelter_id = Shelters.id
                 WHERE adopted_date IS NULL
                     AND
                       species_type = '{species_type_filter}'
-                ORDER BY Animals.id ASC
+                ORDER BY a.id ASC
                 LIMIT {per_page} OFFSET {curr_page};""")
         else:
             db_animals_filtered = execute_query(f"""
-                SELECT Animals.id, shelter_id, animal_name,
-                    birthdate, gender, species_type, breed, personality, 
-                    image_url, intake_date, adopted_date, adoption_fee, 
-                    Shelters.id, shelter_name
-                FROM Animals 
+                SELECT COUNT(*) OVER () as result_total, a.*
+                FROM Animals a
                 LEFT JOIN Shelters ON shelter_id = Shelters.id
                 WHERE adopted_date IS NOT NULL
                     AND
                       species_type = '{species_type_filter}'
-                ORDER BY Animals.id ASC
+                ORDER BY a.id ASC
                 LIMIT {per_page} OFFSET {curr_page};""")
         return render_template('Animals/nw57_animals.j2', 
             animals_data=db_animals_filtered, 
@@ -394,58 +376,46 @@ def animals():
     if shelter_filter and available_filter:
         if shelter_filter == 'None' and available_filter == 'Available':
             db_animals_filtered = execute_query(f"""
-             SELECT Animals.id, shelter_id, animal_name,
-                    birthdate, gender, species_type, breed, personality,
-                    image_url, intake_date, adopted_date, adoption_fee, 
-                    Shelters.id, shelter_name
-                FROM Animals 
+                SELECT COUNT(*) OVER () as result_total, a.*
+                FROM Animals a
                 LEFT JOIN Shelters ON shelter_id = Shelters.id
                 WHERE shelter_name IS NULL
 					AND
 					  adopted_date IS NULL
-                ORDER BY Animals.id ASC
+                ORDER BY a.id ASC
                 LIMIT {per_page} OFFSET {curr_page};
             """)
         elif shelter_filter == 'None' and available_filter == 'Adopted':
             db_animals_filtered = execute_query(f"""
-             SELECT Animals.id, shelter_id, animal_name,
-                    birthdate, gender, species_type, breed, personality,
-                    image_url, intake_date, adopted_date, adoption_fee, 
-                    Shelters.id, shelter_name
-                FROM Animals 
+                SELECT COUNT(*) OVER () as result_total, a.*
+                FROM Animals a
                 LEFT JOIN Shelters ON shelter_id = Shelters.id
                 WHERE shelter_name IS NULL
 					AND
 					  adopted_date IS NOT NULL
-                ORDER BY Animals.id ASC
+                ORDER BY a.id ASC
                 LIMIT {per_page} OFFSET {curr_page};
             """)
         elif available_filter == 'Available':
             db_animals_filtered = execute_query(f"""
-             SELECT Animals.id, shelter_id, animal_name,
-                    birthdate, gender, species_type, breed, personality,
-                    image_url, intake_date, adopted_date, adoption_fee, 
-                    Shelters.id, shelter_name
-                FROM Animals 
+                SELECT COUNT(*) OVER () as result_total, a.*
+                FROM Animals a
                 LEFT JOIN Shelters ON shelter_id = Shelters.id
                 WHERE shelter_name = '{shelter_filter}'
 					AND
 					  adopted_date IS NULL
-                ORDER BY Animals.id ASC
+                ORDER BY a.id ASC
                 LIMIT {per_page} OFFSET {curr_page};
             """)
         else:
             db_animals_filtered = execute_query(f"""
-             SELECT Animals.id, shelter_id, animal_name,
-                    birthdate, gender, species_type, breed, personality,
-                    image_url, intake_date, adopted_date, adoption_fee, 
-                    Shelters.id, shelter_name
-                FROM Animals 
+                SELECT COUNT(*) OVER () as result_total, a.*
+                FROM Animals a
                 LEFT JOIN Shelters ON shelter_id = Shelters.id
                 WHERE shelter_name = '{shelter_filter}'
 					AND
 					  adopted_date IS NOT NULL
-                ORDER BY Animals.id ASC
+                ORDER BY a.id ASC
                 LIMIT {per_page} OFFSET {curr_page};
             """)
         return render_template('Animals/nw57_animals.j2', 
@@ -461,30 +431,24 @@ def animals():
     if shelter_filter and species_type_filter:
         if shelter_filter == 'None':
             db_animals_filtered = execute_query(f"""
-             SELECT Animals.id, shelter_id, animal_name,
-                    birthdate, gender, species_type, breed, personality,
-                    image_url, intake_date, adopted_date, adoption_fee, 
-                    Shelters.id, shelter_name
-                FROM Animals 
+                SELECT COUNT(*) OVER () as result_total, a.*
+                FROM Animals a
                 LEFT JOIN Shelters ON shelter_id = Shelters.id
                 WHERE shelter_name IS NULL
 					AND
 					  species_type = '{species_type_filter}'
-                ORDER BY Animals.id ASC
+                ORDER BY a.id ASC
                 LIMIT {per_page} OFFSET {curr_page};
             """)
         else:
             db_animals_filtered = execute_query(f"""
-             SELECT Animals.id, shelter_id, animal_name,
-                    birthdate, gender, species_type, breed, personality,
-                    image_url, intake_date, adopted_date, adoption_fee, 
-                    Shelters.id, shelter_name
-                FROM Animals 
+                SELECT COUNT(*) OVER () as result_total, a.*
+                FROM Animals a
                 LEFT JOIN Shelters ON shelter_id = Shelters.id
                 WHERE shelter_name = '{shelter_filter}'
 					AND
 					  species_type = '{species_type_filter}'
-                ORDER BY Animals.id ASC
+                ORDER BY a.id ASC
                 LIMIT {per_page} OFFSET {curr_page};
             """)
         return render_template('Animals/nw57_animals.j2', 
@@ -501,25 +465,19 @@ def animals():
         # Filter Animal Shelters that are NULL
         if shelter_filter == 'None':
             db_animals_filtered = execute_query(f"""
-                SELECT Animals.id, shelter_id, animal_name,
-                    birthdate, gender, species_type, breed, personality,
-                    image_url, intake_date, adopted_date, adoption_fee, 
-                    Shelters.id, shelter_name
-                FROM Animals 
+                SELECT COUNT(*) OVER () as result_total, a.*
+                FROM Animals a
                 LEFT JOIN Shelters ON shelter_id = Shelters.id
                 WHERE shelter_name IS NULL
-                ORDER BY Animals.id ASC
+                ORDER BY a.id ASC
                 LIMIT {per_page} OFFSET {curr_page};""")
         else:
             db_animals_filtered = execute_query(f"""
-                SELECT Animals.id, shelter_id, animal_name, 
-                    birthdate, gender, species_type, breed, personality, 
-                    image_url, intake_date, adopted_date, adoption_fee, 
-                    Shelters.id, shelter_name
-                FROM Animals 
+                SELECT COUNT(*) OVER () as result_total, a.*
+                FROM Animals a
                 LEFT JOIN Shelters ON shelter_id = Shelters.id
                 WHERE shelter_name = '{shelter_filter}'
-                ORDER BY Animals.id ASC
+                ORDER BY a.id ASC
                 LIMIT {per_page} OFFSET {curr_page};""")
         return render_template('Animals/nw57_animals.j2', 
             animals_data=db_animals_filtered, 
@@ -532,25 +490,19 @@ def animals():
     elif available_filter:
         if available_filter == 'Available':
             db_animals_filtered = execute_query(f"""
-            SELECT Animals.id, shelter_id, animal_name,
-                birthdate, gender, species_type, breed, personality, 
-                image_url, intake_date, adopted_date, adoption_fee, 
-                Shelters.id, shelter_name
-            FROM Animals 
+            SELECT COUNT(*) OVER () as result_total, a.*
+            FROM Animals a
             LEFT JOIN Shelters ON shelter_id = Shelters.id
             WHERE adopted_date IS NULL
-            ORDER BY Animals.id ASC
+            ORDER BY a.id ASC
             LIMIT {per_page} OFFSET {curr_page};""")
         else:   # if available_filter == 'adopted'
             db_animals_filtered = execute_query(f"""
-            SELECT Animals.id, shelter_id, animal_name, 
-                birthdate, gender, species_type, breed, personality, 
-                image_url, intake_date, adopted_date, adoption_fee,
-                Shelters.id, shelter_name
-            FROM Animals 
+            SELECT COUNT(*) OVER () as result_total, a.*
+            FROM Animals a
             LEFT JOIN Shelters ON shelter_id = Shelters.id
             WHERE adopted_date IS NOT NULL
-            ORDER BY Animals.id ASC
+            ORDER BY a.id ASC
             LIMIT {per_page} OFFSET {curr_page};""")
         return render_template('Animals/nw57_animals.j2', 
             animals_data=db_animals_filtered, 
@@ -562,14 +514,11 @@ def animals():
         )
     elif species_type_filter:
         db_animals_filtered = execute_query(f"""
-            SELECT Animals.id, shelter_id, animal_name, birthdate, 
-                gender, species_type, breed, personality, image_url, 
-                intake_date, adopted_date, adoption_fee, 
-                Shelters.id, shelter_name
-            FROM Animals 
+            SELECT COUNT(*) OVER () as result_total, a.*
+            FROM Animals a
             LEFT JOIN Shelters ON shelter_id = Shelters.id
             WHERE species_type = '{species_type_filter}'
-            ORDER BY Animals.id ASC
+            ORDER BY a.id ASC
             LIMIT {per_page} OFFSET {curr_page};""")
         return render_template('Animals/nw57_animals.j2', 
             animals_data=db_animals_filtered, 
@@ -581,13 +530,10 @@ def animals():
         )
     else:   # no filters
         db_animals = execute_query(f"""
-            SELECT Animals.id, shelter_id, animal_name, birthdate, 
-                   gender, species_type, breed, personality, image_url, 
-                   intake_date, adopted_date, adoption_fee, Shelters.id, 
-                   shelter_name
-            FROM Animals 
+            SELECT COUNT(*) OVER () as result_total, a.*
+            FROM Animals a
             LEFT JOIN Shelters ON shelter_id = Shelters.id
-            ORDER BY Animals.id ASC
+            ORDER BY a.id ASC
             LIMIT {per_page} OFFSET {curr_page};""")
         return render_template('Animals/nw57_animals.j2', 
             animals_data=db_animals, 
