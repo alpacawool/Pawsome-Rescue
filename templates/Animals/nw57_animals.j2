@@ -144,41 +144,49 @@ Relationships: M:1 relationship between Animals and Shelters
   {# show pagination controls #}
   <nav>
     <ul class="pagination justify-content-center">
-      {# make prevous page links with current filters #}
-      {% if current_shelter and current_available and current_species %}
-        <li class="page-item"><a class="page-link" href="/animals?shelter={{current_shelter}}&available={{current_available}}&species_type={{current_species}}&page={{ curr_page-per_page }}">Previous Page</a></li>
-      {% elif current_available and current_species %}
-        <li class="page-item"><a class="page-link" href="/animals?available={{current_available}}&species_type={{current_species}}&page={{ curr_page-per_page }}">Previous Page</a></li>
-      {% elif current_shelter and current_available %}
-        <li class="page-item"><a class="page-link" href="/animals?shelter={{current_shelter}}&available={{current_available}}&page={{ curr_page-per_page }}">Previous Page</a></li>
-      {% elif current_shelter and current_species %}
-        <li class="page-item"><a class="page-link" href="/animals?shelter={{current_shelter}}&species_type={{current_species}}&page={{ curr_page-per_page }}">Previous Page</a></li>
-      {% elif current_shelter %}
-        <li class="page-item"><a class="page-link" href="/animals?shelter={{current_shelter}}&page={{ curr_page-per_page }}">Previous Page</a></li>
-      {% elif current_available %}
-        <li class="page-item"><a class="page-link" href="/animals?available={{current_available}}&page={{ curr_page-per_page }}">Previous Page</a></li>
-      {% elif current_species %}
-        <li class="page-item"><a class="page-link" href="/animals?species_type={{current_species}}&page={{ curr_page-per_page }}">Previous Page</a></li>
-      {% else %}
-        <li class="page-item"><a class="page-link" href="/animals?page={{ curr_page-per_page }}">Previous Page</a></li>
+      {# Don't display previous on first page #}
+      {% if curr_page != 0 %} 
+        {# make prevous page links with current filters #}
+        {% if current_shelter and current_available and current_species %}
+          <li class="page-item"><a class="page-link" href="/animals?shelter={{current_shelter}}&available={{current_available}}&species_type={{current_species}}&page={{ curr_page-per_page }}">Previous Page</a></li>
+        {% elif current_available and current_species %}
+          <li class="page-item"><a class="page-link" href="/animals?available={{current_available}}&species_type={{current_species}}&page={{ curr_page-per_page }}">Previous Page</a></li>
+        {% elif current_shelter and current_available %}
+          <li class="page-item"><a class="page-link" href="/animals?shelter={{current_shelter}}&available={{current_available}}&page={{ curr_page-per_page }}">Previous Page</a></li>
+        {% elif current_shelter and current_species %}
+          <li class="page-item"><a class="page-link" href="/animals?shelter={{current_shelter}}&species_type={{current_species}}&page={{ curr_page-per_page }}">Previous Page</a></li>
+        {% elif current_shelter %}
+          <li class="page-item"><a class="page-link" href="/animals?shelter={{current_shelter}}&page={{ curr_page-per_page }}">Previous Page</a></li>
+        {% elif current_available %}
+          <li class="page-item"><a class="page-link" href="/animals?available={{current_available}}&page={{ curr_page-per_page }}">Previous Page</a></li>
+        {% elif current_species %}
+          <li class="page-item"><a class="page-link" href="/animals?species_type={{current_species}}&page={{ curr_page-per_page }}">Previous Page</a></li>
+        {% else %}
+          <li class="page-item"><a class="page-link" href="/animals?page={{ curr_page-per_page }}">Previous Page</a></li>
+        {% endif %}
       {% endif %}
-      {# make next page links with current filters #}
-      {% if current_shelter and current_available and current_species %}
-        <li class="page-item"><a class="page-link" href="/animals?shelter={{current_shelter}}&available={{current_available}}&species_type={{current_species}}&page={{ curr_page+per_page }}">Next Page</a></li>
-      {% elif current_available and current_species %}
-        <li class="page-item"><a class="page-link" href="/animals?available={{current_available}}&species_type={{current_species}}&page={{ curr_page+per_page }}">Next Page</a></li>
-      {% elif current_shelter and current_available %}
-        <li class="page-item"><a class="page-link" href="/animals?shelter={{current_shelter}}&available={{current_available}}&page={{ curr_page+per_page }}">Next Page</a></li>
-      {% elif current_shelter and current_species %}
-        <li class="page-item"><a class="page-link" href="/animals?shelter={{current_shelter}}&species_type={{current_species}}&page={{ curr_page+per_page }}">Next Page</a></li>
-      {% elif current_shelter %}
-        <li class="page-item"><a class="page-link" href="/animals?shelter={{current_shelter}}&page={{ curr_page+per_page }}">Next Page</a></li>
-      {% elif current_available %}
-        <li class="page-item"><a class="page-link" href="/animals?available={{current_available}}&page={{ curr_page+per_page }}">Next Page</a></li>
-      {% elif current_species %}
-        <li class="page-item"><a class="page-link" href="/animals?species_type={{current_species}}&page={{ curr_page+per_page }}">Next Page</a></li>
+
+      {% if animals_data[0].result_total <= curr_page+per_page %}
+        {# Collect count of total query. Therefore, do not display next button #}
       {% else %}
-        <li class="page-item"><a class="page-link" href="/animals?page={{ curr_page+per_page }}">Next Page</a></li>
+        {# make next page links with current filters #}
+        {% if current_shelter and current_available and current_species %}
+          <li class="page-item"><a class="page-link" href="/animals?shelter={{current_shelter}}&available={{current_available}}&species_type={{current_species}}&page={{ curr_page+per_page }}">Next Page</a></li>
+        {% elif current_available and current_species %}
+          <li class="page-item"><a class="page-link" href="/animals?available={{current_available}}&species_type={{current_species}}&page={{ curr_page+per_page }}">Next Page</a></li>
+        {% elif current_shelter and current_available %}
+          <li class="page-item"><a class="page-link" href="/animals?shelter={{current_shelter}}&available={{current_available}}&page={{ curr_page+per_page }}">Next Page</a></li>
+        {% elif current_shelter and current_species %}
+          <li class="page-item"><a class="page-link" href="/animals?shelter={{current_shelter}}&species_type={{current_species}}&page={{ curr_page+per_page }}">Next Page</a></li>
+        {% elif current_shelter %}
+          <li class="page-item"><a class="page-link" href="/animals?shelter={{current_shelter}}&page={{ curr_page+per_page }}">Next Page</a></li>
+        {% elif current_available %}
+          <li class="page-item"><a class="page-link" href="/animals?available={{current_available}}&page={{ curr_page+per_page }}">Next Page</a></li>
+        {% elif current_species %}
+          <li class="page-item"><a class="page-link" href="/animals?species_type={{current_species}}&page={{ curr_page+per_page }}">Next Page</a></li>
+        {% else %}
+          <li class="page-item"><a class="page-link" href="/animals?page={{ curr_page+per_page }}">Next Page</a></li>
+        {% endif %}
       {% endif %}
     </ul>
   </nav>
