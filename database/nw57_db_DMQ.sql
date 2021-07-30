@@ -41,6 +41,8 @@ WHERE id = :id_of_animal;
 
 -- Filter Animals Page
 --  SELECT all Animals
+-- Citation for counting rows (for pagination purposes)
+-- https://stackoverflow.com/questions/17187124/
 SELECT COUNT(*) OVER () as result_total, a.*
 FROM Animals a
 LEFT JOIN Shelters ON shelter_id = Shelters.id
