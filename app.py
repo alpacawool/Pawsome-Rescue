@@ -1,4 +1,10 @@
 from flask import Flask, render_template, request, redirect, flash, url_for
+# For Image Upload
+from flask_cors import CORS, cross_origin  
+import cloudinary
+from cloudinary.uploader import upload
+from cloudinary.utils import cloudinary_url
+# For Database
 import database.db_connector as db
 import os
 
@@ -11,6 +17,16 @@ def execute_query(query):
     cursor = db.run_query(db_connection=db_connection, query=query)
     results = cursor.fetchall()
     return results
+
+# Cloudinary (Image Upload) Configuration
+# Need the following python installs
+# cloudinary==1.26.0
+# Flask-Cors==3.0.10
+cloudinary.config(
+    cloud_name = os.environ.get('CLOUD_NAME'), 
+    api_key=os.environ.get('API_KEY'), 
+    api_secret=os.environ.get('API_SECRET'),
+)
 
 app = Flask("Pawsome")
 app.secret_key = "1234" # For flask flash
@@ -618,8 +634,40 @@ Functions: INSERT individual Animals
 Relationships: M:1 Relationship between Animals and Shelters
 """
 @app.route("/insert-animal", methods=['GET', 'POST'])
+@cross_origin() # Needed for cloudinary image upload
 def insert_animal():
     if request.method == 'POST': 
+        # Retrieve image for animal
+        image_choice = request.form['imageURL']
+        chosen_url = None
+        # 1. Default image in static folder
+        if image_choice == '1':
+            chosen_url = request.form['imageSelect']
+        # 2. Custom URL
+        elif image_choice == '2':
+            image_to_upload = request.form['imageURLtext']
+            uploaded_image = upload(image_to_upload)
+            image_url, options = cloudinary_url(
+                uploaded_image['public_id'], 
+                format="jpg", 
+                height='320', 
+                width='320', 
+                crop='fill' 
+            )
+            chosen_url = image_url
+        #3. Image Upload URL
+        elif image_choice == '3':
+            image_to_upload = request.files['customFile']
+            if image_to_upload:
+                uploaded_image = upload(image_to_upload)
+                image_url, options = cloudinary_url(
+                    uploaded_image['public_id'], 
+                    format="jpg", 
+                    height='320', 
+                    width='320', 
+                    crop='fill' )
+                chosen_url = image_url
+
         animalName = request.form['animalName']
         shelterId = request.form['shelterId']
         birthdate = request.form['birthdate']
@@ -627,7 +675,7 @@ def insert_animal():
         speciesType = request.form['speciesType']
         breed = request.form['breed']
         personality = request.form['personality']
-        imageURL = request.form['imageURL']
+        imageURL = chosen_url
         intakeDate = request.form['intakeDate']
         if request.form['adoptedDate']:
             adoptedDate = request.form['adoptedDate']
@@ -635,8 +683,8 @@ def insert_animal():
             adoptedDate = None
         adoptionFee = request.form['adoptionFee']
 
-        # utiized this answer to help with inserting dates or NULLs into db: 
-        # https://stackoverflow.com/a/66739228
+        # # utiized this answer to help with inserting dates or NULLs into db: 
+        # # https://stackoverflow.com/a/66739228
         query = f"""
             INSERT INTO Animals(shelter_id, animal_name, birthdate, \
             gender, species_type, breed, personality, image_url, \
@@ -718,7 +766,6 @@ def update_animals(animal_id):
         speciesType = request.form['speciesType']
         breed = request.form['breed']
         personality = request.form['personality']
-        imageURL = request.form['imageURL']
         intakeDate = request.form['intakeDate']
         if request.form['adoptedDate']:
             adoptedDate = request.form['adoptedDate']
@@ -733,7 +780,7 @@ def update_animals(animal_id):
                 animal_name = '{animalName}', \
                 birthdate = '{birthdate}', gender = '{gender}', \
                 species_type = '{speciesType}', breed = '{breed}', \
-                personality = '{personality}', image_url = '{imageURL}', \
+                personality = '{personality}',  \
                 intake_date = '{intakeDate}', \
                 adopted_date = {f"'{adoptedDate}'" if adoptedDate else 'NULL'}, \
                 adoption_fee = {adoptionFee}
@@ -744,6 +791,58 @@ def update_animals(animal_id):
         return redirect(url_for('edit_animals'))
     else:
         return redirect(url_for('edit_animals'))
+
+# Image Upload
+"""
+/update-image/<int:animal_id>
+Entity: Animals
+Functions: UPDATE individual Animals Image_URL (Picture)
+"""
+@app.route("/update-image/<int:animal_id>", methods=['GET','POST'])
+@cross_origin()
+def update_image(animal_id):
+    if request.method == 'POST':
+        image_choice = request.form['imageURL']
+        chosen_url = None
+        # 1. Default image in static folder
+        if image_choice == '1':
+            chosen_url = request.form['imageSelect']
+        # 2. Custom URL
+        elif image_choice == '2':
+            image_to_upload = request.form['imageURLtext']
+            uploaded_image = upload(image_to_upload)
+            image_url, options = cloudinary_url(
+                uploaded_image['public_id'], 
+                format="jpg", 
+                height='320', 
+                width='320', 
+                crop='fill' )
+            chosen_url = image_url
+        # 3. Image Upload URL
+        elif image_choice == '3':
+            image_to_upload = request.files['customFile']
+            if image_to_upload:
+                uploaded_image = upload(image_to_upload)
+                image_url, options = cloudinary_url(
+                    uploaded_image['public_id'], 
+                    format="jpg", 
+                    height='320', 
+                    width='320', 
+                    crop='fill' )
+                chosen_url = image_url
+        
+        if chosen_url:
+            update_animal_img_query = f"""
+                UPDATE Animals 
+                SET image_url = '{chosen_url}'
+                WHERE id = {(animal_id)};
+            """
+            execute_query(update_animal_img_query)
+            flash('Image updated successfully!')
+        else:
+            flash('Was unable to update image')
+
+        return redirect(request.referrer)
 
 # Applications Routes
 
@@ -756,7 +855,7 @@ Functions: SELECT all Applications,
 Relationships: M:1 Relationship between Applications and Animals
                M:1 Relationship between Applications and Users
 """
-@app.route("/edit-apps")
+@app.route("/edit-apps", methods=['GET', 'POST'])
 def edit_apps():
     select_app_query = 'SELECT app.id, app.user_id, app.animal_id, ' \
         'app.application_date, app.approval_status, ' \
@@ -765,9 +864,26 @@ def edit_apps():
         'INNER JOIN Animals as a ON app.animal_id = a.id ' \
         'INNER JOIN Users as u ON app.user_id = u.id ' \
         'ORDER BY app.id ASC;'
+    # For Add Application Form
+    select_users_query = """
+        SELECT u.id, u.first_name, u.last_name
+        FROM Users as u;
+    """
+    # Query animals that are available to adopt to process application
+    available_animals_query = """
+        SELECT a.id, a.animal_name
+        FROM Animals as a
+        WHERE a.adopted_date IS NULL;
+    """
     db_animal_apps = execute_query(select_app_query)
+    db_users = execute_query(select_users_query)
+    db_animals = execute_query(available_animals_query)
     return render_template(
-        'Applications/nw57_edit_apps.j2', animal_apps=db_animal_apps)
+        'Applications/nw57_edit_apps.j2', 
+        animal_apps=db_animal_apps,
+        users = db_users,
+        animals = db_animals
+    )
 
 """
 /edit-apps/<int:app_id>
@@ -814,7 +930,7 @@ def update_app_approval(app_id, app_status):
 """
 /insert-app/<int:animal_id>
 Entity: Applications
-Functions: INSERT individual Applications
+Functions: INSERT individual Applications by Animal ID (On Pet Profile)
 """
 @app.route("/insert-app/<int:animal_id>", methods=['GET', 'POST'])
 def insert_app(animal_id):
@@ -834,6 +950,33 @@ def insert_app(animal_id):
     flash("Application submitted successfully!")
     profile_redirect_url = '/animals/' + str(animal_id)
     return redirect(profile_redirect_url)
+
+
+"""
+/insert-app/
+Entity: Applications
+Functions: INSERT individual Applications by Animal ID (On Edit Apps)
+"""
+@app.route("/edit-apps/new-app", methods=['GET', 'POST'])
+def insert_new_app():
+    req = request.form
+    approval_status = req['approvalStat']
+    if approval_status == '3':
+        approval_status = 'NULL'
+    insert_app_query = f"""
+        INSERT INTO Applications(
+            user_id, animal_id, application_date, home_ownership,
+            has_children, first_pet, pets_in_home, approval_status)
+        VALUES (
+            {req['user-select']}, {req['animal-select']}, 
+            {f"'{req['appDate']}'" if req['appDate'] else 'NULL'},
+            {req['homeOwnership']}, {req['children']}, {req['firstPet']},
+            {req['petsInHome']}, {approval_status}
+        );
+        """
+    execute_query(insert_app_query)
+    flash("Application added successfully!")
+    return redirect("/edit-apps")
 
 # Shelters Routes
 
@@ -875,6 +1018,7 @@ def delete_shelter(shelter_id):
     delete_query = f"""
             DELETE FROM Shelters WHERE id = {shelter_id};
             """
+    # print(delete_query)
     execute_query(delete_query)
     flash('Deleted Shelter successfully!' , 'delete')
     return redirect(url_for('edit_shelters'))
@@ -892,6 +1036,7 @@ def insert_shelter():
             "{request.form['street']}", "{request.form['city']}",
              "{request.form['state']}", "{request.form['zip_code']}");
             """
+    # print(insert_query)
     execute_query(insert_query)
     flash('Added shelter successfully!' , 'insert')
     return redirect(url_for('edit_shelters'))

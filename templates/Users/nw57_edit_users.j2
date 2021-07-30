@@ -1,3 +1,11 @@
+{# 
+Routes: /edit-users
+Entity: Users
+Functions: SELECT all Users 
+           UPDATE individual Users
+           INSERT individual Users
+#}
+
 {% extends "nw57_layout.j2" %}
 
 {# track current page #}
@@ -13,18 +21,6 @@
 
 <a href="/settings"><button class="btn btn-secondary">Back to Settings</button></a>
 <br><br>
-
-<!--
-
-Users: Users that use the animal shelter website (both adopters and staff)
-user_id: INT, auto_increment, unique, NOT NULL, PK
-first_name: VARCHAR(50), NOT NULL
-last_name: VARCHAR(50)
-email_address: VARCHAR(255), UNIQUE, NOT NULL
-password: VARCHAR(255), NOT NULL
-Relationships: 
-M:M relationship with Roles, using intersection table Users_Roles with two foreign keys
--->
 
 {% for message in get_flashed_messages() %}
   <div id="update-success">
@@ -81,7 +77,7 @@ M:M relationship with Roles, using intersection table Users_Roles with two forei
             <td><input type="text" class="form-control" id="user_first" name="user_first" value="{{user.first_name}}"></td>
             <td><input type="text" class="form-control" id="user_last" name="user_last" value="{{user.last_name}}"></td>
             <td><input type="text" class="form-control" id="user_email" name="user_email" value="{{user.email_address}}"></td>
-            <td><input type="text" class="form-control" id="user_pass" name="user_pass" value="{{user.password}}"></td>
+            <td><input type="password" class="form-control" id="user_pass" name="user_pass" value="{{user.password}}"></td>
             <td><button class="btn btn-primary">Update</button></td>
             </form>
         </tr>

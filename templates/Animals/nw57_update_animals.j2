@@ -1,3 +1,11 @@
+{#
+Routes: /edit-animals
+Entity: Animals, Shelters
+Functions: SELECT all Animals
+           SELECT Shelters by id
+Relationships: M:1 relationship between Animals and Shelters
+#}
+
 {% extends "nw57_layout.j2" %}
 
 {# track current page #}

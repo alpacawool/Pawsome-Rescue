@@ -1,7 +1,19 @@
+{#
+Routes: /edit-apps/<int:app_id>
+Entity: Applications, Animals, Users
+Functions: SELECT individual Applications,
+           SELECT individual Users by Users.id,
+           SELECT individual Animals by Animal.id
+           UPDATE Application approval status
+Relationships: M:1 Relationship between Applications and Animals
+               M:1 Relationship between Applications and Users
+#}
+
 {% extends "nw57_layout.j2" %}
 
 {# track current page #}
 {% set active_page = 'settings' %}
+
 
 {% block title %}Pawsome Animal Rescue - Edit Application Detail{% endblock title %} 
 {% block body_content %}

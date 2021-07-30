@@ -1,3 +1,12 @@
+{# 
+Routes: /view-users-roles
+Entity: Users_Roles, Users, Roles
+Functions: SELECT all Users_Roles,
+           SELECT Users first_name, last_name
+           SELECT Roles role_name
+Relationships: Users and Roles (M:M) 
+#}
+
 {% extends "nw57_layout.j2" %}
 
 {# track current page #}

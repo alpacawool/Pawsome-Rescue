@@ -1,3 +1,9 @@
+{# 
+Routes: /edit-roles
+Entity: Roles
+Functions: SELECT all Roles 
+#}
+
 {% extends "nw57_layout.j2" %}
 
 {# track current page #}
@@ -11,12 +17,6 @@
 
 <a href="/settings"><button class="btn btn-secondary">Back to Settings</button></a> <a href="/edit-users"><button class="btn btn-secondary">Manage Role Assignment</button></a>  <a href="/view-users-roles"><button class="btn btn-secondary">View All Role Assignments</button></a>
 <br><br>
-<!--
-role_id: INT, auto_increment, unique, NOT NULL, PK
-role_name: VARCHAR(255), NOT NULL
-Relationship: 
-M:M relationship with Users, using intersection table Users_Roles with two foreign keys
--->
 
 {% for message in get_flashed_messages() %}
   <div id="update-success">
@@ -24,13 +24,13 @@ M:M relationship with Users, using intersection table Users_Roles with two forei
   </div>
 {% endfor %}
 
-<h4>Add New Role<h4>
+<h4>Add New Role</h4>
 <form name="create_a_role" action="/insert-role" method="POST">
-<table class="table table-sm w-auto table-borderless">
+<table class="table w-auto table-borderless">
   <tbody>
   <tr>
     <td><input type="text" name="name" value="" placeholder="Name"></td>
-    <td><button class="btn btn-primary">Create</button>
+    <td><button class="btn btn-success btn-block">Create</button>
   </tr>
   </tbody>
 </table>

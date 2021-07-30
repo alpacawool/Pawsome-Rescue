@@ -1,3 +1,11 @@
+{# 
+Routes: /animals/<int:animal_id>
+Entity: Animals, Shelters, Users
+Function: SELECT individual Animals to view their pet profile
+          SELECT individual Shelters
+          SELECT all Users (for /insert-app/ route in Applications)
+Relationships: M:1 relationship between Animals and Shelters 
+#}
 {% extends "nw57_layout.j2" %}
 {% block title %}Pawsome Animal Rescue - Pet Profile{% endblock title %} 
 {% block body_content %}
@@ -14,33 +22,34 @@
     </div>
     {% endfor %}
 
-<div class="col-sm-12">
-    <div class="card">
-        <div class="row g-0">
-            <div class="col-md-8">
-                <div class="card-body">
-                    <h5 class="card-title">{{animal.animal_name}}</h5>
-                    <h6 class="card-subtitle mb-2 text-muted">{{animal.breed}} - {{animal.species_type}}</h6>
-                    <p class="card-text">
-                        <ul>
-                            <li>Birthdate: {{animal.birthdate}}</li>
-                            <li>Animal ID: {{animal.id}}</li>
-                            <li>Location: {{animal.shelter_name}}</li>
-                            <li>Personality: {{animal.personality}}</li>
-                            <li>Gender: {{animal.gender}}</li>
-                            <li>Intake Date: {{animal.intake_date}}</li>
-                            {% if animal.adopted_date %}
-                                <li>Adopted on: {{animal.adopted_date}}</li>
-                            {% else %}
-                                <li>Needs a Home! Apply Below.</li>
-                                <li>Adoption Fee: {{animal.adoption_fee}}</li>
-                            {% endif %}
-                        </ul>
-                    </p>  
-                </div> 
-            </div>
-            <div class="col-md-4">
-                <img src="{{animal.image_url}}" class="img-fluid float-end rounded-end" alt="picture of animal">
+    <div class="col-sm-12">
+        <div class="card">
+            <div class="row g-0">
+                <div class="col-md-8">
+                    <div class="card-body">
+                        <h5 class="card-title">{{animal.animal_name}}</h5>
+                        <h6 class="card-subtitle mb-2 text-muted">{{animal.breed}} - {{animal.species_type}}</h6>
+                        <p class="card-text">
+                            <ul>
+                                <li>Birthdate: {{animal.birthdate}}</li>
+                                <li>Animal ID: {{animal.id}}</li>
+                                <li>Location: {{animal.shelter_name}}</li>
+                                <li>Personality: {{animal.personality}}</li>
+                                <li>Gender: {{animal.gender}}</li>
+                                <li>Intake Date: {{animal.intake_date}}</li>
+                                {% if animal.adopted_date %}
+                                    <li>Adopted on: {{animal.adopted_date}}</li>
+                                {% else %}
+                                    <li>Needs a Home! Apply Below.</li>
+                                    <li>Adoption Fee: {{animal.adoption_fee}}</li>
+                                {% endif %}
+                            </ul>
+                        </p>  
+                    </div> 
+                </div>
+                <div class="col-md-4">
+                    <img src="{{animal.image_url}}" class="img-fluid float-end rounded-end" alt="picture of animal">
+                </div>
             </div>
         </div>
     </div>
