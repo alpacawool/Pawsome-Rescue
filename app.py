@@ -283,7 +283,7 @@ def animals():
     if shelter_filter and available_filter and species_type_filter:
         if shelter_filter == 'None' and available_filter == 'Adopted':
             db_animals_filtered = execute_query(f"""
-                SELECT COUNT(*) OVER (), a.*
+                SELECT COUNT(*) OVER () as result_total, a.*
                 FROM Animals a
                 LEFT JOIN Shelters ON shelter_id = Shelters.id
                 WHERE adopted_date IS NOT NULL
