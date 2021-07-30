@@ -1,5 +1,6 @@
 -- Create Tables
-CREATE OR REPLACE TABLE Animals (
+DROP TABLE IF EXISTS Animals;
+CREATE TABLE Animals (
     id INT NOT NULL AUTO_INCREMENT,
     shelter_id INT,
     animal_name VARCHAR(50) NOT NULL,
@@ -15,7 +16,8 @@ CREATE OR REPLACE TABLE Animals (
     PRIMARY KEY(id)
 ); 
 
-CREATE OR REPLACE TABLE Applications (
+DROP TABLE IF EXISTS Applications;
+CREATE TABLE Applications (
     id INT NOT NULL AUTO_INCREMENT,
     user_id INT,
     animal_id INT,
@@ -28,7 +30,8 @@ CREATE OR REPLACE TABLE Applications (
     PRIMARY KEY(id)
 ); 
 
-CREATE OR REPLACE TABLE Shelters (
+DROP TABLE IF EXISTS Shelters;
+CREATE TABLE Shelters (
     id INT NOT NULL AUTO_INCREMENT,
     shelter_name VARCHAR(255) NOT NULL,
     street VARCHAR(255),
@@ -38,7 +41,8 @@ CREATE OR REPLACE TABLE Shelters (
     PRIMARY KEY(id)
 ); 
 
-CREATE OR REPLACE TABLE Users (
+DROP TABLE IF EXISTS Users;
+CREATE TABLE Users (
     id INT NOT NULL AUTO_INCREMENT,
     first_name VARCHAR(50) NOT NULL,
     last_name VARCHAR(50),
@@ -48,13 +52,15 @@ CREATE OR REPLACE TABLE Users (
     CONSTRAINT UNIQUE(email_address)
 );
 
-CREATE OR REPLACE TABLE Roles (
+DROP TABLE IF EXISTS Roles;
+CREATE TABLE Roles (
     id INT NOT NULL AUTO_INCREMENT,
     role_name VARCHAR(255) NOT NULL,
     PRIMARY KEY(id)
 );
 
-CREATE OR REPLACE TABLE Users_Roles (
+DROP TABLE IF EXISTS Users_Roles;
+CREATE TABLE Users_Roles (
     id INT NOT NULL AUTO_INCREMENT,
     user_id INT,
     role_id INT,
