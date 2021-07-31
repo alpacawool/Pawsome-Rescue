@@ -50,6 +50,9 @@ def index_page():
 def settings():
     return render_template('nw57_settings.j2')
 
+@app.route("/about")
+def about():
+    return render_template('nw57_about.j2')
 # Users Routes
 
 """
