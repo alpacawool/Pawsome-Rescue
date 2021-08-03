@@ -42,10 +42,10 @@ Functions: SELECT all Users
     <tbody>
      <tr>
             <form action="/create-user" method="POST">
-            <td><input type="text" class="form-control" name="first_name" value="" placeholder="First"></td>
+            <td><input type="text" class="form-control" name="first_name" value="" placeholder="First" required="required"></td>
             <td><input type="text" class="form-control" name="last_name" value="" placeholder="Last"></td>
-            <td><input type="email" class="form-control" name="email" value="" placeholder="name@email.com"></td>
-            <td><input type="text" class="form-control" name="pw" value="" placeholder="**********"></td>
+            <td><input type="email" class="form-control" name="email" value="" placeholder="name@email.com" required="required"></td>
+            <td><input type="text" class="form-control" name="pw" value="" placeholder="**********" required="required"></td>
             <td><button class="btn btn-success">Create</button></td>
             </form>
     </tr>
