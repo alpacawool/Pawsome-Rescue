@@ -161,8 +161,8 @@ Relationships: Users and Roles (M:M)
 """
 @app.route("/edit-users/roles/<int:user_id>")
 def edit_users_roles(user_id):
-    db_user_query = f"""SELECT * FROM Users
-        WHERE id = '{str(user_id)}';"""
+    db_user_query = f"""SELECT id, first_name, last_name 
+        FROM Users WHERE id = '{str(user_id)}';"""
     db_user_role_query = f"""SELECT * FROM Users_Roles
         INNER JOIN Users ON user_id = Users.id
         INNER JOIN Roles ON role_id = Roles.id
@@ -286,7 +286,10 @@ def animals():
     if shelter_filter and available_filter and species_type_filter:
         if shelter_filter == 'None' and available_filter == 'Adopted':
             db_animals_filtered = execute_query(f"""
-                SELECT COUNT(*) OVER () as result_total, a.*
+                SELECT COUNT(*) OVER () as result_total, 
+                a.id, a.animal_name, a.species_type,
+                a.breed, a.personality, a.adopted_date,
+                a.image_url
                 FROM Animals a
                 LEFT JOIN Shelters ON shelter_id = Shelters.id
                 WHERE adopted_date IS NOT NULL
@@ -298,7 +301,10 @@ def animals():
                 LIMIT {per_page} OFFSET {curr_page};""")
         elif shelter_filter == 'None' and available_filter == 'Available':
             db_animals_filtered = execute_query(f"""
-                SELECT COUNT(*) OVER () as result_total, a.*
+                SELECT COUNT(*) OVER () as result_total, 
+                a.id, a.animal_name, a.species_type,
+                a.breed, a.personality, a.adopted_date,
+                a.image_url
                 FROM Animals a 
                 LEFT JOIN Shelters ON shelter_id = Shelters.id
                 WHERE adopted_date IS NULL
@@ -310,7 +316,10 @@ def animals():
                 LIMIT {per_page} OFFSET {curr_page};""")
         elif available_filter == 'Available': 
              db_animals_filtered = execute_query(f"""
-                SELECT COUNT(*) OVER () as result_total, a.*
+                SELECT COUNT(*) OVER () as result_total, 
+                a.id, a.animal_name, a.species_type,
+                a.breed, a.personality, a.adopted_date,
+                a.image_url
                 FROM Animals a
                 LEFT JOIN Shelters ON shelter_id = Shelters.id
                 WHERE adopted_date IS NULL
@@ -322,7 +331,10 @@ def animals():
                 LIMIT {per_page} OFFSET {curr_page};""") 
         else:
              db_animals_filtered = execute_query(f"""
-                SELECT COUNT(*) OVER () as result_total, a.*
+                SELECT COUNT(*) OVER () as result_total, 
+                a.id, a.animal_name, a.species_type,
+                a.breed, a.personality, a.adopted_date,
+                a.image_url
                 FROM Animals a
                 LEFT JOIN Shelters ON shelter_id = Shelters.id
                 WHERE adopted_date IS NOT NULL
@@ -347,7 +359,10 @@ def animals():
     if species_type_filter and available_filter:
         if available_filter == 'Available':
             db_animals_filtered = execute_query(f"""
-                SELECT COUNT(*) OVER () as result_total, a.*
+                SELECT COUNT(*) OVER () as result_total, 
+                a.id, a.animal_name, a.species_type,
+                a.breed, a.personality, a.adopted_date,
+                a.image_url
                 FROM Animals a 
                 LEFT JOIN Shelters ON shelter_id = Shelters.id
                 WHERE adopted_date IS NULL
@@ -357,7 +372,10 @@ def animals():
                 LIMIT {per_page} OFFSET {curr_page};""")
         else:
             db_animals_filtered = execute_query(f"""
-                SELECT COUNT(*) OVER () as result_total, a.*
+                SELECT COUNT(*) OVER () as result_total, 
+                a.id, a.animal_name, a.species_type,
+                a.breed, a.personality, a.adopted_date,
+                a.image_url
                 FROM Animals a
                 LEFT JOIN Shelters ON shelter_id = Shelters.id
                 WHERE adopted_date IS NOT NULL
@@ -379,7 +397,10 @@ def animals():
     if shelter_filter and available_filter:
         if shelter_filter == 'None' and available_filter == 'Available':
             db_animals_filtered = execute_query(f"""
-                SELECT COUNT(*) OVER () as result_total, a.*
+                SELECT COUNT(*) OVER () as result_total, 
+                a.id, a.animal_name, a.species_type,
+                a.breed, a.personality, a.adopted_date,
+                a.image_url
                 FROM Animals a
                 LEFT JOIN Shelters ON shelter_id = Shelters.id
                 WHERE shelter_name IS NULL
@@ -390,7 +411,10 @@ def animals():
             """)
         elif shelter_filter == 'None' and available_filter == 'Adopted':
             db_animals_filtered = execute_query(f"""
-                SELECT COUNT(*) OVER () as result_total, a.*
+                SELECT COUNT(*) OVER () as result_total, 
+                a.id, a.animal_name, a.species_type,
+                a.breed, a.personality, a.adopted_date,
+                a.image_url
                 FROM Animals a
                 LEFT JOIN Shelters ON shelter_id = Shelters.id
                 WHERE shelter_name IS NULL
@@ -401,7 +425,10 @@ def animals():
             """)
         elif available_filter == 'Available':
             db_animals_filtered = execute_query(f"""
-                SELECT COUNT(*) OVER () as result_total, a.*
+                SELECT COUNT(*) OVER () as result_total, 
+                a.id, a.animal_name, a.species_type,
+                a.breed, a.personality, a.adopted_date,
+                a.image_url
                 FROM Animals a
                 LEFT JOIN Shelters ON shelter_id = Shelters.id
                 WHERE shelter_name = '{shelter_filter}'
@@ -412,7 +439,10 @@ def animals():
             """)
         else:
             db_animals_filtered = execute_query(f"""
-                SELECT COUNT(*) OVER () as result_total, a.*
+                SELECT COUNT(*) OVER () as result_total, 
+                a.id, a.animal_name, a.species_type,
+                a.breed, a.personality, a.adopted_date,
+                a.image_url
                 FROM Animals a
                 LEFT JOIN Shelters ON shelter_id = Shelters.id
                 WHERE shelter_name = '{shelter_filter}'
@@ -434,7 +464,10 @@ def animals():
     if shelter_filter and species_type_filter:
         if shelter_filter == 'None':
             db_animals_filtered = execute_query(f"""
-                SELECT COUNT(*) OVER () as result_total, a.*
+                SELECT COUNT(*) OVER () as result_total, 
+                a.id, a.animal_name, a.species_type,
+                a.breed, a.personality, a.adopted_date,
+                a.image_url
                 FROM Animals a
                 LEFT JOIN Shelters ON shelter_id = Shelters.id
                 WHERE shelter_name IS NULL
@@ -445,7 +478,10 @@ def animals():
             """)
         else:
             db_animals_filtered = execute_query(f"""
-                SELECT COUNT(*) OVER () as result_total, a.*
+                SELECT COUNT(*) OVER () as result_total, 
+                a.id, a.animal_name, a.species_type,
+                a.breed, a.personality, a.adopted_date,
+                a.image_url
                 FROM Animals a
                 LEFT JOIN Shelters ON shelter_id = Shelters.id
                 WHERE shelter_name = '{shelter_filter}'
@@ -468,7 +504,10 @@ def animals():
         # Filter Animal Shelters that are NULL
         if shelter_filter == 'None':
             db_animals_filtered = execute_query(f"""
-                SELECT COUNT(*) OVER () as result_total, a.*
+                SELECT COUNT(*) OVER () as result_total, 
+                a.id, a.animal_name, a.species_type,
+                a.breed, a.personality, a.adopted_date,
+                a.image_url
                 FROM Animals a
                 LEFT JOIN Shelters ON shelter_id = Shelters.id
                 WHERE shelter_name IS NULL
@@ -476,7 +515,10 @@ def animals():
                 LIMIT {per_page} OFFSET {curr_page};""")
         else:
             db_animals_filtered = execute_query(f"""
-                SELECT COUNT(*) OVER () as result_total, a.*
+                SELECT COUNT(*) OVER () as result_total, 
+                a.id, a.animal_name, a.species_type,
+                a.breed, a.personality, a.adopted_date,
+                a.image_url
                 FROM Animals a
                 LEFT JOIN Shelters ON shelter_id = Shelters.id
                 WHERE shelter_name = '{shelter_filter}'
@@ -493,7 +535,10 @@ def animals():
     elif available_filter:
         if available_filter == 'Available':
             db_animals_filtered = execute_query(f"""
-            SELECT COUNT(*) OVER () as result_total, a.*
+            SELECT COUNT(*) OVER () as result_total, 
+            a.id, a.animal_name, a.species_type,
+            a.breed, a.personality, a.adopted_date,
+            a.image_url
             FROM Animals a
             LEFT JOIN Shelters ON shelter_id = Shelters.id
             WHERE adopted_date IS NULL
@@ -501,7 +546,10 @@ def animals():
             LIMIT {per_page} OFFSET {curr_page};""")
         else:   # if available_filter == 'adopted'
             db_animals_filtered = execute_query(f"""
-            SELECT COUNT(*) OVER () as result_total, a.*
+            SELECT COUNT(*) OVER () as result_total, 
+            a.id, a.animal_name, a.species_type,
+            a.breed, a.personality, a.adopted_date,
+            a.image_url
             FROM Animals a
             LEFT JOIN Shelters ON shelter_id = Shelters.id
             WHERE adopted_date IS NOT NULL
@@ -517,7 +565,10 @@ def animals():
         )
     elif species_type_filter:
         db_animals_filtered = execute_query(f"""
-            SELECT COUNT(*) OVER () as result_total, a.*
+            SELECT COUNT(*) OVER () as result_total, 
+            a.id, a.animal_name, a.species_type,
+            a.breed, a.personality, a.adopted_date,
+            a.image_url
             FROM Animals a
             LEFT JOIN Shelters ON shelter_id = Shelters.id
             WHERE species_type = '{species_type_filter}'
@@ -533,7 +584,10 @@ def animals():
         )
     else:   # no filters
         db_animals = execute_query(f"""
-            SELECT COUNT(*) OVER () as result_total, a.*
+            SELECT COUNT(*) OVER () as result_total, 
+            a.id, a.animal_name, a.species_type,
+            a.breed, a.personality, a.adopted_date,
+            a.image_url
             FROM Animals a
             LEFT JOIN Shelters ON shelter_id = Shelters.id
             ORDER BY a.id ASC
