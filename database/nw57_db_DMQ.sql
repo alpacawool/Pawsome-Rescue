@@ -43,7 +43,10 @@ WHERE id = :id_of_animal;
 --  SELECT all Animals
 -- Citation for counting rows (for pagination purposes)
 -- https://stackoverflow.com/questions/17187124/
-SELECT COUNT(*) OVER () as result_total, a.*
+SELECT COUNT(*) OVER () as result_total, 
+    a.id, a.animal_name, a.species_type,
+    a.breed, a.personality, a.adopted_date,
+    a.image_url
 FROM Animals a
 LEFT JOIN Shelters ON shelter_id = Shelters.id
 ORDER BY Animals.id ASC;
@@ -51,7 +54,10 @@ ORDER BY Animals.id ASC;
 -- Note: Available animals are filtered by : adopted_date is NULL
 --       Adopted animals are filtered by: adopted_date is NOT NULL
 --       Animals with no Shelter assigned are: shelter_name IS NULL
-SELECT COUNT(*) OVER () as result_total, a.*
+SELECT COUNT(*) OVER () as result_total, 
+    a.id, a.animal_name, a.species_type,
+    a.breed, a.personality, a.adopted_date,
+    a.image_url
 FROM Animals a
 LEFT JOIN Shelters ON shelter_id = Shelters.id
 WHERE adopted_date IS NOT NULL
@@ -62,28 +68,40 @@ WHERE adopted_date IS NOT NULL
 ORDER BY a.id ASC
 LIMIT :results_per_page OFFSET :curr_page_offset;
 --  SELECT subset of Animals - based on the Species Type Filter
-SELECT COUNT(*) OVER () as result_total, a.*
+SELECT COUNT(*) OVER () as result_total, 
+    a.id, a.animal_name, a.species_type,
+    a.breed, a.personality, a.adopted_date,
+    a.image_url
 FROM Animals a
 LEFT JOIN Shelters ON shelter_id = Shelters.id
 WHERE species_type = :species_type_from_the_filter_dropdown
 ORDER BY a.id ASC
 LIMIT :results_per_page OFFSET :curr_page_offset;
 --  SELECT subset of Animals - based on the Shelter Name Filter
-SELECT COUNT(*) OVER () as result_total, a.*
+SELECT COUNT(*) OVER () as result_total, 
+    a.id, a.animal_name, a.species_type,
+    a.breed, a.personality, a.adopted_date,
+    a.image_url
 FROM Animals a
 LEFT JOIN Shelters ON shelter_id = Shelters.id
 WHERE shelter_name = :shelter_name_from_the_filter_dropdown
 ORDER BY a.id ASC
 LIMIT :results_per_page OFFSET :curr_page_offset;
 --  SELECT subset of Animals - based on the Available Filter - Available
-SELECT COUNT(*) OVER () as result_total, a.*
+SELECT COUNT(*) OVER () as result_total, 
+    a.id, a.animal_name, a.species_type,
+    a.breed, a.personality, a.adopted_date,
+    a.image_url
 FROM Animals a
 LEFT JOIN Shelters ON shelter_id = Shelters.id
 WHERE adopted_date IS NULL
 ORDER BY a.id ASC
 LIMIT :results_per_page OFFSET :curr_page_offset;
 --  SELECT subset of Animals - based on the Available Filter - Adopted
-SELECT COUNT(*) OVER () as result_total, a.*
+SELECT COUNT(*) OVER () as result_total, 
+    a.id, a.animal_name, a.species_type,
+    a.breed, a.personality, a.adopted_date,
+    a.image_url
 FROM Animals a
 LEFT JOIN Shelters ON shelter_id = Shelters.id
 WHERE adopted_date IS NOT NULL
@@ -156,6 +174,11 @@ VALUES (
 -- Edit Users Page
 --  SELECT Users
 SELECT * FROM Users;
+
+-- Edit Users Roles page
+-- SELECT Users - id, first name and last name
+SELECT id, first_name, last_name 
+FROM Users WHERE id = :id_of_user;
 
 --  UPDATE Users
 UPDATE Users

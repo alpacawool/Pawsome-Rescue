@@ -73,10 +73,11 @@ Functions: INSERT new User
 @app.route("/create-user", methods=['POST'])
 def create_user():
     req = request.form
-    insert_user_query = 'INSERT INTO Users ' \
-        '(first_name, last_name, email_address, password) ' \
-        'VALUES ("' + req['first_name'] + '", "' + req['last_name'] \
-        + '", "' + req['email'] + '", "' + req['pw'] + '");'
+    insert_user_query = f"""INSERT INTO Users
+        (first_name, last_name, email_address, password)
+        VALUES ('{req['first_name']}', '{req['last_name']}',
+        '{req['email']}','{req['pw']}');"""
+
     execute_query(insert_user_query)
     if request.referrer.endswith('/edit-users'):
         insert_success_message = req['first_name'] + ' ' \
@@ -94,12 +95,12 @@ Functions: UPDATE individual Users
 def update_user(user_id):
     if request.method == 'POST':
         req = request.form
-        update_user_query = 'UPDATE Users ' \
-            'SET first_name = "' + req["user_first"] + '", ' \
-            'last_name = "' + req["user_last"] + '", ' \
-            'email_address = "' + req["user_email"] + '", ' \
-            'password = "' + req["user_pass"] + '" ' \
-            'WHERE id = ' + str(user_id) + ';'
+        update_user_query = f"""UPDATE Users
+            SET first_name = '{req["user_first"]}',
+            last_name = '{req["user_last"]}',
+            email_address = '{req["user_email"]}',
+            password = '{req["user_pass"]}'
+            WHERE id = '{str(user_id)}';"""
         execute_query(update_user_query)
         update_user_success = 'Updated ' + req["user_first"] \
             + ' ' + req["user_last"] + ' successfully!'
@@ -126,9 +127,8 @@ Functions: INSERT new Role
 @app.route("/insert-role", methods=['POST'])
 def insert_role():
     if request.method == 'POST':
-        insert_role_query = 'INSERT INTO Roles (role_name) ' \
-            'VALUES ("' + request.form['name'] + '");'
-        print(insert_role_query)
+        insert_role_query = f"""INSERT INTO Roles (role_name)
+            VALUES ('{request.form['name']}');"""
         execute_query(insert_role_query)
         success_message = 'Created role ' + request.form['name'] \
             + ' successfully!'
@@ -144,9 +144,9 @@ Functions: UPDATE individual Role
 def update_role(role_id):
     if request.method == 'POST':
         req = request.form
-        update_role_query = 'UPDATE Roles ' \
-            'SET role_name = "' + req["role_name"] + \
-            '" WHERE id = ' + str(role_id) + ';'
+        update_role_query = f"""UPDATE Roles
+            SET role_name = '{req["role_name"]}'
+            WHERE id = '{str(role_id)}';"""
         execute_query(update_role_query)
         flash("Updated role successfully!")
     return redirect("/edit-roles")
@@ -161,12 +161,13 @@ Relationships: Users and Roles (M:M)
 """
 @app.route("/edit-users/roles/<int:user_id>")
 def edit_users_roles(user_id):
-    db_user_query = 'SELECT * FROM Users ' \
-        'WHERE id = ' + str(user_id) + ';'
-    db_user_role_query = 'SELECT * FROM Users_Roles ' \
-        'INNER JOIN Users ON user_id = Users.id ' \
-        'INNER JOIN Roles ON role_id = Roles.id ' \
-        'WHERE user_id = ' + str(user_id) + ';'
+    db_user_query = f"""SELECT id, first_name, last_name 
+        FROM Users WHERE id = '{str(user_id)}';"""
+    db_user_role_query = f"""SELECT * FROM Users_Roles
+        INNER JOIN Users ON user_id = Users.id
+        INNER JOIN Roles ON role_id = Roles.id
+        WHERE user_id = '{str(user_id)}';"""
+
     db_user = execute_query(db_user_query)
     db_users_roles = execute_query(db_user_role_query)
     db_roles = execute_query('SELECT * FROM Roles;')
@@ -186,8 +187,8 @@ Relationships: Users and Roles (M:M)
 @app.route("/create-users-roles/<int:user_id>", methods=['POST'])
 def create_users_roles(user_id):
     role_id = request.form.get('roles')
-    insert_user_role_query = 'INSERT INTO Users_Roles (user_id, role_id) ' \
-        'VALUES (' + str(user_id) + ', ' + role_id + ');'
+    insert_user_role_query = f"""INSERT INTO Users_Roles (user_id, role_id) 
+        VALUES ('{str(user_id)} ', '{role_id}');"""
     execute_query(insert_user_role_query)
     users_roles_redirect_url = "/edit-users/roles/" + str(user_id)
     flash('Added role successfully!' , 'insert')
@@ -201,11 +202,10 @@ Relationships: Users and Roles (M:M)
 """
 @app.route("/delete-users-roles/<int:users_roles_id>", methods=['POST'])
 def delete_users_roles(users_roles_id):
-    current_user_id_query = 'SELECT user_id FROM Users_Roles ' \
-        'WHERE id = ' + str(users_roles_id) + ';'
-    delete_users_roles_query = 'DELETE FROM Users_Roles ' \
-        'WHERE id = ' + str(users_roles_id) + ';'
-
+    current_user_id_query = f"""SELECT user_id FROM Users_Roles 
+        WHERE id = '{str(users_roles_id)}';"""
+    delete_users_roles_query = f"""DELETE FROM Users_Roles 
+        WHERE id = '{str(users_roles_id)}';"""
     current_user_id = execute_query(current_user_id_query)[0]['user_id']
     execute_query(delete_users_roles_query)
     flash('Deleted role successfully!', 'delete')
@@ -286,7 +286,10 @@ def animals():
     if shelter_filter and available_filter and species_type_filter:
         if shelter_filter == 'None' and available_filter == 'Adopted':
             db_animals_filtered = execute_query(f"""
-                SELECT COUNT(*) OVER () as result_total, a.*
+                SELECT COUNT(*) OVER () as result_total, 
+                a.id, a.animal_name, a.species_type,
+                a.breed, a.personality, a.adopted_date,
+                a.image_url
                 FROM Animals a
                 LEFT JOIN Shelters ON shelter_id = Shelters.id
                 WHERE adopted_date IS NOT NULL
@@ -298,7 +301,10 @@ def animals():
                 LIMIT {per_page} OFFSET {curr_page};""")
         elif shelter_filter == 'None' and available_filter == 'Available':
             db_animals_filtered = execute_query(f"""
-                SELECT COUNT(*) OVER () as result_total, a.*
+                SELECT COUNT(*) OVER () as result_total, 
+                a.id, a.animal_name, a.species_type,
+                a.breed, a.personality, a.adopted_date,
+                a.image_url
                 FROM Animals a 
                 LEFT JOIN Shelters ON shelter_id = Shelters.id
                 WHERE adopted_date IS NULL
@@ -310,7 +316,10 @@ def animals():
                 LIMIT {per_page} OFFSET {curr_page};""")
         elif available_filter == 'Available': 
              db_animals_filtered = execute_query(f"""
-                SELECT COUNT(*) OVER () as result_total, a.*
+                SELECT COUNT(*) OVER () as result_total, 
+                a.id, a.animal_name, a.species_type,
+                a.breed, a.personality, a.adopted_date,
+                a.image_url
                 FROM Animals a
                 LEFT JOIN Shelters ON shelter_id = Shelters.id
                 WHERE adopted_date IS NULL
@@ -322,7 +331,10 @@ def animals():
                 LIMIT {per_page} OFFSET {curr_page};""") 
         else:
              db_animals_filtered = execute_query(f"""
-                SELECT COUNT(*) OVER () as result_total, a.*
+                SELECT COUNT(*) OVER () as result_total, 
+                a.id, a.animal_name, a.species_type,
+                a.breed, a.personality, a.adopted_date,
+                a.image_url
                 FROM Animals a
                 LEFT JOIN Shelters ON shelter_id = Shelters.id
                 WHERE adopted_date IS NOT NULL
@@ -347,7 +359,10 @@ def animals():
     if species_type_filter and available_filter:
         if available_filter == 'Available':
             db_animals_filtered = execute_query(f"""
-                SELECT COUNT(*) OVER () as result_total, a.*
+                SELECT COUNT(*) OVER () as result_total, 
+                a.id, a.animal_name, a.species_type,
+                a.breed, a.personality, a.adopted_date,
+                a.image_url
                 FROM Animals a 
                 LEFT JOIN Shelters ON shelter_id = Shelters.id
                 WHERE adopted_date IS NULL
@@ -357,7 +372,10 @@ def animals():
                 LIMIT {per_page} OFFSET {curr_page};""")
         else:
             db_animals_filtered = execute_query(f"""
-                SELECT COUNT(*) OVER () as result_total, a.*
+                SELECT COUNT(*) OVER () as result_total, 
+                a.id, a.animal_name, a.species_type,
+                a.breed, a.personality, a.adopted_date,
+                a.image_url
                 FROM Animals a
                 LEFT JOIN Shelters ON shelter_id = Shelters.id
                 WHERE adopted_date IS NOT NULL
@@ -379,7 +397,10 @@ def animals():
     if shelter_filter and available_filter:
         if shelter_filter == 'None' and available_filter == 'Available':
             db_animals_filtered = execute_query(f"""
-                SELECT COUNT(*) OVER () as result_total, a.*
+                SELECT COUNT(*) OVER () as result_total, 
+                a.id, a.animal_name, a.species_type,
+                a.breed, a.personality, a.adopted_date,
+                a.image_url
                 FROM Animals a
                 LEFT JOIN Shelters ON shelter_id = Shelters.id
                 WHERE shelter_name IS NULL
@@ -390,7 +411,10 @@ def animals():
             """)
         elif shelter_filter == 'None' and available_filter == 'Adopted':
             db_animals_filtered = execute_query(f"""
-                SELECT COUNT(*) OVER () as result_total, a.*
+                SELECT COUNT(*) OVER () as result_total, 
+                a.id, a.animal_name, a.species_type,
+                a.breed, a.personality, a.adopted_date,
+                a.image_url
                 FROM Animals a
                 LEFT JOIN Shelters ON shelter_id = Shelters.id
                 WHERE shelter_name IS NULL
@@ -401,7 +425,10 @@ def animals():
             """)
         elif available_filter == 'Available':
             db_animals_filtered = execute_query(f"""
-                SELECT COUNT(*) OVER () as result_total, a.*
+                SELECT COUNT(*) OVER () as result_total, 
+                a.id, a.animal_name, a.species_type,
+                a.breed, a.personality, a.adopted_date,
+                a.image_url
                 FROM Animals a
                 LEFT JOIN Shelters ON shelter_id = Shelters.id
                 WHERE shelter_name = '{shelter_filter}'
@@ -412,7 +439,10 @@ def animals():
             """)
         else:
             db_animals_filtered = execute_query(f"""
-                SELECT COUNT(*) OVER () as result_total, a.*
+                SELECT COUNT(*) OVER () as result_total, 
+                a.id, a.animal_name, a.species_type,
+                a.breed, a.personality, a.adopted_date,
+                a.image_url
                 FROM Animals a
                 LEFT JOIN Shelters ON shelter_id = Shelters.id
                 WHERE shelter_name = '{shelter_filter}'
@@ -434,7 +464,10 @@ def animals():
     if shelter_filter and species_type_filter:
         if shelter_filter == 'None':
             db_animals_filtered = execute_query(f"""
-                SELECT COUNT(*) OVER () as result_total, a.*
+                SELECT COUNT(*) OVER () as result_total, 
+                a.id, a.animal_name, a.species_type,
+                a.breed, a.personality, a.adopted_date,
+                a.image_url
                 FROM Animals a
                 LEFT JOIN Shelters ON shelter_id = Shelters.id
                 WHERE shelter_name IS NULL
@@ -445,7 +478,10 @@ def animals():
             """)
         else:
             db_animals_filtered = execute_query(f"""
-                SELECT COUNT(*) OVER () as result_total, a.*
+                SELECT COUNT(*) OVER () as result_total, 
+                a.id, a.animal_name, a.species_type,
+                a.breed, a.personality, a.adopted_date,
+                a.image_url
                 FROM Animals a
                 LEFT JOIN Shelters ON shelter_id = Shelters.id
                 WHERE shelter_name = '{shelter_filter}'
@@ -468,7 +504,10 @@ def animals():
         # Filter Animal Shelters that are NULL
         if shelter_filter == 'None':
             db_animals_filtered = execute_query(f"""
-                SELECT COUNT(*) OVER () as result_total, a.*
+                SELECT COUNT(*) OVER () as result_total, 
+                a.id, a.animal_name, a.species_type,
+                a.breed, a.personality, a.adopted_date,
+                a.image_url
                 FROM Animals a
                 LEFT JOIN Shelters ON shelter_id = Shelters.id
                 WHERE shelter_name IS NULL
@@ -476,7 +515,10 @@ def animals():
                 LIMIT {per_page} OFFSET {curr_page};""")
         else:
             db_animals_filtered = execute_query(f"""
-                SELECT COUNT(*) OVER () as result_total, a.*
+                SELECT COUNT(*) OVER () as result_total, 
+                a.id, a.animal_name, a.species_type,
+                a.breed, a.personality, a.adopted_date,
+                a.image_url
                 FROM Animals a
                 LEFT JOIN Shelters ON shelter_id = Shelters.id
                 WHERE shelter_name = '{shelter_filter}'
@@ -493,7 +535,10 @@ def animals():
     elif available_filter:
         if available_filter == 'Available':
             db_animals_filtered = execute_query(f"""
-            SELECT COUNT(*) OVER () as result_total, a.*
+            SELECT COUNT(*) OVER () as result_total, 
+            a.id, a.animal_name, a.species_type,
+            a.breed, a.personality, a.adopted_date,
+            a.image_url
             FROM Animals a
             LEFT JOIN Shelters ON shelter_id = Shelters.id
             WHERE adopted_date IS NULL
@@ -501,7 +546,10 @@ def animals():
             LIMIT {per_page} OFFSET {curr_page};""")
         else:   # if available_filter == 'adopted'
             db_animals_filtered = execute_query(f"""
-            SELECT COUNT(*) OVER () as result_total, a.*
+            SELECT COUNT(*) OVER () as result_total, 
+            a.id, a.animal_name, a.species_type,
+            a.breed, a.personality, a.adopted_date,
+            a.image_url
             FROM Animals a
             LEFT JOIN Shelters ON shelter_id = Shelters.id
             WHERE adopted_date IS NOT NULL
@@ -517,7 +565,10 @@ def animals():
         )
     elif species_type_filter:
         db_animals_filtered = execute_query(f"""
-            SELECT COUNT(*) OVER () as result_total, a.*
+            SELECT COUNT(*) OVER () as result_total, 
+            a.id, a.animal_name, a.species_type,
+            a.breed, a.personality, a.adopted_date,
+            a.image_url
             FROM Animals a
             LEFT JOIN Shelters ON shelter_id = Shelters.id
             WHERE species_type = '{species_type_filter}'
@@ -533,7 +584,10 @@ def animals():
         )
     else:   # no filters
         db_animals = execute_query(f"""
-            SELECT COUNT(*) OVER () as result_total, a.*
+            SELECT COUNT(*) OVER () as result_total, 
+            a.id, a.animal_name, a.species_type,
+            a.breed, a.personality, a.adopted_date,
+            a.image_url
             FROM Animals a
             LEFT JOIN Shelters ON shelter_id = Shelters.id
             ORDER BY a.id ASC
@@ -812,13 +866,13 @@ Relationships: M:1 Relationship between Applications and Animals
 """
 @app.route("/edit-apps", methods=['GET', 'POST'])
 def edit_apps():
-    select_app_query = 'SELECT app.id, app.user_id, app.animal_id, ' \
-        'app.application_date, app.approval_status, ' \
-        'a.animal_name, u.first_name, u.last_name ' \
-        'FROM Applications AS app ' \
-        'INNER JOIN Animals as a ON app.animal_id = a.id ' \
-        'INNER JOIN Users as u ON app.user_id = u.id ' \
-        'ORDER BY app.id ASC;'
+    select_app_query = """SELECT app.id, app.user_id, app.animal_id, 
+        app.application_date, app.approval_status, 
+        a.animal_name, u.first_name, u.last_name 
+        FROM Applications AS app 
+        INNER JOIN Animals as a ON app.animal_id = a.id 
+        INNER JOIN Users as u ON app.user_id = u.id 
+        ORDER BY app.id ASC;"""
     # For Add Application Form
     select_users_query = """
         SELECT u.id, u.first_name, u.last_name
@@ -851,12 +905,12 @@ Relationships: M:1 Relationship between Applications and Animals
 """
 @app.route("/edit-apps/<int:app_id>")
 def edit_app_detail(app_id):
-    select_app_detail_query = 'SELECT app.*, ' \
-        'a.animal_name, u.first_name, u.last_name ' \
-        'FROM Applications AS app ' \
-        'INNER JOIN Animals as a ON app.animal_id = a.id ' \
-        'INNER JOIN Users as u ON app.user_id = u.id ' \
-        'WHERE app.id = ' + str(app_id) + ';'
+    select_app_detail_query = f"""SELECT app.*, 
+        a.animal_name, u.first_name, u.last_name 
+        FROM Applications AS app 
+        INNER JOIN Animals as a ON app.animal_id = a.id 
+        INNER JOIN Users as u ON app.user_id = u.id 
+        WHERE app.id = '{str(app_id)}';"""
     db_current_app = execute_query(select_app_detail_query)
     return render_template(
         'Applications/nw57_edit_app_detail.j2', 
@@ -874,9 +928,9 @@ def update_app_approval(app_id, app_status):
         approval_string = 'NULL'
     else:
         approval_string = str(app_status)
-    update_app_query = 'UPDATE Applications ' \
-        'SET approval_status = ' + approval_string \
-        + ' WHERE id = ' + str(app_id) + ';'
+    update_app_query = f"""UPDATE Applications
+        SET approval_status = {approval_string}
+        WHERE id = '{str(app_id)}';"""
     execute_query(update_app_query)
     flash('Updated approval status successfully!')
     users_roles_redirect_url = "/edit-apps/" + str(app_id)
@@ -973,7 +1027,6 @@ def delete_shelter(shelter_id):
     delete_query = f"""
             DELETE FROM Shelters WHERE id = {shelter_id};
             """
-    # print(delete_query)
     execute_query(delete_query)
     flash('Deleted Shelter successfully!' , 'delete')
     return redirect(url_for('edit_shelters'))
@@ -991,7 +1044,6 @@ def insert_shelter():
             "{request.form['street']}", "{request.form['city']}",
              "{request.form['state']}", "{request.form['zip_code']}");
             """
-    # print(insert_query)
     execute_query(insert_query)
     flash('Added shelter successfully!' , 'insert')
     return redirect(url_for('edit_shelters'))
